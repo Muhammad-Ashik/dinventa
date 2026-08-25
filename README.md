@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dinventa
 
-## Getting Started
+An AI-driven ecommerce platform. Standard storefront (browse, cart, checkout,
+orders) today; AI features (chat-based product search, admin trending-product
+discovery, phone order confirmation, courier dispatch) land in later phases.
 
-First, run the development server:
+## Getting started (Docker)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
+# Generate a session secret and paste it into .env as SESSION_SECRET:
+openssl rand -base64 32
+
+docker compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This starts:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **app** — Next.js on [http://localhost:3000](http://localhost:3000). On
+  first boot it runs `prisma migrate dev` (creates the schema) and
+  `prisma db seed` (demo categories/products + the admin account from
+  `.env`) before starting the dev server. Both are safe to re-run.
+- **db** — Postgres 16 on `localhost:5432`.
+- **adminer** — DB browser at [http://localhost:8080](http://localhost:8080)
+  (system: PostgreSQL, server: `db`, credentials from `.env`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Log in with `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env` to reach `/admin`, or
+register a normal account to shop as a customer (Cash on Delivery checkout).
 
-## Learn More
+## Getting started (without Docker)
 
-To learn more about Next.js, take a look at the following resources:
+Requires a local Postgres instance; point `DATABASE_URL` in `.env` at it
+(swap the `db` host for `localhost`), then:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+npx prisma migrate dev --name init
+npm run db:seed
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
+- `prisma/schema.prisma` — data model (users, categories, products, orders).
+- `src/lib/session.ts`, `src/lib/dal.ts` — cookie-based auth session +
+  authorization checks (custom, not a third-party auth library — see note
+  below).
+- `src/proxy.ts` — optimistic route protection for `/admin` and the auth
+  pages (Next.js 16 renamed `middleware.ts` to `proxy.ts`).
+- `src/app/` — storefront, auth, and admin routes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Why custom auth instead of Auth.js/NextAuth:** this project runs on
+Next.js 16, which is very new and has breaking changes (e.g. the
+middleware→proxy rename). Rather than depend on a beta auth library of
+uncertain compatibility with such a new Next.js version, this uses the
+lightweight session pattern Next.js's own docs recommend: signed JWT cookies
+via `jose`, password hashing via `bcryptjs`. It's a straightforward swap for
+Auth.js later if needed.
