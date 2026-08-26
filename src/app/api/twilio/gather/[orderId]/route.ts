@@ -2,21 +2,28 @@ import twilio from "twilio";
 import { Type } from "@google/genai";
 import { prisma } from "@/lib/prisma";
 import { generateStructured } from "@/lib/llm";
-import { validateTwilioRequest, twimlResponse } from "@/lib/twilio-webhook";
+import { validateTwilioRequest, twimlResponse, speak, BN } from "@/lib/twilio-webhook";
 import { triggerCourierParcel } from "@/lib/confirm-order";
 
 type Intent = "CONFIRM" | "DECLINE" | "UNCLEAR";
 
+// English `\b` word-boundary matching doesn't apply meaningfully to Bangla
+// script (JS regex `\w`/`\b` only recognize ASCII word characters), so the
+// Bangla alternatives are plain substring alternatives instead, appended
+// outside the `\b...\b` English group.
 const NEGATION_PATTERN = /\b(don'?t|do not|won'?t|not|never)\b/i;
-const DECLINE_PATTERN = /\b(cancel|decline|don'?t want|stop|not interested)\b/i;
+const DECLINE_PATTERN =
+  /\b(cancel|decline|don'?t want|stop|not interested)\b|না|বাতিল|ক্যানসেল/i;
 const CONFIRM_PATTERN =
-  /\b(confirm|confirmed|yes|yeah|yep|yup|correct|that'?s right|go ahead|proceed|sounds good)\b/i;
+  /\b(confirm|confirmed|yes|yeah|yep|yup|correct|that'?s right|go ahead|proceed|sounds good)\b|হ্যাঁ|জি|নিশ্চিত|ঠিক আছে|কনফার্ম/i;
 
-// Instant classification for clear, unambiguous phrases — skips the Gemini
-// round-trip entirely (which was leaving several seconds of dead air on the
-// call). Falls back to null (→ Gemini) for anything genuinely ambiguous or
-// where confirm/decline/negation words appear together, rather than risk a
-// fast wrong guess.
+// Instant classification for clear, unambiguous phrases (English or Bangla)
+// — skips the Gemini round-trip entirely (which was leaving several seconds
+// of dead air on the call). Falls back to null (→ Gemini) for anything
+// genuinely ambiguous or where confirm/decline words appear together (e.g.
+// Bangla "না" is both the standalone word "no" *and* a trailing negation
+// particle — "কনফার্ম না" would match both patterns and correctly punt to
+// Gemini rather than guess), rather than risk a fast wrong guess.
 function quickIntent(speechResult: string): Intent | null {
   const text = speechResult.trim();
   if (!text) return null;
@@ -44,8 +51,8 @@ async function interpretIntent(speechResult: string): Promise<Intent> {
         enum: ["CONFIRM", "DECLINE", "UNCLEAR"],
         description:
           "CONFIRM if the customer clearly agreed to proceed with the order (e.g. " +
-          '"yes", "that\'s right", "go ahead"), DECLINE if they clearly want to cancel ' +
-          '(e.g. "no", "cancel it", "I don\'t want it"), UNCLEAR otherwise.',
+          '"yes"/হ্যাঁ, "that\'s right", "go ahead"), DECLINE if they clearly want to ' +
+          'cancel (e.g. "no"/না, "cancel it"/বাতিল, "I don\'t want it"), UNCLEAR otherwise.',
       },
     },
     required: ["intent"],
@@ -53,7 +60,9 @@ async function interpretIntent(speechResult: string): Promise<Intent> {
 
   try {
     const text = await generateStructured(
-      `A customer was asked to confirm or cancel an order over the phone. They said: "${speechResult}". Classify their intent.`,
+      `A Bangladeshi customer was asked, in Bangla, to confirm or cancel an order over the ` +
+        `phone. They replied (possibly in Bangla, English, or a mix): "${speechResult}". ` +
+        "Classify their intent.",
       responseSchema,
       '{ "intent": "CONFIRM" | "DECLINE" | "UNCLEAR" }'
     );
@@ -82,7 +91,7 @@ export async function POST(
 
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order || order.status !== "PENDING_CONFIRMATION") {
-    twiml.say("This order is no longer awaiting confirmation. Goodbye.");
+    await speak(twiml, "এই অর্ডারটি আর নিশ্চিতকরণের অপেক্ষায় নেই। ধন্যবাদ।");
     twiml.hangup();
     return twimlResponse(twiml);
   }
@@ -95,7 +104,7 @@ export async function POST(
       where: { id: orderId },
       data: { confirmationNote: "Call ended without capturing a response — needs manual follow-up." },
     });
-    twiml.say("Sorry, we didn't catch that. We'll follow up with you another way. Goodbye.");
+    await speak(twiml, "দুঃখিত, আমরা কোনো উত্তর পাইনি। আমরা অন্যভাবে যোগাযোগ করব। ধন্যবাদ।");
     twiml.hangup();
     return twimlResponse(twiml);
   }
@@ -113,14 +122,14 @@ export async function POST(
     // since this runs in a persistent Docker container, not a serverless
     // function that would freeze once the response is returned.
     void triggerCourierParcel(orderId);
-    twiml.say("Great, your order is confirmed. Thank you!");
+    await speak(twiml, "ধন্যবাদ! আপনার অর্ডারটি নিশ্চিত করা হয়েছে।");
     twiml.hangup();
   } else if (intent === "DECLINE") {
     await prisma.order.update({
       where: { id: orderId },
       data: { status: "DECLINED", confirmationNote: `Declined via call: "${speechResult}"` },
     });
-    twiml.say("Okay, we've cancelled your order. Thank you.");
+    await speak(twiml, "ঠিক আছে, আপনার অর্ডারটি বাতিল করা হয়েছে। ধন্যবাদ।");
     twiml.hangup();
   } else if (isRetry) {
     await prisma.order.update({
@@ -129,19 +138,21 @@ export async function POST(
         confirmationNote: `Call ended unclear — needs manual follow-up. Last said: "${speechResult}"`,
       },
     });
-    twiml.say("Sorry, I still didn't catch that. We'll follow up with you another way. Goodbye.");
+    await speak(twiml, "দুঃখিত, আমরা এখনও বুঝতে পারিনি। আমরা অন্যভাবে যোগাযোগ করব। ধন্যবাদ।");
     twiml.hangup();
   } else {
     const gather = twiml.gather({
       input: ["speech"],
+      language: BN,
       action: `${process.env.PUBLIC_BASE_URL}/api/twilio/gather/${orderId}?retry=1`,
       method: "POST",
       speechTimeout: "auto",
     });
-    gather.say(
-      "Sorry, I didn't quite catch that. Please say confirm to proceed with your order, or cancel to cancel it."
+    await speak(
+      gather,
+      "দুঃখিত, বুঝতে পারিনি। অর্ডারটি নিশ্চিত করতে 'কনফার্ম' বলুন, অথবা বাতিল করতে 'ক্যানসেল' বলুন।"
     );
-    twiml.say("We didn't receive a response. Goodbye.");
+    await speak(twiml, "কোনো উত্তর পাওয়া যায়নি। ধন্যবাদ।");
     twiml.hangup();
   }
 

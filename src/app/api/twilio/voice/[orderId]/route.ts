@@ -1,7 +1,6 @@
 import twilio from "twilio";
 import { prisma } from "@/lib/prisma";
-import { formatBDT } from "@/lib/money";
-import { validateTwilioRequest, twimlResponse } from "@/lib/twilio-webhook";
+import { validateTwilioRequest, twimlResponse, speak, BN } from "@/lib/twilio-webhook";
 
 // Twilio fetches this when the outbound confirmation call connects.
 export async function POST(
@@ -24,29 +23,35 @@ export async function POST(
   });
 
   if (!order || order.status !== "PENDING_CONFIRMATION") {
-    twiml.say("This order is no longer awaiting confirmation. Goodbye.");
+    await speak(twiml, "এই অর্ডারটি আর নিশ্চিতকরণের অপেক্ষায় নেই। ধন্যবাদ।");
     twiml.hangup();
     return twimlResponse(twiml);
   }
 
+  // Product names/brands stay in their original (mostly English) form —
+  // that's how Bangladeshi customers actually hear them referred to; only
+  // the surrounding sentence is Bangla. Kept out of formatBDT() here so the
+  // amount is a plain number the Bangla TTS reads out as Bangla number
+  // words, followed by "টাকা" (taka), instead of an English currency string.
   const itemsSummary = order.items
-    .map((item) => `${item.quantity} ${item.product.name}`)
+    .map((item) => `${item.quantity}টি ${item.product.name}`)
     .join(", ");
 
   const prompt =
-    `Hello, this is Dinventa calling to confirm your order of ${itemsSummary}, ` +
-    `total ${formatBDT(order.totalAmount)}, shipping to ${order.shippingAddress}. ` +
-    "Please say confirm to proceed, or cancel to cancel this order.";
+    `হ্যালো, ডিনভেন্টা থেকে বলছি। আপনার অর্ডার নিশ্চিত করার জন্য কল করা হয়েছে: ${itemsSummary}, ` +
+    `মোট ${order.totalAmount} টাকা, ঠিকানা ${order.shippingAddress}। ` +
+    "অর্ডারটি নিশ্চিত করতে 'কনফার্ম' বলুন, অথবা বাতিল করতে 'ক্যানসেল' বলুন।";
 
   const gather = twiml.gather({
     input: ["speech"],
+    language: BN,
     action: `${process.env.PUBLIC_BASE_URL}/api/twilio/gather/${orderId}`,
     method: "POST",
     speechTimeout: "auto",
   });
-  gather.say(prompt);
+  await speak(gather, prompt);
 
-  twiml.say("We didn't receive a response. Goodbye.");
+  await speak(twiml, "কোনো উত্তর পাওয়া যায়নি। ধন্যবাদ।");
   twiml.hangup();
 
   return twimlResponse(twiml);

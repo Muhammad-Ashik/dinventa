@@ -6,11 +6,18 @@ import type { Role } from "@prisma/client";
 const SESSION_COOKIE = "session";
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-const secretKey = process.env.SESSION_SECRET;
-if (!secretKey) {
-  throw new Error("SESSION_SECRET environment variable is not set");
+// Lazy, not module-top-level: Next's build-time "collecting page data" step
+// evaluates this module even for fully dynamic routes that never call
+// encrypt/decrypt at build time — an eager throw here breaks `next build`
+// whenever SESSION_SECRET isn't present in the build environment (e.g. a
+// container build stage that intentionally doesn't bake in runtime secrets).
+function getEncodedKey() {
+  const secretKey = process.env.SESSION_SECRET;
+  if (!secretKey) {
+    throw new Error("SESSION_SECRET environment variable is not set");
+  }
+  return new TextEncoder().encode(secretKey);
 }
-const encodedKey = new TextEncoder().encode(secretKey);
 
 export type SessionPayload = {
   userId: string;
@@ -23,12 +30,12 @@ export async function encrypt(payload: SessionPayload) {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
-    .sign(encodedKey);
+    .sign(getEncodedKey());
 }
 
 export async function decrypt(session: string | undefined = "") {
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
+    const { payload } = await jwtVerify(session, getEncodedKey(), {
       algorithms: ["HS256"],
     });
     return payload as { userId: string; role: Role; expiresAt: string };

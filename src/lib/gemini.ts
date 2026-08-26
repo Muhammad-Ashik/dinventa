@@ -6,15 +6,24 @@ const globalForGemini = globalThis as unknown as {
   gemini: GoogleGenAI | undefined;
 };
 
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  throw new Error("GEMINI_API_KEY environment variable is not set");
-}
+// Lazy, not module-top-level: Next's build-time "collecting page data" step
+// evaluates this module even for routes that never call generateWithFallback
+// at build time — an eager throw here breaks `next build` whenever
+// GEMINI_API_KEY isn't present in the build environment (e.g. a container
+// build stage that intentionally doesn't bake in runtime secrets).
+function getGemini(): GoogleGenAI {
+  if (globalForGemini.gemini) return globalForGemini.gemini;
 
-export const gemini = globalForGemini.gemini ?? new GoogleGenAI({ apiKey });
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY environment variable is not set");
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  globalForGemini.gemini = gemini;
+  const gemini = new GoogleGenAI({ apiKey });
+  if (process.env.NODE_ENV !== "production") {
+    globalForGemini.gemini = gemini;
+  }
+  return gemini;
 }
 
 // Alias that always points at Google's current Flash model, so this never
@@ -44,6 +53,7 @@ export async function generateWithFallback(
   contents: string,
   config: Omit<GenerateContentConfig, "httpOptions">
 ) {
+  const gemini = getGemini();
   try {
     return await gemini.models.generateContent({
       model: GEMINI_MODEL,
