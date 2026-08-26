@@ -2,7 +2,7 @@ import twilio from "twilio";
 import { Type } from "@google/genai";
 import { prisma } from "@/lib/prisma";
 import { generateStructured } from "@/lib/llm";
-import { validateTwilioRequest, twimlResponse, speak, BN } from "@/lib/twilio-webhook";
+import { validateTwilioRequest, twimlResponse, speak, gatherAttributes } from "@/lib/twilio-webhook";
 import { triggerCourierParcel } from "@/lib/confirm-order";
 
 type Intent = "CONFIRM" | "DECLINE" | "UNCLEAR";
@@ -38,6 +38,28 @@ function quickIntent(speechResult: string): Intent | null {
   return null;
 }
 
+// Twilio gives up waiting on this webhook after ~15s total (confirmed live:
+// a call timed out with "Configured tt is 15000ms" while generateStructured
+// was still working through its Gemini-primary → Gemini-fallback →
+// OpenRouter chain — each Gemini attempt alone has a Google-enforced 10s
+// floor, so that full chain can easily exceed Twilio's budget on its own).
+// Racing against a ceiling well under 15s (leaving room for the DB query,
+// TwiML serialization, and network overhead already spent by this point)
+// guarantees we always respond in time, at the cost of sometimes abandoning
+// a Gemini call that might have succeeded a few seconds later — an
+// abandoned call is wasted API quota but otherwise harmless, and "UNCLEAR"
+// already degrades gracefully into the existing one-retry re-prompt flow.
+const AI_INTENT_TIMEOUT_MS = 8_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 async function interpretIntent(speechResult: string): Promise<Intent> {
   const quick = quickIntent(speechResult);
   if (quick) return quick;
@@ -59,17 +81,20 @@ async function interpretIntent(speechResult: string): Promise<Intent> {
   };
 
   try {
-    const text = await generateStructured(
-      `A Bangladeshi customer was asked, in Bangla, to confirm or cancel an order over the ` +
-        `phone. They replied (possibly in Bangla, English, or a mix): "${speechResult}". ` +
-        "Classify their intent.",
-      responseSchema,
-      '{ "intent": "CONFIRM" | "DECLINE" | "UNCLEAR" }'
+    const text = await withTimeout(
+      generateStructured(
+        `A Bangladeshi customer was asked, in Bangla, to confirm or cancel an order over the ` +
+          `phone. They replied (possibly in Bangla, English, or a mix): "${speechResult}". ` +
+          "Classify their intent.",
+        responseSchema,
+        '{ "intent": "CONFIRM" | "DECLINE" | "UNCLEAR" }'
+      ),
+      AI_INTENT_TIMEOUT_MS
     );
     const parsed = JSON.parse(text) as { intent: Intent };
     return parsed.intent ?? "UNCLEAR";
   } catch (error) {
-    console.error("interpretIntent: AI call failed:", error);
+    console.error("interpretIntent: AI call failed or timed out:", error);
     return "UNCLEAR";
   }
 }
@@ -141,13 +166,9 @@ export async function POST(
     await speak(twiml, "দুঃখিত, আমরা এখনও বুঝতে পারিনি। আমরা অন্যভাবে যোগাযোগ করব। ধন্যবাদ।");
     twiml.hangup();
   } else {
-    const gather = twiml.gather({
-      input: ["speech"],
-      language: BN,
-      action: `${process.env.PUBLIC_BASE_URL}/api/twilio/gather/${orderId}?retry=1`,
-      method: "POST",
-      speechTimeout: "auto",
-    });
+    const gather = twiml.gather(
+      gatherAttributes(`${process.env.PUBLIC_BASE_URL}/api/twilio/gather/${orderId}?retry=1`)
+    );
     await speak(
       gather,
       "দুঃখিত, বুঝতে পারিনি। অর্ডারটি নিশ্চিত করতে 'কনফার্ম' বলুন, অথবা বাতিল করতে 'ক্যানসেল' বলুন।"

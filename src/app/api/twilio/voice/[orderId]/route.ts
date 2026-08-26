@@ -1,6 +1,6 @@
 import twilio from "twilio";
 import { prisma } from "@/lib/prisma";
-import { validateTwilioRequest, twimlResponse, speak, BN } from "@/lib/twilio-webhook";
+import { validateTwilioRequest, twimlResponse, speak, gatherAttributes } from "@/lib/twilio-webhook";
 
 // Twilio fetches this when the outbound confirmation call connects.
 export async function POST(
@@ -42,13 +42,9 @@ export async function POST(
     `মোট ${order.totalAmount} টাকা, ঠিকানা ${order.shippingAddress}। ` +
     "অর্ডারটি নিশ্চিত করতে 'কনফার্ম' বলুন, অথবা বাতিল করতে 'ক্যানসেল' বলুন।";
 
-  const gather = twiml.gather({
-    input: ["speech"],
-    language: BN,
-    action: `${process.env.PUBLIC_BASE_URL}/api/twilio/gather/${orderId}`,
-    method: "POST",
-    speechTimeout: "auto",
-  });
+  const gather = twiml.gather(
+    gatherAttributes(`${process.env.PUBLIC_BASE_URL}/api/twilio/gather/${orderId}`)
+  );
   await speak(gather, prompt);
 
   await speak(twiml, "কোনো উত্তর পাওয়া যায়নি। ধন্যবাদ।");

@@ -50,6 +50,25 @@ export function twimlResponse(twiml: VoiceResponse) {
   });
 }
 
+// <Gather language="bn-IN"> alone silently falls back to English speech
+// recognition (same "language is not a supported language" warning as the
+// old <Say> bug — confirmed live: a Bangla reply was transcribed as garbled
+// English text with `language: "en-US"` in the payload). Twilio's default
+// speech model only supports ~10 languages; unlocking Bengali requires an
+// explicit `speechModel`. "experimental_utterances" is Twilio's pick for
+// short single-utterance replies (fits our yes/no-style confirm/decline
+// flow) and is one of the two models Twilio's docs confirm include Bengali.
+export function gatherAttributes(actionUrl: string): VoiceResponse.GatherAttributes {
+  return {
+    input: ["speech"],
+    language: BN,
+    speechModel: "experimental_utterances",
+    action: actionUrl,
+    method: "POST",
+    speechTimeout: "auto",
+  };
+}
+
 // Prefers ElevenLabs (eleven_v3, the only ElevenLabs model with Bengali
 // support) via <Play> when configured; falls back to Twilio's native <Say>
 // (via an explicit Google Bengali voice, see BN_SAY_VOICE) otherwise or if
