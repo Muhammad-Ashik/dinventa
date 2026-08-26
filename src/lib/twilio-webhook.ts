@@ -66,6 +66,21 @@ export function gatherAttributes(actionUrl: string): VoiceResponse.GatherAttribu
     action: actionUrl,
     method: "POST",
     speechTimeout: "auto",
+    // `timeout` (time to wait for speech to START, separate from
+    // speechTimeout's end-of-speech silence detection) defaults to 5s —
+    // confirmed live too short: a caller who paused briefly after the long
+    // prompt before replying caused Gather to give up and fall through to
+    // Twilio's own generic fallback WITHOUT ever hitting our action URL (no
+    // /gather request in the call's event log at all). 10s gives more room
+    // to start speaking after a long prompt.
+    timeout: 10,
+    // Without this, that same give-up-without-input case skips our webhook
+    // entirely — the order silently stays PENDING_CONFIRMATION with no
+    // confirmationNote and no record anything even happened. Forcing the
+    // action URL to fire either way lets our own route's `!speechResult`
+    // branch record a note and respond consistently instead of relying on
+    // Twilio's own generic (English) fallback message.
+    actionOnEmptyResult: true,
   };
 }
 
