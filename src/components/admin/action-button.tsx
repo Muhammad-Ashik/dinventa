@@ -1,0 +1,60 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
+
+const VARIANT_CLASSES: Record<string, string> = {
+  primary: "bg-green-600 text-white hover:bg-green-700 active:bg-green-800",
+  danger:
+    "border border-red-600 text-red-600 hover:bg-red-50 active:bg-red-100",
+  neutral: "border border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100",
+};
+
+const SUCCESS_DISPLAY_MS = 5000;
+
+// Must be rendered inside the <form> it belongs to — useFormStatus reads the
+// nearest parent form's pending state. Shows three states: idle, pending
+// ("Working..."), and a 5s success label after a submit completes, during
+// which the button stays disabled so a second click can't double-fire the
+// action before the page has re-rendered with the new state.
+export function ActionButton({
+  children,
+  successLabel,
+  variant = "neutral",
+}: {
+  children: React.ReactNode;
+  successLabel: string;
+  variant?: "primary" | "danger" | "neutral";
+}) {
+  const { pending } = useFormStatus();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const wasPending = useRef(false);
+
+  useEffect(() => {
+    if (pending) {
+      wasPending.current = true;
+      return;
+    }
+    if (!wasPending.current) return;
+    wasPending.current = false;
+    setShowSuccess(true);
+    const timer = setTimeout(() => setShowSuccess(false), SUCCESS_DISPLAY_MS);
+    return () => clearTimeout(timer);
+  }, [pending]);
+
+  const disabled = pending || showSuccess;
+
+  return (
+    <button
+      type="submit"
+      disabled={disabled}
+      className={`rounded px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
+        showSuccess
+          ? "border border-green-300 bg-green-50 text-green-700"
+          : VARIANT_CLASSES[variant]
+      }`}
+    >
+      {pending ? "Working…" : showSuccess ? `✓ ${successLabel}` : children}
+    </button>
+  );
+}

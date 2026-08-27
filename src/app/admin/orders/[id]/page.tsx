@@ -11,6 +11,7 @@ import {
   removeOrderItem,
 } from "@/lib/actions/admin";
 import { OrderShippingForm } from "@/components/admin/order-shipping-form";
+import { ActionButton } from "@/components/admin/action-button";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING_CONFIRMATION: "Pending phone confirmation",
@@ -82,7 +83,7 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
                     />
                     <button
                       type="submit"
-                      className="rounded border px-2 py-1 text-xs font-medium hover:bg-neutral-50"
+                      className="rounded border border-neutral-300 px-2 py-1 text-xs font-medium transition-colors hover:bg-neutral-50 active:bg-neutral-100"
                     >
                       Update
                     </button>
@@ -99,7 +100,7 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
                   <form action={removeOrderItem.bind(null, order.id, item.id)}>
                     <button
                       type="submit"
-                      className="text-xs text-neutral-500 hover:text-red-600"
+                      className="text-xs text-neutral-500 transition-colors hover:text-red-600 active:text-red-700"
                       aria-label={`Remove ${item.product.name}`}
                     >
                       Remove
@@ -143,39 +144,27 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
               {order.status === "PENDING_CONFIRMATION" && (
                 <>
                   <form action={manuallyConfirmOrder.bind(null, order.id)}>
-                    <button
-                      type="submit"
-                      className="rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700"
-                    >
+                    <ActionButton variant="primary" successLabel="Confirmed">
                       Mark confirmed
-                    </button>
+                    </ActionButton>
                   </form>
                   <form action={manuallyDeclineOrder.bind(null, order.id)}>
-                    <button
-                      type="submit"
-                      className="rounded border border-red-600 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
-                    >
+                    <ActionButton variant="danger" successLabel="Declined">
                       Mark declined
-                    </button>
+                    </ActionButton>
                   </form>
                   <form action={retryConfirmationCall.bind(null, order.id)}>
-                    <button
-                      type="submit"
-                      className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-neutral-50"
-                    >
+                    <ActionButton variant="neutral" successLabel="Called">
                       Call again
-                    </button>
+                    </ActionButton>
                   </form>
                 </>
               )}
               {order.status === "CONFIRMED" && !order.courierConsignmentId && (
                 <form action={retryCourierOrder.bind(null, order.id)}>
-                  <button
-                    type="submit"
-                    className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-neutral-50"
-                  >
+                  <ActionButton variant="neutral" successLabel="Retried">
                     Retry courier order
-                  </button>
+                  </ActionButton>
                 </form>
               )}
             </div>

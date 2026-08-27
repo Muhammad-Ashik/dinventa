@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getBrands, getCategories, getProducts, parseProductFilters } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
+import { DropdownFilter } from "@/components/dropdown-filter";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 const PRICE_PRESETS = [
   { label: "Under ৳500", min: undefined, max: 500 },
@@ -29,9 +31,13 @@ export default async function ProductsPage({
     getBrands(),
   ]);
 
+  const activeCategory = categories.find((c) => c.slug === filters.category);
+  const hasPriceFilter = filters.minPrice !== undefined || filters.maxPrice !== undefined;
+  const currentSort = SORT_OPTIONS.find((o) => o.value === (filters.sort ?? "newest"))!;
+
   // Builds a query string starting from the current filters, with the given
-  // overrides applied — used for the plain-link controls (sort, price
-  // presets) so clicking one doesn't wipe out the rest of the filter state.
+  // overrides applied — every dropdown link uses this so picking one filter
+  // never wipes out the others.
   function hrefWith(overrides: Record<string, string | number | undefined>) {
     const params = new URLSearchParams();
     const merged: Record<string, string | number | undefined> = {
@@ -52,163 +58,128 @@ export default async function ProductsPage({
     return qs ? `/products?${qs}` : "/products";
   }
 
+  const filterLinkClass = (isActive: boolean) =>
+    isActive
+      ? "block rounded px-2 py-1.5 font-medium text-brand"
+      : "block rounded px-2 py-1.5 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand";
+
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Products</h1>
+    <div className="flex flex-col gap-4">
+      <Breadcrumbs
+        items={activeCategory ? [{ label: activeCategory.name }] : [{ label: "Products" }]}
+      />
+      <h1 className="text-2xl font-bold">{activeCategory ? activeCategory.name : "Products"}</h1>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr]">
-        <form
-          method="get"
-          className="flex h-fit flex-col gap-5 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm"
-        >
-          <div className="flex flex-col gap-1">
-            <label htmlFor="q" className="font-semibold">
-              Search
-            </label>
-            <input
-              id="q"
-              name="q"
-              defaultValue={filters.q}
-              placeholder="e.g. mechanical keyboard"
-              className="rounded border border-neutral-300 bg-white px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <span className="font-semibold">Category</span>
+      <div className="flex flex-wrap items-center gap-3 border-y border-neutral-200 py-3">
+        <DropdownFilter label="Category" active={!!filters.category}>
+          <Link href={hrefWith({ category: undefined })} className={filterLinkClass(!filters.category)}>
+            All categories
+          </Link>
+          {categories.map((c) => (
             <Link
-              href={hrefWith({ category: undefined })}
-              className={!filters.category ? "font-medium text-brand" : "text-neutral-700 hover:text-brand"}
+              key={c.id}
+              href={hrefWith({ category: c.slug })}
+              className={filterLinkClass(filters.category === c.slug)}
             >
-              All
+              {c.name}
             </Link>
-            {categories.map((c) => (
+          ))}
+        </DropdownFilter>
+
+        <DropdownFilter label="Brand" active={!!filters.brand}>
+          <Link href={hrefWith({ brand: undefined })} className={filterLinkClass(!filters.brand)}>
+            All brands
+          </Link>
+          {brands.map((b) => (
+            <Link key={b} href={hrefWith({ brand: b })} className={filterLinkClass(filters.brand === b)}>
+              {b}
+            </Link>
+          ))}
+        </DropdownFilter>
+
+        <DropdownFilter label="Price" active={hasPriceFilter} panelClassName="w-72">
+          <div className="flex flex-col">
+            {PRICE_PRESETS.map((preset) => (
               <Link
-                key={c.id}
-                href={hrefWith({ category: c.slug })}
-                className={
-                  filters.category === c.slug
-                    ? "font-medium text-brand"
-                    : "text-neutral-700 hover:text-brand"
-                }
+                key={preset.label}
+                href={hrefWith({ minPrice: preset.min, maxPrice: preset.max })}
+                className={filterLinkClass(
+                  filters.minPrice === preset.min && filters.maxPrice === preset.max
+                )}
               >
-                {c.name}
+                {preset.label}
               </Link>
             ))}
           </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="brand" className="font-semibold">
-              Brand
-            </label>
-            <select
-              id="brand"
-              name="brand"
-              defaultValue={filters.brand ?? ""}
-              className="rounded border border-neutral-300 bg-white px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
-            >
-              <option value="">All brands</option>
-              {brands.map((b) => (
-                <option key={b} value={b}>
-                  {b}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <span className="font-semibold">Price range</span>
-            <div className="flex flex-col gap-1">
-              {PRICE_PRESETS.map((preset) => {
-                const active = filters.minPrice === preset.min && filters.maxPrice === preset.max;
-                return (
-                  <Link
-                    key={preset.label}
-                    href={hrefWith({ minPrice: preset.min, maxPrice: preset.max })}
-                    className={active ? "font-medium text-brand" : "text-neutral-700 hover:text-brand"}
-                  >
-                    {preset.label}
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="mt-1 flex items-center gap-2">
-              <input
-                name="minPrice"
-                type="number"
-                min={0}
-                placeholder="Min"
-                defaultValue={filters.minPrice}
-                className="w-full rounded border border-neutral-300 bg-white px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
-              />
-              <span className="text-neutral-400">–</span>
-              <input
-                name="maxPrice"
-                type="number"
-                min={0}
-                placeholder="Max"
-                defaultValue={filters.maxPrice}
-                className="w-full rounded border border-neutral-300 bg-white px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
-              />
-            </div>
-          </div>
-
-          <label className="flex items-center gap-2">
+          <form method="get" className="mt-3 flex items-center gap-2 border-t border-neutral-100 pt-3">
+            {filters.q && <input type="hidden" name="q" value={filters.q} />}
+            {filters.category && <input type="hidden" name="category" value={filters.category} />}
+            {filters.brand && <input type="hidden" name="brand" value={filters.brand} />}
+            {filters.inStock && <input type="hidden" name="inStock" value="1" />}
+            {filters.sort && <input type="hidden" name="sort" value={filters.sort} />}
             <input
-              type="checkbox"
-              name="inStock"
-              value="1"
-              defaultChecked={filters.inStock}
-              className="size-4 accent-brand"
+              name="minPrice"
+              type="number"
+              min={0}
+              placeholder="Min"
+              defaultValue={filters.minPrice}
+              className="w-full rounded border border-neutral-300 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
             />
-            In stock only
-          </label>
+            <span className="text-neutral-400">–</span>
+            <input
+              name="maxPrice"
+              type="number"
+              min={0}
+              placeholder="Max"
+              defaultValue={filters.maxPrice}
+              className="w-full rounded border border-neutral-300 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
+            />
+            <button
+              type="submit"
+              className="rounded bg-brand px-3 py-1.5 text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
+            >
+              Go
+            </button>
+          </form>
+        </DropdownFilter>
 
-          {/* Preserve sort across a filter-form submit — the sort links below
-              are separate GET navigations, so this form needs to carry the
-              current sort forward instead of resetting it. */}
-          {filters.sort && <input type="hidden" name="sort" value={filters.sort} />}
+        <Link
+          href={hrefWith({ inStock: filters.inStock ? undefined : "1" })}
+          className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+            filters.inStock
+              ? "border-brand bg-brand-light text-brand"
+              : "border-neutral-300 text-neutral-700 hover:border-neutral-400"
+          }`}
+        >
+          In stock only
+        </Link>
 
-          <button
-            type="submit"
-            className="rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark"
-          >
-            Apply filters
-          </button>
-        </form>
-
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-neutral-600">{products.length} products</p>
-            <div className="flex items-center gap-1 text-sm">
-              <span className="text-neutral-500">Sort:</span>
-              {SORT_OPTIONS.map((opt) => (
-                <Link
-                  key={opt.value}
-                  href={hrefWith({ sort: opt.value })}
-                  className={
-                    (filters.sort ?? "newest") === opt.value
-                      ? "rounded px-2 py-1 font-medium text-brand"
-                      : "rounded px-2 py-1 text-neutral-600 hover:text-brand"
-                  }
-                >
-                  {opt.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {products.length === 0 ? (
-            <p className="text-neutral-600">No products match your filters.</p>
-          ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+        <div className="ml-auto">
+          <DropdownFilter label={`Sort: ${currentSort.label}`}>
+            {SORT_OPTIONS.map((opt) => (
+              <Link
+                key={opt.value}
+                href={hrefWith({ sort: opt.value })}
+                className={filterLinkClass((filters.sort ?? "newest") === opt.value)}
+              >
+                {opt.label}
+              </Link>
+            ))}
+          </DropdownFilter>
         </div>
       </div>
+
+      <p className="text-sm text-neutral-500">{products.length} products</p>
+
+      {products.length === 0 ? (
+        <p className="text-neutral-600">No products match your filters.</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

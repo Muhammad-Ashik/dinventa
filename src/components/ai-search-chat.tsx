@@ -106,7 +106,7 @@ export function AiSearchChat() {
             <button
               type="submit"
               disabled={pending || !input.trim()}
-              className="rounded bg-brand px-3 py-1.5 text-sm text-white hover:bg-brand-dark disabled:opacity-50"
+              className="rounded bg-brand px-3 py-1.5 text-sm text-white transition-colors hover:bg-brand-dark active:bg-brand-dark disabled:opacity-50"
             >
               Go
             </button>
@@ -117,7 +117,7 @@ export function AiSearchChat() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="rounded-full bg-brand px-4 py-3 text-sm font-medium text-white shadow-lg hover:bg-brand-dark"
+        className="rounded-full bg-brand px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-brand-dark active:bg-brand-dark"
       >
         {open ? "Close" : "Ask AI"}
       </button>

@@ -23,7 +23,7 @@ export async function Header() {
           <button
             type="submit"
             aria-label="Search"
-            className="rounded-r bg-brand px-4 text-white hover:bg-brand-dark"
+            className="rounded-r bg-brand px-4 text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

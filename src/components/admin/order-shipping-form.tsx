@@ -71,7 +71,7 @@ export function OrderShippingForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-fit rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
+        className="w-fit rounded bg-brand px-4 py-2 font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark disabled:opacity-50"
       >
         {pending ? "Saving..." : "Save changes"}
       </button>

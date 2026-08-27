@@ -12,7 +12,7 @@ export function FindTrendingButton() {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded bg-black px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+          className="rounded bg-brand px-4 py-2 text-sm font-medium text-white transition-colors transition-colors hover:bg-brand-dark active:bg-brand-dark active:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? "Finding trending products..." : "Find trending products"}
         </button>
