@@ -57,6 +57,21 @@ export type CheckoutFormState =
     }
   | undefined;
 
+export const ProfileFormSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters long."),
+  phone: z.string().trim().min(6, "Please enter a valid phone number."),
+});
+
+export type ProfileFormState =
+  | {
+      errors?: {
+        name?: string[];
+        phone?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
 export const ManualProductFormSchema = z.object({
   name: z.string().trim().min(2, "Please enter a product name."),
   description: z.string().trim().min(10, "Please enter a longer description."),

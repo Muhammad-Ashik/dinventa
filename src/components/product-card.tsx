@@ -36,7 +36,7 @@ export function ProductCard({
         </p>
         <Link
           href={`/products/${product.slug}`}
-          className="line-clamp-2 text-sm font-medium hover:text-brand"
+          className="line-clamp-2 text-sm font-medium transition-colors hover:text-brand"
         >
           {product.name}
         </Link>

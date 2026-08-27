@@ -3,12 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const EXAMPLES = [
-  "mechanical keyboard under 500 taka",
-  "something for a home workout",
-  "gift for someone who loves reading",
-];
-
 export function AiSearchHero() {
   const router = useRouter();
   const [input, setInput] = useState("");
@@ -42,47 +36,35 @@ export function AiSearchHero() {
   }
 
   return (
-    <div className="rounded-lg border-2 border-brand/20 bg-gradient-to-br from-brand-light to-white p-6 sm:p-8">
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">✨</span>
-        <h2 className="text-xl font-bold sm:text-2xl">Ask our AI to find it for you</h2>
-      </div>
-      <p className="mt-1 text-sm text-neutral-600 sm:text-base">
-        Describe what you need in plain language — we&apos;ll find matching products instantly.
-      </p>
-
-      <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
+    <div className="rounded-lg border-2 border-brand/20 bg-gradient-to-br from-brand-light to-white px-4 py-3 sm:px-6">
+      <form onSubmit={handleSubmit} className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        <span className="hidden shrink-0 items-center gap-1.5 font-bold whitespace-nowrap sm:flex">
+          <span className="text-lg">✨</span> Ask AI:
+        </span>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g. mechanical keyboard under 500 taka"
+          placeholder="✨ Ask our AI — e.g. mechanical keyboard under 500 taka"
           disabled={pending}
-          className="flex-1 rounded border border-neutral-300 bg-white px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-brand"
+          className="flex-1 rounded border border-neutral-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:hidden"
+        />
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="mechanical keyboard under 500 taka"
+          disabled={pending}
+          className="hidden flex-1 rounded border border-neutral-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:block"
         />
         <button
           type="submit"
           disabled={pending || !input.trim()}
-          className="rounded bg-brand px-6 py-3 font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 rounded bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? "Thinking…" : "Ask AI"}
         </button>
       </form>
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {EXAMPLES.map((example) => (
-          <button
-            key={example}
-            type="button"
-            onClick={() => setInput(example)}
-            disabled={pending}
-            className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs text-neutral-600 transition-colors hover:border-brand hover:text-brand disabled:cursor-not-allowed"
-          >
-            {example}
-          </button>
-        ))}
-      </div>
+      {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
     </div>
   );
 }

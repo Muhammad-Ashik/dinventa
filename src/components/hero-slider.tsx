@@ -51,7 +51,7 @@ export function HeroSlider() {
             <p className="mt-2 max-w-xl text-sm text-white/90 sm:text-base">{slide.body}</p>
             <Link
               href={slide.cta.href}
-              className="mt-5 inline-block rounded bg-white px-5 py-2.5 text-sm font-semibold text-brand hover:bg-neutral-100"
+              className="mt-5 inline-block rounded bg-white px-5 py-2.5 text-sm font-semibold text-brand transition-colors hover:bg-neutral-100 active:bg-neutral-200"
             >
               {slide.cta.label}
             </Link>
@@ -63,7 +63,7 @@ export function HeroSlider() {
         type="button"
         aria-label="Previous slide"
         onClick={() => setIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length)}
-        className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/20 p-1.5 text-white hover:bg-black/40"
+        className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/20 p-1.5 text-white transition-colors hover:bg-black/40 active:bg-black/60"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
           <path
@@ -77,7 +77,7 @@ export function HeroSlider() {
         type="button"
         aria-label="Next slide"
         onClick={() => setIndex((i) => (i + 1) % SLIDES.length)}
-        className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/20 p-1.5 text-white hover:bg-black/40"
+        className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/20 p-1.5 text-white transition-colors hover:bg-black/40 active:bg-black/60"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
           <path

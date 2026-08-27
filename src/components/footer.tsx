@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getCategories } from "@/lib/products";
+import { getCurrentUser } from "@/lib/dal";
 
 export async function Footer() {
-  const categories = await getCategories();
+  const [categories, user] = await Promise.all([getCategories(), getCurrentUser()]);
 
   return (
     <footer className="border-t bg-neutral-50">
@@ -23,7 +24,7 @@ export async function Footer() {
             <Link
               key={c.id}
               href={`/products?category=${c.slug}`}
-              className="text-neutral-600 hover:text-brand"
+              className="text-neutral-600 transition-colors hover:text-brand"
             >
               {c.name}
             </Link>
@@ -32,15 +33,21 @@ export async function Footer() {
 
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold">Account</h3>
-          <Link href="/products" className="text-neutral-600 hover:text-brand">
+          <Link href="/products" className="text-neutral-600 transition-colors hover:text-brand">
             All products
           </Link>
-          <Link href="/cart" className="text-neutral-600 hover:text-brand">
+          <Link href="/cart" className="text-neutral-600 transition-colors hover:text-brand">
             Your cart
           </Link>
-          <Link href="/login" className="text-neutral-600 hover:text-brand">
-            Log in
-          </Link>
+          {user ? (
+            <Link href="/orders" className="text-neutral-600 transition-colors hover:text-brand">
+              Your orders
+            </Link>
+          ) : (
+            <Link href="/login" className="text-neutral-600 transition-colors hover:text-brand">
+              Log in
+            </Link>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">

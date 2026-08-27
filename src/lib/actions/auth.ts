@@ -1,12 +1,16 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/lib/dal";
 import { createSession, deleteSession } from "@/lib/session";
 import {
   LoginFormSchema,
   LoginFormState,
+  ProfileFormSchema,
+  ProfileFormState,
   SignupFormSchema,
   SignupFormState,
 } from "@/lib/definitions";
@@ -74,4 +78,30 @@ export async function login(
 export async function logout() {
   await deleteSession();
   redirect("/login");
+}
+
+// Deliberately name/phone only — email is the login identifier (changing it
+// would need re-verification) and password changes deserve their own
+// current-password-gated flow, both out of scope for a basic profile form.
+export async function updateProfile(
+  _state: ProfileFormState,
+  formData: FormData
+): Promise<ProfileFormState> {
+  const session = await verifySession();
+
+  const validatedFields = ProfileFormSchema.safeParse({
+    name: formData.get("name"),
+    phone: formData.get("phone"),
+  });
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.flatten().fieldErrors };
+  }
+
+  await prisma.user.update({
+    where: { id: session.userId },
+    data: validatedFields.data,
+  });
+
+  revalidatePath("/account");
+  return { message: "Profile updated." };
 }
