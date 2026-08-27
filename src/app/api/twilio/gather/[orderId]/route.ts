@@ -12,10 +12,20 @@ type Intent = "CONFIRM" | "DECLINE" | "UNCLEAR";
 // Bangla alternatives are plain substring alternatives instead, appended
 // outside the `\b...\b` English group.
 const NEGATION_PATTERN = /\b(don'?t|do not|won'?t|not|never)\b/i;
+// "না" already covers colloquial phrases built on it ("লাগবে না" / don't
+// need it, "চাই না" / don't want) as a substring match; "নাই" is a distinct
+// spelling (not just "না" + suffix) for the same colloquial "no", common
+// enough to warrant its own alternative.
 const DECLINE_PATTERN =
-  /\b(cancel|decline|don'?t want|stop|not interested)\b|না|বাতিল|ক্যানসেল/i;
+  /\b(cancel|decline|don'?t want|stop|not interested)\b|না|নাই|বাতিল|ক্যানসেল/i;
+// "ok"/"okay" added as English loanwords very commonly used mid-Bangla-speech
+// for a plain affirmative. Deliberately NOT adding standalone "আচ্ছা" (a
+// softer Bangla "okay/I see") — it can be passive acknowledgment rather than
+// actual confirmation (e.g. "আচ্ছা ভাবছি" / "okay, thinking about it" is
+// genuinely ambiguous), and a wrong auto-CONFIRM ships an order the customer
+// didn't actually agree to — worse than the cost of one extra AI/re-prompt.
 const CONFIRM_PATTERN =
-  /\b(confirm|confirmed|yes|yeah|yep|yup|correct|that'?s right|go ahead|proceed|sounds good)\b|হ্যাঁ|জি|নিশ্চিত|ঠিক আছে|কনফার্ম/i;
+  /\b(confirm|confirmed|yes|yeah|yep|yup|correct|that'?s right|go ahead|proceed|sounds good|ok|okay)\b|হ্যাঁ|জি|নিশ্চিত|ঠিক আছে|কনফার্ম/i;
 
 // Instant classification for clear, unambiguous phrases (English or Bangla)
 // — skips the Gemini round-trip entirely (which was leaving several seconds
@@ -60,9 +70,17 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
-async function interpretIntent(speechResult: string): Promise<Intent> {
+// AI is the expensive, slowest path — reserved for the customer's LAST
+// chance (the retry attempt) rather than spent on every ambiguous reply.
+// A first-attempt ambiguous phrase gets a free re-prompt (plain TwiML, no
+// API call) instead; many callers just say it more clearly the second time
+// and resolve via quickIntent alone, so this often avoids the Gemini call
+// entirely rather than merely delaying it. Cuts worst-case Gemini calls per
+// confirmation from 2 (both attempts) down to at most 1.
+async function interpretIntent(speechResult: string, allowAiFallback: boolean): Promise<Intent> {
   const quick = quickIntent(speechResult);
   if (quick) return quick;
+  if (!allowAiFallback) return "UNCLEAR";
 
   const responseSchema = {
     type: Type.OBJECT,
@@ -134,7 +152,7 @@ export async function POST(
     return twimlResponse(twiml);
   }
 
-  const intent = await interpretIntent(speechResult);
+  const intent = await interpretIntent(speechResult, isRetry);
 
   if (intent === "CONFIRM") {
     await prisma.order.update({

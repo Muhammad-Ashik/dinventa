@@ -18,7 +18,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-      <div className="relative aspect-square w-full overflow-hidden rounded bg-neutral-100">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-100">
         <Image
           src={product.imageUrl}
           alt={product.name}
@@ -29,13 +29,21 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="text-sm text-neutral-500">{product.category.name}</p>
-        <h1 className="text-2xl font-semibold">{product.name}</h1>
-        <p className="text-xl font-semibold">{formatBDT(product.price)}</p>
-        <p className="text-neutral-700">{product.description}</p>
-        <p className="text-sm text-neutral-500">
-          {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+          {product.category.name}
         </p>
+        <h1 className="text-2xl font-bold">{product.name}</h1>
+        <p className="text-2xl font-bold text-brand">{formatBDT(product.price)}</p>
+        <p className="text-neutral-700">{product.description}</p>
+        <span
+          className={
+            product.stock > 0
+              ? "inline-flex w-fit items-center rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700"
+              : "inline-flex w-fit items-center rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700"
+          }
+        >
+          {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+        </span>
 
         {product.stock > 0 && (
           <div className="pt-2">

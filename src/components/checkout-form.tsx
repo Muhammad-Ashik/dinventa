@@ -18,7 +18,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
     return (
       <p className="text-neutral-600">
         Your cart is empty.{" "}
-        <Link href="/products" className="underline">
+        <Link href="/products" className="font-medium text-brand hover:underline">
           Browse products
         </Link>
         .
@@ -60,7 +60,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
             name="shippingAddress"
             required
             rows={3}
-            className="rounded border px-2 py-1"
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {fieldErrors.shippingAddress && (
             <p className="text-sm text-red-600">{fieldErrors.shippingAddress[0]}</p>
@@ -76,7 +76,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
             name="phone"
             required
             defaultValue={defaultPhone}
-            className="rounded border px-2 py-1"
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {fieldErrors.phone && (
             <p className="text-sm text-red-600">{fieldErrors.phone[0]}</p>
@@ -91,13 +91,13 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded bg-black px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+          className="rounded bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
         >
           {isPending ? "Placing order..." : "Place order (Cash on Delivery)"}
         </button>
       </form>
 
-      <div className="flex flex-col gap-2 rounded border p-4 h-fit">
+      <div className="flex h-fit flex-col gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
         <h2 className="font-semibold">Order summary</h2>
         {items.map((item) => (
           <div key={item.productId} className="flex justify-between text-sm">
@@ -107,9 +107,9 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
             <span>{formatBDT(item.price * item.quantity)}</span>
           </div>
         ))}
-        <div className="flex justify-between border-t pt-2 font-semibold">
+        <div className="flex justify-between border-t pt-2 font-bold">
           <span>Total</span>
-          <span>{formatBDT(totalPrice)}</span>
+          <span className="text-brand">{formatBDT(totalPrice)}</span>
         </div>
       </div>
     </div>

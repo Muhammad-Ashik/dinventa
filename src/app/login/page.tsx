@@ -8,8 +8,8 @@ export default function LoginPage() {
   const [state, action, pending] = useActionState(login, undefined);
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Log in</h1>
+    <div className="mx-auto flex max-w-sm flex-col gap-4 rounded-lg border border-neutral-200 p-6">
+      <h1 className="text-2xl font-bold">Log in</h1>
 
       <form action={action} className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
@@ -21,7 +21,7 @@ export default function LoginPage() {
             name="email"
             type="email"
             required
-            className="rounded border px-2 py-1"
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {state?.errors?.email && (
             <p className="text-sm text-red-600">{state.errors.email[0]}</p>
@@ -37,7 +37,7 @@ export default function LoginPage() {
             name="password"
             type="password"
             required
-            className="rounded border px-2 py-1"
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {state?.errors?.password && (
             <p className="text-sm text-red-600">{state.errors.password[0]}</p>
@@ -49,7 +49,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={pending}
-          className="rounded bg-black px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+          className="rounded bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
         >
           {pending ? "Logging in..." : "Log in"}
         </button>
@@ -57,7 +57,7 @@ export default function LoginPage() {
 
       <p className="text-sm text-neutral-600">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="underline">
+        <Link href="/register" className="font-medium text-brand hover:underline">
           Sign up
         </Link>
       </p>

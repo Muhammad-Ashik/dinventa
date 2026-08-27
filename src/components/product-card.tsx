@@ -16,29 +16,38 @@ export function ProductCard({
   };
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded border p-3">
+    <div className="group flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white transition-shadow hover:shadow-md">
       <Link href={`/products/${product.slug}`}>
-        <div className="relative aspect-square w-full overflow-hidden rounded bg-neutral-100">
+        <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover"
-            sizes="(max-width: 768px) 50vw, 25vw"
+            className="object-cover transition-transform group-hover:scale-105"
+            sizes="(max-width: 768px) 50vw, 20vw"
           />
         </div>
       </Link>
-      <p className="text-xs text-neutral-500">{product.category.name}</p>
-      <Link href={`/products/${product.slug}`} className="font-medium hover:underline">
-        {product.name}
-      </Link>
-      <p className="font-semibold">{formatBDT(product.price)}</p>
-      <AddToCartButton
-        productId={product.id}
-        name={product.name}
-        price={product.price}
-        imageUrl={product.imageUrl}
-      />
+      <div className="flex flex-1 flex-col gap-1 p-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+          {product.category.name}
+        </p>
+        <Link
+          href={`/products/${product.slug}`}
+          className="line-clamp-2 text-sm font-medium hover:text-brand"
+        >
+          {product.name}
+        </Link>
+        <p className="mt-1 text-base font-bold text-brand">{formatBDT(product.price)}</p>
+        <div className="mt-auto pt-2">
+          <AddToCartButton
+            productId={product.id}
+            name={product.name}
+            price={product.price}
+            imageUrl={product.imageUrl}
+          />
+        </div>
+      </div>
     </div>
   );
 }

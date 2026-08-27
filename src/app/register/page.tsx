@@ -8,15 +8,20 @@ export default function RegisterPage() {
   const [state, action, pending] = useActionState(signup, undefined);
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Create an account</h1>
+    <div className="mx-auto flex max-w-sm flex-col gap-4 rounded-lg border border-neutral-200 p-6">
+      <h1 className="text-2xl font-bold">Create an account</h1>
 
       <form action={action} className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <label htmlFor="name" className="text-sm font-medium">
             Name
           </label>
-          <input id="name" name="name" required className="rounded border px-2 py-1" />
+          <input
+            id="name"
+            name="name"
+            required
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+          />
           {state?.errors?.name && (
             <p className="text-sm text-red-600">{state.errors.name[0]}</p>
           )}
@@ -31,7 +36,7 @@ export default function RegisterPage() {
             name="email"
             type="email"
             required
-            className="rounded border px-2 py-1"
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {state?.errors?.email && (
             <p className="text-sm text-red-600">{state.errors.email[0]}</p>
@@ -42,7 +47,12 @@ export default function RegisterPage() {
           <label htmlFor="phone" className="text-sm font-medium">
             Phone
           </label>
-          <input id="phone" name="phone" required className="rounded border px-2 py-1" />
+          <input
+            id="phone"
+            name="phone"
+            required
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+          />
           {state?.errors?.phone && (
             <p className="text-sm text-red-600">{state.errors.phone[0]}</p>
           )}
@@ -57,7 +67,7 @@ export default function RegisterPage() {
             name="password"
             type="password"
             required
-            className="rounded border px-2 py-1"
+            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {state?.errors?.password && (
             <ul className="text-sm text-red-600">
@@ -73,7 +83,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={pending}
-          className="rounded bg-black px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+          className="rounded bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
         >
           {pending ? "Creating account..." : "Sign up"}
         </button>
@@ -81,7 +91,7 @@ export default function RegisterPage() {
 
       <p className="text-sm text-neutral-600">
         Already have an account?{" "}
-        <Link href="/login" className="underline">
+        <Link href="/login" className="font-medium text-brand hover:underline">
           Log in
         </Link>
       </p>

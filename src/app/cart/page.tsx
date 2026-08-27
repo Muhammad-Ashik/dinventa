@@ -11,10 +11,10 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-semibold">Your cart</h1>
+        <h1 className="text-2xl font-bold">Your cart</h1>
         <p className="text-neutral-600">
           Your cart is empty.{" "}
-          <Link href="/products" className="underline">
+          <Link href="/products" className="font-medium text-brand hover:underline">
             Browse products
           </Link>
           .
@@ -25,18 +25,18 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Your cart</h1>
+      <h1 className="text-2xl font-bold">Your cart</h1>
 
-      <div className="flex flex-col divide-y">
+      <div className="flex flex-col divide-y rounded-lg border border-neutral-200">
         {items.map((item) => (
-          <div key={item.productId} className="flex items-center gap-4 py-4">
+          <div key={item.productId} className="flex items-center gap-4 p-4">
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100">
               <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
             </div>
 
             <div className="flex-1">
               <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-neutral-500">{formatBDT(item.price)}</p>
+              <p className="text-sm text-brand">{formatBDT(item.price)}</p>
             </div>
 
             <input
@@ -44,17 +44,17 @@ export default function CartPage() {
               min={1}
               value={item.quantity}
               onChange={(e) => setQuantity(item.productId, Number(e.target.value))}
-              className="w-16 rounded border px-2 py-1"
+              className="w-16 rounded border border-neutral-300 px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand"
             />
 
-            <p className="w-24 text-right font-medium">
+            <p className="w-24 text-right font-semibold">
               {formatBDT(item.price * item.quantity)}
             </p>
 
             <button
               type="button"
               onClick={() => removeItem(item.productId)}
-              className="text-sm text-neutral-500 underline"
+              className="text-sm text-neutral-500 hover:text-brand"
             >
               Remove
             </button>
@@ -63,10 +63,12 @@ export default function CartPage() {
       </div>
 
       <div className="flex items-center justify-between border-t pt-4">
-        <p className="text-lg font-semibold">Total: {formatBDT(totalPrice)}</p>
+        <p className="text-lg font-bold">
+          Total: <span className="text-brand">{formatBDT(totalPrice)}</span>
+        </p>
         <Link
           href="/checkout"
-          className="rounded bg-black px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+          className="rounded bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark"
         >
           Proceed to checkout
         </Link>

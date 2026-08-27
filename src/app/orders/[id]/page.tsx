@@ -12,6 +12,15 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Cancelled",
 };
 
+const STATUS_STYLES: Record<string, string> = {
+  PENDING_CONFIRMATION: "bg-amber-50 text-amber-700",
+  CONFIRMED: "bg-green-50 text-green-700",
+  DECLINED: "bg-red-50 text-red-700",
+  SHIPPED: "bg-blue-50 text-blue-700",
+  DELIVERED: "bg-green-50 text-green-700",
+  CANCELLED: "bg-red-50 text-red-700",
+};
+
 export default async function OrderStatusPage(props: PageProps<"/orders/[id]">) {
   const { id } = await props.params;
   const session = await verifySession();
@@ -27,14 +36,16 @@ export default async function OrderStatusPage(props: PageProps<"/orders/[id]">) 
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Order #{order.id.slice(-8)}</h1>
-        <p className="text-neutral-600">
-          Status: <span className="font-medium">{STATUS_LABELS[order.status]}</span>
-        </p>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold">Order #{order.id.slice(-8)}</h1>
+        <span
+          className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[order.status] ?? "bg-neutral-100 text-neutral-700"}`}
+        >
+          {STATUS_LABELS[order.status]}
+        </span>
       </div>
 
-      <div className="flex flex-col divide-y rounded border">
+      <div className="flex flex-col divide-y rounded-lg border border-neutral-200">
         {order.items.map((item) => (
           <div key={item.id} className="flex justify-between p-3 text-sm">
             <span>
@@ -43,9 +54,9 @@ export default async function OrderStatusPage(props: PageProps<"/orders/[id]">) 
             <span>{formatBDT(item.unitPrice * item.quantity)}</span>
           </div>
         ))}
-        <div className="flex justify-between p-3 font-semibold">
+        <div className="flex justify-between p-3 font-bold">
           <span>Total</span>
-          <span>{formatBDT(order.totalAmount)}</span>
+          <span className="text-brand">{formatBDT(order.totalAmount)}</span>
         </div>
       </div>
 
