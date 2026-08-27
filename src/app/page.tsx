@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCategories, getProducts } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
+import { HeroSlider } from "@/components/hero-slider";
 
 export default async function HomePage() {
   const [products, categories] = await Promise.all([
@@ -11,19 +12,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="rounded-lg bg-gradient-to-r from-brand to-brand-dark px-6 py-10 text-white sm:px-10 sm:py-14">
-        <h1 className="text-2xl font-bold sm:text-3xl">Smart shopping, made for Bangladesh</h1>
-        <p className="mt-2 max-w-xl text-sm text-white/90 sm:text-base">
-          Tell our AI what you&apos;re looking for, order with Cash on Delivery, and we&apos;ll
-          call to confirm before it ships.
-        </p>
-        <Link
-          href="/products"
-          className="mt-5 inline-block rounded bg-white px-5 py-2.5 text-sm font-semibold text-brand hover:bg-neutral-100"
-        >
-          Shop all products
-        </Link>
-      </div>
+      <HeroSlider />
 
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
         {categories.map((c) => (

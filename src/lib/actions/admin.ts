@@ -20,6 +20,7 @@ type TrendingCandidate = {
   description: string;
   category: string;
   price: number;
+  brand: string;
 };
 
 export type FindTrendingState = { success: true } | { error: string } | undefined;
@@ -66,8 +67,15 @@ export async function findTrendingProducts(
               type: Type.NUMBER,
               description: "A plausible retail price in BDT (whole taka).",
             },
+            brand: {
+              type: Type.STRING,
+              description:
+                "A plausible brand name for this product — a real, well-known brand if the " +
+                'product type clearly has one (e.g. "Logitech" for a gaming mouse), otherwise ' +
+                'a made-up, generic-sounding house brand name (not an existing real company).',
+            },
           },
-          required: ["name", "description", "category", "price"],
+          required: ["name", "description", "category", "price", "brand"],
         },
       },
     },
@@ -85,7 +93,7 @@ export async function findTrendingProducts(
     .filter(Boolean)
     .join("\n");
 
-  const jsonShapeDescription = `{ "products": [ { "name": string, "description": string, "category": one of [${categorySlugs.join(", ")}], "price": number } ] }`;
+  const jsonShapeDescription = `{ "products": [ { "name": string, "description": string, "category": one of [${categorySlugs.join(", ")}], "price": number, "brand": string } ] }`;
 
   let candidates: TrendingCandidate[] = [];
   try {
@@ -114,6 +122,7 @@ export async function findTrendingProducts(
         description: candidate.description,
         price: Math.max(1, Math.round(candidate.price)),
         imageUrl,
+        brand: candidate.brand?.trim() || "Generic",
         categoryId: category.id,
       },
     });
@@ -137,6 +146,7 @@ export async function approveProduct(id: string) {
         description: pending.description,
         price: pending.price,
         imageUrl: pending.imageUrl,
+        brand: pending.brand,
         stock: DEFAULT_STOCK,
         categoryId: pending.categoryId,
       },

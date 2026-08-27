@@ -22,6 +22,7 @@ const products = [
       "Compact 87-key mechanical keyboard with blue switches and red backlighting.",
     price: 3200,
     stock: 25,
+    brand: "Redragon",
     categorySlug: "electronics",
   },
   {
@@ -30,6 +31,7 @@ const products = [
     description: "Entry-level mechanical keyboard, great for a first upgrade under 500 BDT.",
     price: 450,
     stock: 40,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
   {
@@ -38,6 +40,7 @@ const products = [
     description: "Lightweight gaming mouse with RGB lighting and 8000 DPI sensor.",
     price: 1450,
     stock: 30,
+    brand: "Logitech",
     categorySlug: "electronics",
   },
   {
@@ -46,6 +49,7 @@ const products = [
     description: "Compact wireless mouse with silent clicks, budget friendly.",
     price: 480,
     stock: 50,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
   {
@@ -54,6 +58,7 @@ const products = [
     description: "24-inch IPS monitor with 75Hz refresh rate, ideal for work and casual gaming.",
     price: 12500,
     stock: 12,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
   {
@@ -62,6 +67,7 @@ const products = [
     description: "Comfortable over-ear headset with noise-cancelling mic.",
     price: 890,
     stock: 35,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
   {
@@ -70,6 +76,7 @@ const products = [
     description: "Compact speaker with 10-hour battery life and deep bass.",
     price: 1990,
     stock: 20,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
   {
@@ -78,6 +85,7 @@ const products = [
     description: "Extended desk mat with RGB edge lighting.",
     price: 650,
     stock: 45,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
   {
@@ -86,6 +94,7 @@ const products = [
     description: "Adjustable aluminum laptop stand for better posture and cooling.",
     price: 1200,
     stock: 18,
+    brand: "TechNova",
     categorySlug: "electronics",
   },
 
@@ -96,6 +105,7 @@ const products = [
     description: "Soft, breathable 100% cotton t-shirt for everyday wear.",
     price: 550,
     stock: 60,
+    brand: "UrbanThread",
     categorySlug: "fashion",
   },
   {
@@ -104,6 +114,7 @@ const products = [
     description: "Classic fit denim jacket, a wardrobe staple for every season.",
     price: 2200,
     stock: 25,
+    brand: "UrbanThread",
     categorySlug: "fashion",
   },
   {
@@ -112,6 +123,7 @@ const products = [
     description: "Lightweight canvas sneakers that go with almost any outfit.",
     price: 1800,
     stock: 32,
+    brand: "UrbanThread",
     categorySlug: "fashion",
   },
 
@@ -122,6 +134,7 @@ const products = [
     description: "Set of 4 matte-finish ceramic mugs, microwave and dishwasher safe.",
     price: 450,
     stock: 40,
+    brand: "HomeCraft",
     categorySlug: "home-lifestyle",
   },
   {
@@ -130,6 +143,7 @@ const products = [
     description: "3-candle gift set in lavender, vanilla, and sandalwood scents.",
     price: 650,
     stock: 28,
+    brand: "HomeCraft",
     categorySlug: "home-lifestyle",
   },
   {
@@ -138,6 +152,7 @@ const products = [
     description: "Queen-size cotton bedsheet with two pillow covers, machine washable.",
     price: 1800,
     stock: 22,
+    brand: "HomeCraft",
     categorySlug: "home-lifestyle",
   },
 
@@ -148,6 +163,7 @@ const products = [
     description: "Gentle daily face wash with neem and aloe vera extracts.",
     price: 320,
     stock: 55,
+    brand: "PureGlow",
     categorySlug: "beauty-personal-care",
   },
   {
@@ -156,6 +172,7 @@ const products = [
     description: "Cordless rechargeable trimmer with multiple length guides.",
     price: 1250,
     stock: 20,
+    brand: "PureGlow",
     categorySlug: "beauty-personal-care",
   },
   {
@@ -164,6 +181,7 @@ const products = [
     description: "Non-greasy daily body lotion for soft, hydrated skin.",
     price: 380,
     stock: 48,
+    brand: "PureGlow",
     categorySlug: "beauty-personal-care",
   },
 
@@ -174,6 +192,7 @@ const products = [
     description: "6mm thick yoga mat with carry strap, non-slip on both sides.",
     price: 900,
     stock: 30,
+    brand: "ActiveGear",
     categorySlug: "sports-outdoors",
   },
   {
@@ -182,6 +201,7 @@ const products = [
     description: "Pair of 5kg adjustable dumbbells for home strength training.",
     price: 2500,
     stock: 15,
+    brand: "ActiveGear",
     categorySlug: "sports-outdoors",
   },
   {
@@ -190,6 +210,7 @@ const products = [
     description: "Leak-proof 1-litre bottle with time markers, BPA-free.",
     price: 350,
     stock: 50,
+    brand: "ActiveGear",
     categorySlug: "sports-outdoors",
   },
 
@@ -200,6 +221,7 @@ const products = [
     description: "3-book box set of award-winning contemporary fiction.",
     price: 950,
     stock: 18,
+    brand: "PagePress",
     categorySlug: "books-stationery",
   },
   {
@@ -208,6 +230,7 @@ const products = [
     description: "Set of 3 ruled A5 notebooks, 120 pages each.",
     price: 280,
     stock: 60,
+    brand: "PagePress",
     categorySlug: "books-stationery",
   },
   {
@@ -216,6 +239,7 @@ const products = [
     description: "Smooth-writing gel pens in assorted colors, 10 per pack.",
     price: 220,
     stock: 70,
+    brand: "PagePress",
     categorySlug: "books-stationery",
   },
 ];

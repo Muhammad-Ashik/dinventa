@@ -29,8 +29,10 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-          {product.category.name}
+        <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
+          <span>{product.category.name}</span>
+          <span className="text-neutral-300">•</span>
+          <span>{product.brand}</span>
         </p>
         <h1 className="text-2xl font-bold">{product.name}</h1>
         <p className="text-2xl font-bold text-brand">{formatBDT(product.price)}</p>
