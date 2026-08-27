@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatBDT } from "@/lib/money";
 import {
@@ -30,12 +31,12 @@ export default async function AdminDashboardPage() {
     }),
     prisma.order.findMany({
       where: { status: "PENDING_CONFIRMATION" },
-      include: { user: true },
+      include: { user: true, items: { include: { product: true } } },
       orderBy: { createdAt: "desc" },
     }),
     prisma.order.findMany({
       where: { status: "CONFIRMED", courierConsignmentId: null },
-      include: { user: true },
+      include: { user: true, items: { include: { product: true } } },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -122,11 +123,14 @@ export default async function AdminDashboardPage() {
             {pendingConfirmationOrders.map((order) => (
               <div key={order.id} className="flex flex-col gap-2 py-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium">
+                  <Link href={`/admin/orders/${order.id}`} className="font-medium hover:text-brand">
                     Order #{order.id.slice(-8)} — {order.user.name}
-                  </p>
+                  </Link>
                   <p className="font-semibold">{formatBDT(order.totalAmount)}</p>
                 </div>
+                <p className="text-neutral-500">
+                  {order.items.map((item) => `${item.quantity}× ${item.product.name}`).join(", ")}
+                </p>
                 <p className="text-neutral-500">Phone: {order.phone}</p>
                 {order.confirmationNote && (
                   <p className="text-xs text-neutral-500">Note: {order.confirmationNote}</p>
@@ -174,11 +178,14 @@ export default async function AdminDashboardPage() {
             {awaitingCourierOrders.map((order) => (
               <div key={order.id} className="flex flex-col gap-2 py-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium">
+                  <Link href={`/admin/orders/${order.id}`} className="font-medium hover:text-brand">
                     Order #{order.id.slice(-8)} — {order.user.name}
-                  </p>
+                  </Link>
                   <p className="font-semibold">{formatBDT(order.totalAmount)}</p>
                 </div>
+                <p className="text-neutral-500">
+                  {order.items.map((item) => `${item.quantity}× ${item.product.name}`).join(", ")}
+                </p>
                 <p className="text-neutral-500">Phone: {order.phone}</p>
                 {order.courierNote && (
                   <p className="text-xs text-neutral-500">Note: {order.courierNote}</p>

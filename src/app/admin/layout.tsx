@@ -10,6 +10,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
         <Link href="/admin" className="font-medium">
           Dashboard
         </Link>
+        <Link href="/admin/products/new" className="font-medium">
+          Add product
+        </Link>
       </nav>
       {children}
     </div>

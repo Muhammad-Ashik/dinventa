@@ -56,3 +56,28 @@ export type CheckoutFormState =
       message?: string;
     }
   | undefined;
+
+export const ManualProductFormSchema = z.object({
+  name: z.string().trim().min(2, "Please enter a product name."),
+  description: z.string().trim().min(10, "Please enter a longer description."),
+  price: z.coerce.number().int().positive("Price must be a positive whole number of taka."),
+  stock: z.coerce.number().int().min(0, "Stock can't be negative."),
+  brand: z.string().trim().min(1, "Please enter a brand (or \"Generic\")."),
+  categoryId: z.string().trim().min(1, "Please choose a category."),
+  imageUrl: z.union([z.url("Please enter a valid image URL."), z.literal("")]).optional(),
+});
+
+export type ManualProductFormState =
+  | {
+      errors?: {
+        name?: string[];
+        description?: string[];
+        price?: string[];
+        stock?: string[];
+        brand?: string[];
+        categoryId?: string[];
+        imageUrl?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
