@@ -10,8 +10,7 @@ import { ProductCard } from "@/components/product-card";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductImageGallery } from "@/components/product-image-gallery";
 import { StarRating } from "@/components/star-rating";
-import { ReviewList } from "@/components/review-list";
-import { ReviewForm } from "@/components/review-form";
+import { ProductDetailTabs } from "@/components/product-detail-tabs";
 import { canReviewProduct, getProductRatingSummary, getProductReviews } from "@/lib/reviews";
 
 const TRUST_BADGES = [
@@ -118,8 +117,6 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
               </span>
             </div>
 
-            <p className="leading-relaxed text-neutral-700">{product.description}</p>
-
             {product.stock > 0 && (
               <div className="pt-1">
                 <AddToCartWithQuantity
@@ -144,20 +141,31 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
         </div>
       </div>
 
-      <section className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div>
-          <h2 className="mb-3 text-lg font-bold">Reviews</h2>
-          <ReviewList reviews={reviews} />
-        </div>
-        <div>
-          {canReview && <ReviewForm productSlug={product.slug} productId={product.id} />}
-        </div>
-      </section>
+      <ProductDetailTabs
+        description={product.description}
+        additionalInfo={[
+          { label: "Brand", value: product.brand },
+          { label: "Category", value: product.category.name },
+          { label: "Availability", value: product.stock > 0 ? "In stock" : "Out of stock" },
+          {
+            label: "Added",
+            value: product.createdAt.toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }),
+          },
+        ]}
+        reviews={reviews}
+        canReview={canReview}
+        productSlug={product.slug}
+        productId={product.id}
+      />
 
       {relatedProducts.length > 0 && (
         <section>
           <h2 className="mb-3 text-lg font-bold">You might also like</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
             {relatedProducts.map((p) => (
               <ProductCard
                 key={p.id}

@@ -16,28 +16,28 @@ export function PromoBanner({
 }) {
   return (
     <div
-      className={`flex items-center justify-between gap-4 overflow-hidden rounded-2xl bg-[#F3F4F6] text-neutral-900 ${compact ? "p-6" : "flex-col p-8 sm:flex-row"}`}
+      className={`flex items-center justify-between gap-6 overflow-hidden rounded-2xl bg-[#F3F4F6] text-neutral-900 ${compact ? "p-7" : "flex-col p-10 sm:flex-row"}`}
     >
       <div>
-        <p className={`font-medium text-neutral-500 ${compact ? "text-sm" : "text-base"}`}>
+        <p className={`font-medium text-neutral-500 ${compact ? "text-base" : "text-lg"}`}>
           {product.category.name}
         </p>
-        <h2 className={`mt-1.5 font-bold ${compact ? "text-xl" : "text-2xl sm:text-3xl"}`}>
+        <h2 className={`mt-2 font-bold ${compact ? "text-2xl" : "text-3xl sm:text-4xl"}`}>
           {product.name}
         </h2>
-        <p className={`mt-1 font-medium text-brand ${compact ? "text-base" : "mt-2 text-lg"}`}>
+        <p className={`mt-1.5 font-medium text-brand ${compact ? "text-lg" : "mt-3 text-xl"}`}>
           Up to {discountPercent}% off
         </p>
         <Link
           href={`/products/${product.slug}`}
-          className={`mt-4 inline-flex rounded-lg text-sm font-medium text-white transition-colors ${
-            compact ? "bg-dark px-5 py-2.5 hover:bg-brand-dark" : "bg-brand px-6 py-3 hover:bg-brand-dark"
+          className={`mt-5 inline-flex rounded-lg text-base font-medium text-white transition-colors ${
+            compact ? "bg-dark px-6 py-3 hover:bg-brand-dark" : "bg-brand px-7 py-3.5 hover:bg-brand-dark"
           }`}
         >
           {compact ? "Grab the deal" : "Shop Now"}
         </Link>
       </div>
-      <div className={`relative shrink-0 ${compact ? "size-24" : "size-48 sm:size-56"}`}>
+      <div className={`relative shrink-0 ${compact ? "size-28" : "size-52 sm:size-64"}`}>
         <Image
           src={product.imageUrl}
           alt={product.name}

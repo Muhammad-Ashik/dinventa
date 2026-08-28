@@ -24,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <CartProvider>
           <Header />
-          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">
+          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
             {children}
           </main>
           <Footer />

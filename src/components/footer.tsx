@@ -7,12 +7,12 @@ export async function Footer() {
 
   return (
     <footer className="overflow-hidden border-t border-neutral-200">
-      <div className="mx-auto flex w-full max-w-7xl flex-wrap justify-between gap-10 px-4 pt-14 pb-10 xl:flex-nowrap xl:gap-16">
-        <div className="w-full max-w-[330px]">
-          <span className="text-xl font-bold">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap justify-between gap-12 px-4 pt-16 pb-12 xl:flex-nowrap xl:gap-20">
+        <div className="w-full max-w-[350px]">
+          <span className="text-2xl font-bold">
             Din<span className="text-brand">venta</span>
           </span>
-          <p className="mt-4 text-base text-neutral-600">
+          <p className="mt-5 text-base text-neutral-600">
             AI-assisted shopping for Bangladesh — smart search, phone-confirmed orders, and
             doorstep delivery.
           </p>

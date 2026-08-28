@@ -41,43 +41,43 @@ export async function Header() {
       </div>
 
       <div className="bg-white">
-        <div className="mx-auto flex w-full max-w-7xl items-center gap-5 px-4 py-3">
-          <Link href="/" className="shrink-0 text-xl font-bold tracking-tight">
+        <div className="mx-auto flex w-full max-w-7xl items-center gap-6 px-4 py-4">
+          <Link href="/" className="shrink-0 text-2xl font-bold tracking-tight">
             Din<span className="text-brand">venta</span>
           </Link>
 
-          <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
-            <Link href="/products" className="font-medium text-dark transition-colors hover:text-brand">
+          <nav className="hidden flex-1 items-center justify-center gap-9 md:flex">
+            <Link href="/products" className="text-base font-medium text-dark transition-colors hover:text-brand">
               All Products
             </Link>
             <NavCategoriesDropdown categories={categories} />
             <Link
               href="/products?onSale=1"
-              className="font-medium text-dark transition-colors hover:text-brand"
+              className="text-base font-medium text-dark transition-colors hover:text-brand"
             >
               Deals
             </Link>
-            <Link href="/orders" className="font-medium text-dark transition-colors hover:text-brand">
+            <Link href="/orders" className="text-base font-medium text-dark transition-colors hover:text-brand">
               Track Order
             </Link>
           </nav>
 
-          <nav className="ml-auto flex shrink-0 items-center gap-4">
+          <nav className="ml-auto flex shrink-0 items-center gap-5">
             <Link
               href="/products"
               aria-label="Search products"
               className="text-neutral-700 transition-colors hover:text-brand"
             >
-              <MagnifyingGlassIcon className="size-5" />
+              <MagnifyingGlassIcon className="size-5.5" />
             </Link>
 
             <Link href="/wishlist" aria-label="Wishlist" className="relative text-neutral-700 transition-colors hover:text-brand">
-              <HeartIcon className="size-5" />
+              <HeartIcon className="size-5.5" />
               {wishlistCount > 0 && <span className={badgeClass}>{wishlistCount}</span>}
             </Link>
 
             <Link href="/cart" aria-label="Cart" className="relative text-neutral-700 transition-colors hover:text-brand">
-              <ShoppingCartIcon className="size-5" />
+              <ShoppingCartIcon className="size-5.5" />
               <CartCountBadge className={badgeClass} />
             </Link>
 

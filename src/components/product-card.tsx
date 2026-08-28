@@ -34,11 +34,12 @@ export function ProductCard({
 
   return (
     <div className="group flex flex-col">
-      <div className="relative mb-4 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-[#F6F7FB]">
+      <div className="relative mb-5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-[#F6F7FB]">
         <ProductImageGallery
           images={gallery}
           alt={product.name}
           href={`/products/${product.slug}`}
+          imgClassName="object-cover"
         />
 
         <div className="absolute top-2 left-2 z-10">
@@ -73,11 +74,11 @@ export function ProductCard({
       <Link
         href={`/products/${product.slug}`}
         title={product.name}
-        className="mb-1.5 line-clamp-1 text-base font-semibold text-neutral-900 transition-colors hover:text-brand"
+        className="mb-2 line-clamp-1 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand"
       >
         {product.name}
       </Link>
-      <p className="flex items-center gap-2 text-base font-medium">
+      <p className="flex items-center gap-2 text-lg font-medium">
         {onSale && (
           <span className="text-neutral-400 line-through">
             {formatBDT(product.compareAtPrice!)}
