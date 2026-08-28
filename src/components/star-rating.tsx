@@ -15,7 +15,7 @@ export function StarRating({
 
   return (
     <span className="relative inline-flex" aria-label={`${rating.toFixed(1)} out of 5 stars`}>
-      <span className="flex text-neutral-300">
+      <span className="flex text-neutral-300 dark:text-neutral-600">
         {Array.from({ length: 5 }).map((_, i) => (
           <StarOutline key={i} className={size} />
         ))}

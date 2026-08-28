@@ -16,10 +16,10 @@ export function PromoBanner({
 }) {
   return (
     <div
-      className={`flex items-center justify-between gap-6 overflow-hidden rounded-2xl bg-[#F3F4F6] text-neutral-900 ${compact ? "p-7" : "flex-col p-10 sm:flex-row"}`}
+      className={`flex items-center justify-between gap-6 overflow-hidden rounded-2xl bg-surface-muted text-neutral-900 dark:text-neutral-100 ${compact ? "p-7" : "flex-col p-10 sm:flex-row"}`}
     >
       <div>
-        <p className={`font-medium text-neutral-500 ${compact ? "text-base" : "text-lg"}`}>
+        <p className={`font-medium text-neutral-500 dark:text-neutral-400 ${compact ? "text-base" : "text-lg"}`}>
           {product.category.name}
         </p>
         <h2 className={`mt-2 font-bold ${compact ? "text-2xl" : "text-3xl sm:text-4xl"}`}>

@@ -10,13 +10,20 @@ type Review = {
 
 export function ReviewList({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) {
-    return <p className="text-sm text-neutral-500">No reviews yet — be the first to leave one.</p>;
+    return (
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+        No reviews yet — be the first to leave one.
+      </p>
+    );
   }
 
   return (
     <div className="flex flex-col gap-4">
       {reviews.map((review) => (
-        <div key={review.id} className="flex gap-3 border-b border-neutral-100 pb-4 last:border-0">
+        <div
+          key={review.id}
+          className="flex gap-3 border-b border-neutral-100 pb-4 last:border-0 dark:border-neutral-800"
+        >
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-light text-sm font-bold text-brand">
             {review.user.name.charAt(0).toUpperCase()}
           </span>
@@ -25,8 +32,8 @@ export function ReviewList({ reviews }: { reviews: Review[] }) {
               <p className="text-sm font-semibold">{review.user.name}</p>
               <StarRating rating={review.rating} size="size-3.5" />
             </div>
-            {review.comment && <p className="text-sm text-neutral-700">{review.comment}</p>}
-            <p className="text-xs text-neutral-400">
+            {review.comment && <p className="text-sm text-neutral-700 dark:text-neutral-300">{review.comment}</p>}
+            <p className="text-xs text-neutral-400 dark:text-neutral-500">
               {new Date(review.createdAt).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "short",

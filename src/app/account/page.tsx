@@ -7,7 +7,7 @@ export default async function AccountPage() {
   if (!user) redirect("/login");
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-4 rounded-lg border border-neutral-200 p-6">
+    <div className="mx-auto flex max-w-sm flex-col gap-4 rounded-lg border border-neutral-200 p-6 dark:border-neutral-800">
       <h1 className="text-2xl font-bold">Profile settings</h1>
       <ProfileForm name={user.name} email={user.email} phone={user.phone ?? ""} />
     </div>

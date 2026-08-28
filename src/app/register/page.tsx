@@ -8,7 +8,7 @@ export default function RegisterPage() {
   const [state, action, pending] = useActionState(signup, undefined);
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-4 rounded-lg border border-neutral-200 p-6">
+    <div className="mx-auto flex max-w-sm flex-col gap-4 rounded-lg border border-neutral-200 p-6 dark:border-neutral-800">
       <h1 className="text-2xl font-bold">Create an account</h1>
 
       <form action={action} className="flex flex-col gap-3">
@@ -20,7 +20,7 @@ export default function RegisterPage() {
             id="name"
             name="name"
             required
-            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+            className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
           />
           {state?.errors?.name && (
             <p className="text-sm text-red-600">{state.errors.name[0]}</p>
@@ -36,7 +36,7 @@ export default function RegisterPage() {
             name="email"
             type="email"
             required
-            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+            className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
           />
           {state?.errors?.email && (
             <p className="text-sm text-red-600">{state.errors.email[0]}</p>
@@ -51,7 +51,7 @@ export default function RegisterPage() {
             id="phone"
             name="phone"
             required
-            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+            className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
           />
           {state?.errors?.phone && (
             <p className="text-sm text-red-600">{state.errors.phone[0]}</p>
@@ -67,7 +67,7 @@ export default function RegisterPage() {
             name="password"
             type="password"
             required
-            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+            className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
           />
           {state?.errors?.password && (
             <ul className="text-sm text-red-600">
@@ -89,7 +89,7 @@ export default function RegisterPage() {
         </button>
       </form>
 
-      <p className="text-sm text-neutral-600">
+      <p className="text-sm text-neutral-600 dark:text-neutral-400">
         Already have an account?{" "}
         <Link href="/login" className="font-medium text-brand transition-colors hover:underline">
           Log in

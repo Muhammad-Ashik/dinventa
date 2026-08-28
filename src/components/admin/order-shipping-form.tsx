@@ -24,7 +24,7 @@ export function OrderShippingForm({
   if (locked) {
     return (
       <div className="flex flex-col gap-2 text-sm">
-        <p className="text-neutral-500">This order is declined/cancelled — no longer editable.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">This order is declined/cancelled — no longer editable.</p>
         <p>{shippingAddress}</p>
         <p>{phone}</p>
       </div>
@@ -43,7 +43,7 @@ export function OrderShippingForm({
           required
           rows={3}
           defaultValue={shippingAddress}
-          className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+          className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
         />
         {state?.errors?.shippingAddress && (
           <p className="text-red-600">{state.errors.shippingAddress[0]}</p>
@@ -59,13 +59,13 @@ export function OrderShippingForm({
           name="phone"
           required
           defaultValue={phone}
-          className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+          className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
         />
         {state?.errors?.phone && <p className="text-red-600">{state.errors.phone[0]}</p>}
       </div>
 
       {state?.message && (
-        <p className={state.errors ? "text-red-600" : "text-green-700"}>{state.message}</p>
+        <p className={state.errors ? "text-red-600" : "text-green-700 dark:text-green-400"}>{state.message}</p>
       )}
 
       <button

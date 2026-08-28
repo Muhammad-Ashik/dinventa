@@ -24,9 +24,9 @@ export function ProfileForm({
           id="email"
           value={email}
           disabled
-          className="rounded border border-neutral-200 bg-neutral-100 px-3 py-2 text-neutral-500"
+          className="rounded border border-neutral-200 bg-neutral-100 px-3 py-2 text-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
         />
-        <p className="text-xs text-neutral-500">Email can&apos;t be changed here.</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">Email can&apos;t be changed here.</p>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -38,7 +38,7 @@ export function ProfileForm({
           name="name"
           required
           defaultValue={name}
-          className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+          className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
         />
         {state?.errors?.name && <p className="text-sm text-red-600">{state.errors.name[0]}</p>}
       </div>
@@ -52,13 +52,13 @@ export function ProfileForm({
           name="phone"
           required
           defaultValue={phone}
-          className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+          className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
         />
         {state?.errors?.phone && <p className="text-sm text-red-600">{state.errors.phone[0]}</p>}
       </div>
 
       {state?.message && (
-        <p className={state.errors ? "text-sm text-red-600" : "text-sm text-green-700"}>
+        <p className={state.errors ? "text-sm text-red-600" : "text-sm text-green-700 dark:text-green-400"}>
           {state.message}
         </p>
       )}

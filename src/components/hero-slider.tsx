@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatBDT } from "@/lib/money";
+import { useDragSlider } from "@/lib/use-drag-slider";
 
 type Deal = {
   slug: string;
@@ -21,6 +22,7 @@ const AUTO_ADVANCE_MS = 5000;
 export function HeroSlider({ deals }: { deals: Deal[] }) {
   const [index, setIndex] = useState(0);
   const hasDeals = deals.length > 0;
+  const { dragOffset, isDragging, dragHandlers } = useDragSlider(deals.length, index, setIndex);
 
   useEffect(() => {
     if (deals.length <= 1) return;
@@ -30,9 +32,9 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
 
   if (!hasDeals) {
     return (
-      <div className="flex min-h-[460px] flex-col items-start justify-center rounded-2xl bg-white p-10 sm:p-12">
+      <div className="flex min-h-[460px] flex-col items-start justify-center rounded-2xl bg-white p-10 sm:p-12 dark:bg-surface">
         <h1 className="text-3xl font-bold sm:text-4xl">Smart shopping, made for Bangladesh</h1>
-        <p className="mt-3 max-w-md text-base text-neutral-600 sm:text-lg">
+        <p className="mt-3 max-w-md text-base text-neutral-600 sm:text-lg dark:text-neutral-400">
           Tell our AI what you&apos;re looking for and we&apos;ll find it instantly.
         </p>
         <Link
@@ -46,10 +48,13 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
   }
 
   return (
-    <div className="relative h-[460px] overflow-hidden rounded-2xl bg-white">
+    <div className="relative h-[460px] overflow-hidden rounded-2xl bg-white dark:bg-surface">
       <div
-        className="flex h-full transition-transform duration-500 ease-out"
-        style={{ transform: `translateX(-${index * 100}%)` }}
+        className={`flex h-full cursor-grab touch-pan-y select-none active:cursor-grabbing ${
+          isDragging ? "" : "transition-transform duration-500 ease-out"
+        }`}
+        style={{ transform: `translateX(calc(${-index * 100}% + ${dragOffset}px))` }}
+        {...dragHandlers}
       >
         {deals.map((p) => {
           const discountPercent = p.compareAtPrice
@@ -64,17 +69,17 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
                 {discountPercent > 0 && (
                   <p className="flex items-baseline gap-2">
                     <span className="text-5xl font-extrabold text-brand">{discountPercent}%</span>
-                    <span className="text-base font-semibold text-neutral-500">SALE OFF</span>
+                    <span className="text-base font-semibold text-neutral-500 dark:text-neutral-400">SALE OFF</span>
                   </p>
                 )}
                 <h1 className="mt-3 text-3xl font-bold sm:text-4xl">{p.name}</h1>
-                <p className="mt-3 line-clamp-2 max-w-md text-base text-neutral-600 sm:text-lg">
+                <p className="mt-3 line-clamp-2 max-w-md text-base text-neutral-600 sm:text-lg dark:text-neutral-400">
                   {p.description}
                 </p>
                 <div className="mt-4 flex items-center gap-3">
                   <p className="text-2xl font-bold text-brand">{formatBDT(p.price)}</p>
                   {p.compareAtPrice && (
-                    <p className="text-base text-neutral-400 line-through">
+                    <p className="text-base text-neutral-400 line-through dark:text-neutral-500">
                       {formatBDT(p.compareAtPrice)}
                     </p>
                   )}
@@ -93,6 +98,7 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
                   fill
                   className="object-contain"
                   sizes="224px"
+                  draggable={false}
                 />
               </div>
             </div>
@@ -109,7 +115,7 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
               aria-label={`Go to slide ${i + 1}`}
               onClick={() => setIndex(i)}
               className={`h-1.5 rounded-full transition-all ${
-                i === index ? "w-6 bg-brand" : "w-1.5 bg-neutral-300"
+                i === index ? "w-6 bg-brand" : "w-1.5 bg-neutral-300 dark:bg-neutral-700"
               }`}
             />
           ))}

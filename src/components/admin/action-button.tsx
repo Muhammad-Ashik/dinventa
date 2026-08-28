@@ -7,8 +7,9 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 const VARIANT_CLASSES: Record<string, string> = {
   primary: "bg-green-600 text-white hover:bg-green-700 active:bg-green-800",
   danger:
-    "border border-red-600 text-red-600 hover:bg-red-50 active:bg-red-100",
-  neutral: "border border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100",
+    "border border-red-600 text-red-600 hover:bg-red-50 active:bg-red-100 dark:hover:bg-red-950/40 dark:active:bg-red-950/60",
+  neutral:
+    "border border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800 dark:active:bg-neutral-700",
 };
 
 const SUCCESS_DISPLAY_MS = 5000;
@@ -51,7 +52,7 @@ export function ActionButton({
       disabled={disabled}
       className={`flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
         showSuccess
-          ? "border border-green-300 bg-green-50 text-green-700"
+          ? "border border-green-300 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/40 dark:text-green-400"
           : VARIANT_CLASSES[variant]
       }`}
     >

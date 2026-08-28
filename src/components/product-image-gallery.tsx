@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useDragSlider } from "@/lib/use-drag-slider";
 
 // Dot-cycle gallery for grid cards — lets a shopper flip through a
 // product's real photos (Product.images) right on the card, without
-// opening the product page or the quick-view modal. Falls back to a
-// single, non-interactive image when there's only one real photo (never
-// pads the array with repeats to force dots to appear).
+// opening the product page or the quick-view modal, either via the dots or
+// by grabbing and dragging left/right. Falls back to a single,
+// non-interactive image when there's only one real photo (never pads the
+// array with repeats to force dots/dragging to appear).
 export function ProductImageGallery({
   images,
   alt,
@@ -23,20 +25,31 @@ export function ProductImageGallery({
   sizes?: string;
 }) {
   const [index, setIndex] = useState(0);
+  const { dragHandlers } = useDragSlider(images.length, index, setIndex);
   const current = images[index] ?? images[0];
+  const draggable = images.length > 1;
 
   const image = (
-    <Image src={current} alt={alt} fill className={imgClassName} sizes={sizes} />
+    <Image src={current} alt={alt} fill className={imgClassName} sizes={sizes} draggable={false} />
   );
 
   return (
     <>
       {href ? (
-        <Link href={href} className="absolute inset-0">
+        <Link
+          href={href}
+          className={`absolute inset-0 select-none ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
+          {...(draggable ? dragHandlers : {})}
+        >
           {image}
         </Link>
       ) : (
-        <div className="absolute inset-0">{image}</div>
+        <div
+          className={`absolute inset-0 select-none ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
+          {...(draggable ? dragHandlers : {})}
+        >
+          {image}
+        </div>
       )}
 
       {images.length > 1 && (

@@ -45,14 +45,14 @@ export function DropdownFilter({
         className={`flex cursor-pointer list-none items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors select-none [&::-webkit-details-marker]:hidden ${
           active
             ? "border-brand bg-brand-light text-brand"
-            : "border-neutral-300 text-neutral-700 hover:border-neutral-400 group-open:border-brand group-open:text-brand"
+            : "border-neutral-300 text-neutral-700 hover:border-neutral-400 group-open:border-brand group-open:text-brand dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-500"
         }`}
       >
         {label}
         <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
       </summary>
       <div
-        className={`absolute left-0 z-30 mt-2 w-64 rounded-lg border border-neutral-200 bg-white p-4 text-sm shadow-lg ${panelClassName ?? ""}`}
+        className={`absolute left-0 z-30 mt-2 w-64 rounded-lg border border-neutral-200 bg-white p-4 text-sm text-foreground shadow-lg dark:border-neutral-700 dark:bg-surface dark:shadow-black/40 ${panelClassName ?? ""}`}
       >
         {children}
       </div>

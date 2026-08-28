@@ -67,7 +67,7 @@ export default async function ProductsPage({
   const filterLinkClass = (isActive: boolean) =>
     isActive
       ? "block rounded px-2 py-1.5 font-medium text-brand"
-      : "block rounded px-2 py-1.5 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand";
+      : "block rounded px-2 py-1.5 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand dark:text-neutral-300 dark:hover:bg-neutral-800";
 
   return (
     <div className="flex flex-col gap-4">
@@ -76,7 +76,7 @@ export default async function ProductsPage({
       />
       <h1 className="text-2xl font-bold">{activeCategory ? activeCategory.name : "Products"}</h1>
 
-      <div className="flex flex-wrap items-center gap-3 border-y border-neutral-200 py-3">
+      <div className="flex flex-wrap items-center gap-3 border-y border-neutral-200 py-3 dark:border-neutral-800">
         <DropdownFilter label="Category" active={!!filters.category}>
           <Link href={hrefWith({ category: undefined })} className={filterLinkClass(!filters.category)}>
             All categories
@@ -117,7 +117,7 @@ export default async function ProductsPage({
               </Link>
             ))}
           </div>
-          <form method="get" className="mt-3 flex items-center gap-2 border-t border-neutral-100 pt-3">
+          <form method="get" className="mt-3 flex items-center gap-2 border-t border-neutral-100 pt-3 dark:border-neutral-800">
             {filters.q && <input type="hidden" name="q" value={filters.q} />}
             {filters.category && <input type="hidden" name="category" value={filters.category} />}
             {filters.brand && <input type="hidden" name="brand" value={filters.brand} />}
@@ -130,16 +130,16 @@ export default async function ProductsPage({
               min={0}
               placeholder="Min"
               defaultValue={filters.minPrice}
-              className="w-full rounded border border-neutral-300 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
+              className="w-full rounded border border-neutral-300 px-2 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
             />
-            <span className="text-neutral-400">–</span>
+            <span className="text-neutral-400 dark:text-neutral-500">–</span>
             <input
               name="maxPrice"
               type="number"
               min={0}
               placeholder="Max"
               defaultValue={filters.maxPrice}
-              className="w-full rounded border border-neutral-300 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand"
+              className="w-full rounded border border-neutral-300 px-2 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
             />
             <button
               type="submit"
@@ -155,7 +155,7 @@ export default async function ProductsPage({
           className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
             filters.inStock
               ? "border-brand bg-brand-light text-brand"
-              : "border-neutral-300 text-neutral-700 hover:border-neutral-400"
+              : "border-neutral-300 text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-500"
           }`}
         >
           In stock only
@@ -166,7 +166,7 @@ export default async function ProductsPage({
           className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
             filters.onSale
               ? "border-brand bg-brand-light text-brand"
-              : "border-neutral-300 text-neutral-700 hover:border-neutral-400"
+              : "border-neutral-300 text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-500"
           }`}
         >
           On Sale
@@ -187,10 +187,10 @@ export default async function ProductsPage({
         </div>
       </div>
 
-      <p className="text-sm text-neutral-500">{products.length} products</p>
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">{products.length} products</p>
 
       {products.length === 0 ? (
-        <p className="text-neutral-600">No products match your filters.</p>
+        <p className="text-neutral-600 dark:text-neutral-400">No products match your filters.</p>
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (

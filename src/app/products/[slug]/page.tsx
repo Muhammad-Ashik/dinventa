@@ -61,7 +61,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
         />
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-[#F6F7FB]">
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-surface-muted">
             <ProductImageGallery
               images={product.images.length > 0 ? product.images : [product.imageUrl]}
               alt={product.name}
@@ -82,16 +82,16 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
 
           <div className="flex flex-col gap-4">
             <div>
-              <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                 <span>{product.category.name}</span>
-                <span className="text-neutral-300">•</span>
+                <span className="text-neutral-300 dark:text-neutral-600">•</span>
                 <span>{product.brand}</span>
               </p>
               <h1 className="mt-1 text-3xl font-bold">{product.name}</h1>
               {ratingSummary.count > 0 && (
                 <div className="mt-2 flex items-center gap-2">
                   <StarRating rating={ratingSummary.average} />
-                  <span className="text-sm text-neutral-500">
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">
                     {ratingSummary.average.toFixed(1)} ({ratingSummary.count} review
                     {ratingSummary.count === 1 ? "" : "s"})
                   </span>
@@ -102,15 +102,15 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
             <div className="flex items-center gap-3">
               <p className="text-3xl font-bold text-brand">{formatBDT(product.price)}</p>
               {onSale && (
-                <p className="text-lg text-neutral-400 line-through">
+                <p className="text-lg text-neutral-400 line-through dark:text-neutral-500">
                   {formatBDT(product.compareAtPrice!)}
                 </p>
               )}
               <span
                 className={
                   product.stock > 0
-                    ? "inline-flex w-fit items-center rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700"
-                    : "inline-flex w-fit items-center rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700"
+                    ? "inline-flex w-fit items-center rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-400"
+                    : "inline-flex w-fit items-center rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-950/40 dark:text-red-400"
                 }
               >
                 {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
@@ -129,9 +129,9 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
               </div>
             )}
 
-            <div className="mt-2 flex flex-col gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+            <div className="mt-2 flex flex-col gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900">
               {TRUST_BADGES.map(({ Icon, label }) => (
-                <div key={label} className="flex items-center gap-2 text-sm text-neutral-700">
+                <div key={label} className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
                   <Icon className="size-4 text-brand" />
                   <span>{label}</span>
                 </div>

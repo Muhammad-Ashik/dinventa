@@ -22,8 +22,8 @@ export default async function WishlistPage() {
       <h1 className="text-2xl font-bold">Your wishlist</h1>
 
       {products.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 py-12 text-center text-neutral-500">
-          <HeartIcon className="size-10 text-neutral-300" />
+        <div className="flex flex-col items-center gap-3 py-12 text-center text-neutral-500 dark:text-neutral-400">
+          <HeartIcon className="size-10 text-neutral-300 dark:text-neutral-700" />
           <p>
             Nothing saved yet.{" "}
             <Link href="/products" className="font-medium text-brand hover:underline">

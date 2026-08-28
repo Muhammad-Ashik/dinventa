@@ -20,10 +20,10 @@ export function CustomerReviews({ reviews }: { reviews: FeaturedReview[] }) {
       <h2 className="mb-8 text-center text-2xl font-bold">What customers are saying</h2>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {reviews.map((review) => (
-          <div key={review.id} className="rounded-xl bg-[#F6F7FB] p-7">
+          <div key={review.id} className="rounded-xl bg-surface-muted p-7">
             <StarRating rating={review.rating} />
             {review.comment && (
-              <p className="mt-4 line-clamp-4 text-base text-neutral-700">{review.comment}</p>
+              <p className="mt-4 line-clamp-4 text-base text-neutral-700 dark:text-neutral-300">{review.comment}</p>
             )}
             <div className="mt-5 flex items-center gap-3">
               <span className="flex size-10 items-center justify-center rounded-full bg-brand-light text-base font-bold text-brand">
@@ -33,7 +33,7 @@ export function CustomerReviews({ reviews }: { reviews: FeaturedReview[] }) {
                 <p className="text-base font-semibold">{review.user.name}</p>
                 <Link
                   href={`/products/${review.product.slug}`}
-                  className="text-sm text-neutral-500 hover:text-brand"
+                  className="text-sm text-neutral-500 hover:text-brand dark:text-neutral-400"
                 >
                   Verified buyer · {review.product.name}
                 </Link>

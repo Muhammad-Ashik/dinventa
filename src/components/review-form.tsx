@@ -20,7 +20,10 @@ export function ReviewForm({ productSlug, productId }: { productSlug: string; pr
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
+    <form
+      action={formAction}
+      className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-700"
+    >
       <p className="text-sm font-semibold">Rate this product</p>
 
       <div className="flex items-center gap-1">
@@ -49,7 +52,7 @@ export function ReviewForm({ productSlug, productId }: { productSlug: string; pr
         name="comment"
         rows={3}
         placeholder="Share your experience (optional)"
-        className="rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
+        className="rounded border border-neutral-300 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
       />
       {state?.errors?.comment && <p className="text-xs text-red-600">{state.errors.comment[0]}</p>}
 

@@ -18,9 +18,27 @@ export const metadata: Metadata = {
   description: "AI-driven ecommerce, built one feature at a time.",
 };
 
+// Standard next.js dark-mode-without-flash pattern: this runs synchronously
+// before React hydrates, so the `.dark` class is already correct on
+// <html> by the time paint happens (and, critically, before hydration —
+// avoiding a server/client class mismatch warning since the server always
+// renders without `.dark`).
+const themeInitScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem('theme');
+    var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (dark) document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${dmSans.variable} h-full antialiased`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <CartProvider>
           <Header />

@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-export type ProductSort = "newest" | "price_asc" | "price_desc";
+export type ProductSort = "newest" | "price_asc" | "price_desc" | "popular";
 
 export type ProductFilters = {
   q?: string;
@@ -18,6 +18,10 @@ const SORT_TO_ORDER_BY: Record<ProductSort, Prisma.ProductOrderByWithRelationInp
   newest: { createdAt: "desc" },
   price_asc: { price: "asc" },
   price_desc: { price: "desc" },
+  // Real popularity — ranked by actual completed order-line count, same
+  // metric the homepage "Best Selling Products" section uses. Never a
+  // fabricated popularity score.
+  popular: { orderItems: { _count: "desc" } },
 };
 
 export function parseProductFilters(
@@ -41,8 +45,8 @@ export function parseProductFilters(
   };
 }
 
-export async function getProducts(filters: ProductFilters) {
-  const where: Prisma.ProductWhereInput = {
+function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereInput {
+  return {
     status: "ACTIVE",
     ...(filters.category ? { category: { slug: filters.category } } : {}),
     ...(filters.brand ? { brand: filters.brand } : {}),
@@ -65,12 +69,33 @@ export async function getProducts(filters: ProductFilters) {
         }
       : {}),
   };
+}
 
+export async function getProducts(filters: ProductFilters) {
   return prisma.product.findMany({
-    where,
+    where: buildProductWhere(filters),
     orderBy: SORT_TO_ORDER_BY[filters.sort ?? "newest"],
     include: { category: true },
   });
+}
+
+// Page-based variant for listing pages with real pagination (e.g. /popular)
+// — returns the total match count alongside the page's items so the UI can
+// show an honest "Showing X of Y" and render only as many page links as
+// actually exist.
+export async function getProductsPaged(filters: ProductFilters, page: number, pageSize: number) {
+  const where = buildProductWhere(filters);
+  const [items, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      orderBy: SORT_TO_ORDER_BY[filters.sort ?? "newest"],
+      include: { category: true },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.product.count({ where }),
+  ]);
+  return { items, total };
 }
 
 export async function getCategories() {

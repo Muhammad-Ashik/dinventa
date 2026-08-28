@@ -68,7 +68,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-14">
-      <div className="relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[#F7F7F7]">
+      <div className="relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-surface-muted">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="min-w-0 lg:basis-[70%]">
@@ -112,7 +112,7 @@ export default async function HomePage() {
           <h2 className="flex items-center gap-2 text-3xl font-bold">
             <StarIcon className="size-6 text-brand" /> Best Selling Products
           </h2>
-          <p className="mt-2 max-w-md text-center text-lg text-neutral-500">
+          <p className="mt-2 max-w-md text-center text-lg text-neutral-500 dark:text-neutral-400">
             The products our customers actually order the most — ranked by real order counts,
             not a guess.
           </p>

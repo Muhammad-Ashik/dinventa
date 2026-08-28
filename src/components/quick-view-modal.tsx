@@ -11,6 +11,7 @@ import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { formatBDT } from "@/lib/money";
 import { toggleWishlist } from "@/lib/actions/wishlist";
 import { AddToCartWithQuantity } from "@/components/add-to-cart-with-quantity";
+import { useDragSlider } from "@/lib/use-drag-slider";
 
 type Product = {
   id: string;
@@ -38,6 +39,8 @@ export function QuickViewModal({
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(isWishlisted);
   const [, startTransition] = useTransition();
+  const { dragHandlers } = useDragSlider(product.images.length, activeImage, setActiveImage);
+  const imageDraggable = product.images.length > 1;
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -73,14 +76,14 @@ export function QuickViewModal({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white p-6 shadow-xl sm:p-8"
+        className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white p-6 shadow-xl sm:p-8 dark:bg-surface"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 z-10 flex size-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 transition-colors hover:bg-neutral-200"
+          className="absolute top-4 right-4 z-10 flex size-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
         >
           <XMarkIcon className="size-5" />
         </button>
@@ -94,7 +97,7 @@ export function QuickViewModal({
                     key={src}
                     type="button"
                     onClick={() => setActiveImage(i)}
-                    className={`relative size-14 shrink-0 overflow-hidden rounded-lg bg-[#F6F7FB] ${
+                    className={`relative size-14 shrink-0 overflow-hidden rounded-lg bg-surface-muted ${
                       i === activeImage ? "ring-2 ring-brand" : ""
                     }`}
                   >
@@ -103,13 +106,19 @@ export function QuickViewModal({
                 ))}
               </div>
             )}
-            <div className="relative aspect-square flex-1 overflow-hidden rounded-xl bg-[#F6F7FB]">
+            <div
+              className={`relative aspect-square flex-1 overflow-hidden rounded-xl bg-surface-muted select-none ${
+                imageDraggable ? "cursor-grab active:cursor-grabbing" : ""
+              }`}
+              {...(imageDraggable ? dragHandlers : {})}
+            >
               <Image
                 src={product.images[activeImage] ?? product.images[0]}
                 alt={product.name}
                 fill
                 className="object-contain p-6"
                 sizes="(max-width: 640px) 90vw, 400px"
+                draggable={false}
               />
             </div>
           </div>
@@ -126,12 +135,12 @@ export function QuickViewModal({
             >
               {product.name}
             </Link>
-            <p className="mt-3 line-clamp-4 text-sm text-neutral-600">{product.description}</p>
+            <p className="mt-3 line-clamp-4 text-sm text-neutral-600 dark:text-neutral-400">{product.description}</p>
 
             <div className="mt-4 flex items-center gap-2">
               <span className="text-2xl font-bold text-brand">{formatBDT(product.price)}</span>
               {onSale && (
-                <span className="text-base text-neutral-400 line-through">
+                <span className="text-base text-neutral-400 line-through dark:text-neutral-500">
                   {formatBDT(product.compareAtPrice!)}
                 </span>
               )}

@@ -34,7 +34,7 @@ export function ProductCard({
 
   return (
     <div className="group flex flex-col">
-      <div className="relative mb-5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-[#F6F7FB]">
+      <div className="relative mb-5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
         <ProductImageGallery
           images={gallery}
           alt={product.name}
@@ -50,10 +50,16 @@ export function ProductCard({
           />
         </div>
 
-        {onSale && (
-          <span className="absolute top-2 right-2 z-10 rounded-full bg-brand px-2 py-1 text-xs font-medium text-white">
-            {discountPercent}% OFF
+        {product.stock === 0 ? (
+          <span className="absolute top-2 right-2 z-10 rounded-full bg-red-600 px-2 py-1 text-xs font-medium text-white dark:bg-red-500">
+            Out of Stock
           </span>
+        ) : (
+          onSale && (
+            <span className="absolute top-2 right-2 z-10 rounded-full bg-brand px-2 py-1 text-xs font-medium text-white">
+              {discountPercent}% OFF
+            </span>
+          )
         )}
 
         <div className="absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center gap-2 pb-4 duration-200 ease-linear group-hover:translate-y-0">
@@ -74,17 +80,17 @@ export function ProductCard({
       <Link
         href={`/products/${product.slug}`}
         title={product.name}
-        className="mb-2 line-clamp-1 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand"
+        className="mb-2 line-clamp-1 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand dark:text-neutral-100"
       >
         {product.name}
       </Link>
       <p className="flex items-center gap-2 text-lg font-medium">
         {onSale && (
-          <span className="text-neutral-400 line-through">
+          <span className="text-neutral-400 line-through dark:text-neutral-500">
             {formatBDT(product.compareAtPrice!)}
           </span>
         )}
-        <span className="text-neutral-900">{formatBDT(product.price)}</span>
+        <span className="text-neutral-900 dark:text-neutral-100">{formatBDT(product.price)}</span>
       </p>
     </div>
   );

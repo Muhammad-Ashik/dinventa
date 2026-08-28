@@ -12,7 +12,7 @@ export default function CartPage() {
     return (
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl font-bold">Your cart</h1>
-        <p className="text-neutral-600">
+        <p className="text-neutral-600 dark:text-neutral-400">
           Your cart is empty.{" "}
           <Link href="/products" className="font-medium text-brand hover:underline">
             Browse products
@@ -27,10 +27,10 @@ export default function CartPage() {
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold">Your cart</h1>
 
-      <div className="flex flex-col divide-y rounded-lg border border-neutral-200">
+      <div className="flex flex-col divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
         {items.map((item) => (
           <div key={item.productId} className="flex items-center gap-4 p-4">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800">
               <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
             </div>
 
@@ -44,7 +44,7 @@ export default function CartPage() {
               min={1}
               value={item.quantity}
               onChange={(e) => setQuantity(item.productId, Number(e.target.value))}
-              className="w-16 rounded border border-neutral-300 px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand"
+              className="w-16 rounded border border-neutral-300 px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
             />
 
             <p className="w-24 text-right font-semibold">
@@ -54,7 +54,7 @@ export default function CartPage() {
             <button
               type="button"
               onClick={() => removeItem(item.productId)}
-              className="text-sm text-neutral-500 hover:text-brand"
+              className="text-sm text-neutral-500 hover:text-brand dark:text-neutral-400"
             >
               Remove
             </button>
@@ -62,7 +62,7 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div className="flex items-center justify-between border-t pt-4">
+      <div className="flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-800">
         <p className="text-lg font-bold">
           Total: <span className="text-brand">{formatBDT(totalPrice)}</span>
         </p>

@@ -41,18 +41,18 @@ export function AccountMenu({
 
   const firstName = name.split(" ")[0];
   const itemClass =
-    "flex items-center gap-2 px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand";
+    "flex items-center gap-2 px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand dark:text-neutral-300 dark:hover:bg-neutral-800";
 
   return (
     <details ref={ref} className="group relative">
-      <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium transition-colors select-none hover:text-brand [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium text-foreground transition-colors select-none hover:text-brand [&::-webkit-details-marker]:hidden">
         <span className="flex size-7 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
           {firstName.charAt(0).toUpperCase()}
         </span>
         <span className="hidden sm:inline">{firstName}</span>
         <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
       </summary>
-      <div className="absolute right-0 z-30 mt-2 w-48 rounded-lg border border-neutral-200 bg-white py-1.5 text-sm shadow-lg">
+      <div className="absolute right-0 z-30 mt-2 w-48 rounded-lg border border-neutral-200 bg-white py-1.5 text-sm shadow-lg dark:border-neutral-700 dark:bg-surface dark:shadow-black/40">
         {isAdmin && (
           <Link href="/admin" className={itemClass}>
             <Cog6ToothIcon className="size-4" />

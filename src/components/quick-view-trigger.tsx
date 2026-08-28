@@ -36,7 +36,7 @@ export function QuickViewTrigger({
           e.stopPropagation();
           setOpen(true);
         }}
-        className="flex size-9 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-700 shadow-sm transition-colors hover:text-brand"
+        className="flex size-9 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-700 shadow-sm transition-colors hover:text-brand dark:border-neutral-700 dark:bg-surface dark:text-neutral-300"
       >
         <ArrowsPointingOutIcon className="size-4" />
       </button>

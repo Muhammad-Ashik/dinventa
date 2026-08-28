@@ -26,13 +26,13 @@ export function AddToCartWithQuantity({
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex items-center rounded border border-neutral-300">
+      <div className="flex items-center rounded border border-neutral-300 dark:border-neutral-700">
         <button
           type="button"
           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
           disabled={quantity <= 1}
           aria-label="Decrease quantity"
-          className="p-2.5 transition-colors hover:bg-neutral-100 active:bg-neutral-200 disabled:cursor-not-allowed disabled:text-neutral-300 disabled:hover:bg-transparent"
+          className="p-2.5 transition-colors hover:bg-neutral-100 active:bg-neutral-200 disabled:cursor-not-allowed disabled:text-neutral-300 disabled:hover:bg-transparent dark:hover:bg-neutral-800 dark:active:bg-neutral-700 dark:disabled:text-neutral-600"
         >
           <MinusIcon className="size-4" />
         </button>
@@ -42,7 +42,7 @@ export function AddToCartWithQuantity({
           onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
           disabled={quantity >= maxQuantity}
           aria-label="Increase quantity"
-          className="p-2.5 transition-colors hover:bg-neutral-100 active:bg-neutral-200 disabled:cursor-not-allowed disabled:text-neutral-300 disabled:hover:bg-transparent"
+          className="p-2.5 transition-colors hover:bg-neutral-100 active:bg-neutral-200 disabled:cursor-not-allowed disabled:text-neutral-300 disabled:hover:bg-transparent dark:hover:bg-neutral-800 dark:active:bg-neutral-700 dark:disabled:text-neutral-600"
         >
           <PlusIcon className="size-4" />
         </button>

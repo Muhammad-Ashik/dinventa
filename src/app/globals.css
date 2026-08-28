@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Manual, class-based dark mode: every `dark:` utility keys off a `.dark`
+   class on an ancestor (we put it on <html>) instead of Tailwind v4's
+   default `prefers-color-scheme` behavior, so we can offer a real toggle
+   instead of only following the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* White page background, matching the reference — grey is only used
      locally, on specific promo/hero panels (see the hero wrapper and
@@ -20,6 +26,31 @@
      deal") that are deliberately NOT brand blue. Distinct from --foreground,
      which is body text color. */
   --color-dark: #1c274c;
+
+  /* Semantic surface tokens: the same near-identical light-grey panel bg
+     (#F6F7FB / #F7F7F7 / #F3F4F6) repeats across ~8 files as "muted surface"
+     (promo/hero wrappers, countdown, best-seller cards, AI search panel),
+     and plain --color-surface stands in for structural `bg-white` cards.
+     Centralizing both here means the dark palette below is a one-line flip
+     per token instead of hand-sprinkling dark: on every arbitrary hex. */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f6f7fb;
+}
+
+.dark {
+  --background: #0b0d12;
+  --foreground: #e5e7eb;
+
+  --color-brand: #3c50e0;
+  --color-brand-dark: #5b72f5;
+  /* Pale-blue tint reads as a light-mode paste-in on a dark background, so
+     dark mode gets a muted, desaturated navy tint instead. */
+  --color-brand-light: #1b2340;
+
+  --color-dark: #33406e;
+
+  --color-surface: #12151c;
+  --color-surface-muted: #171b24;
 }
 
 @theme inline {
@@ -29,6 +60,8 @@
   --color-brand-dark: var(--color-brand-dark);
   --color-brand-light: var(--color-brand-light);
   --color-dark: var(--color-dark);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
   --font-sans: var(--font-dm-sans);
 }
 

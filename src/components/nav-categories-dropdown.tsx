@@ -32,16 +32,16 @@ export function NavCategoriesDropdown({
 
   return (
     <details ref={ref} className="group relative">
-      <summary className="flex cursor-pointer list-none items-center gap-1 font-medium text-dark transition-colors select-none hover:text-brand [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-1 font-medium text-dark transition-colors select-none hover:text-brand dark:text-neutral-100 [&::-webkit-details-marker]:hidden">
         Categories
         <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
       </summary>
-      <div className="absolute left-0 z-30 mt-3 w-56 rounded-lg border border-neutral-200 bg-white py-1.5 text-sm shadow-lg">
+      <div className="absolute left-0 z-30 mt-3 w-56 rounded-lg border border-neutral-200 bg-white py-1.5 text-sm shadow-lg dark:border-neutral-700 dark:bg-surface dark:shadow-black/40">
         {categories.map((c) => (
           <Link
             key={c.id}
             href={`/products?category=${c.slug}`}
-            className="block px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand"
+            className="block px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand dark:text-neutral-300 dark:hover:bg-neutral-800"
           >
             {c.name}
           </Link>

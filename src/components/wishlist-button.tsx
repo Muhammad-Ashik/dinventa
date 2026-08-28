@@ -50,7 +50,7 @@ export function WishlistButton({
       {wishlisted ? (
         <HeartSolid className="size-4 text-brand" />
       ) : (
-        <HeartOutline className="size-4 text-neutral-600" />
+        <HeartOutline className="size-4 text-neutral-600 dark:text-neutral-700" />
       )}
     </button>
   );

@@ -16,7 +16,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
 
   if (items.length === 0) {
     return (
-      <p className="text-neutral-600">
+      <p className="text-neutral-600 dark:text-neutral-400">
         Your cart is empty.{" "}
         <Link href="/products" className="font-medium text-brand hover:underline">
           Browse products
@@ -60,7 +60,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
             name="shippingAddress"
             required
             rows={3}
-            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+            className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
           />
           {fieldErrors.shippingAddress && (
             <p className="text-sm text-red-600">{fieldErrors.shippingAddress[0]}</p>
@@ -76,12 +76,12 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
             name="phone"
             required
             defaultValue={defaultPhone}
-            className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+            className="rounded border border-neutral-300 px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
           />
           {fieldErrors.phone && (
             <p className="text-sm text-red-600">{fieldErrors.phone[0]}</p>
           )}
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             We&apos;ll call this number to confirm your order before it ships.
           </p>
         </div>
@@ -97,7 +97,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
         </button>
       </form>
 
-      <div className="flex h-fit flex-col gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+      <div className="flex h-fit flex-col gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900">
         <h2 className="font-semibold">Order summary</h2>
         {items.map((item) => (
           <div key={item.productId} className="flex justify-between text-sm">
@@ -107,7 +107,7 @@ export function CheckoutForm({ defaultPhone }: { defaultPhone: string }) {
             <span>{formatBDT(item.price * item.quantity)}</span>
           </div>
         ))}
-        <div className="flex justify-between border-t pt-2 font-bold">
+        <div className="flex justify-between border-t border-neutral-200 pt-2 font-bold dark:border-neutral-700">
           <span>Total</span>
           <span className="text-brand">{formatBDT(totalPrice)}</span>
         </div>
