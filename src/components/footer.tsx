@@ -6,59 +6,79 @@ export async function Footer() {
   const [categories, user] = await Promise.all([getCategories(), getCurrentUser()]);
 
   return (
-    <footer className="border-t bg-neutral-50">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-8 px-4 py-10 text-sm sm:grid-cols-4">
-        <div className="col-span-2 flex flex-col gap-2 sm:col-span-1">
-          <span className="text-lg font-bold">
+    <footer className="overflow-hidden border-t border-neutral-200">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap justify-between gap-10 px-4 pt-14 pb-10 xl:flex-nowrap xl:gap-16">
+        <div className="w-full max-w-[330px]">
+          <span className="text-xl font-bold">
             Din<span className="text-brand">venta</span>
           </span>
-          <p className="text-neutral-600">
+          <p className="mt-4 text-base text-neutral-600">
             AI-assisted shopping for Bangladesh — smart search, phone-confirmed orders, and
             doorstep delivery.
           </p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Shop</h3>
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/products?category=${c.slug}`}
-              className="text-neutral-600 transition-colors hover:text-brand"
-            >
-              {c.name}
-            </Link>
-          ))}
+        <div className="w-full sm:w-auto">
+          <h2 className="mb-6 text-xl font-semibold">Shop</h2>
+          <ul className="flex flex-col gap-3">
+            {categories.map((c) => (
+              <li key={c.id}>
+                <Link
+                  href={`/products?category=${c.slug}`}
+                  className="text-base text-neutral-600 transition-colors hover:text-brand"
+                >
+                  {c.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Account</h3>
-          <Link href="/products" className="text-neutral-600 transition-colors hover:text-brand">
-            All products
-          </Link>
-          <Link href="/cart" className="text-neutral-600 transition-colors hover:text-brand">
-            Your cart
-          </Link>
-          {user ? (
-            <Link href="/orders" className="text-neutral-600 transition-colors hover:text-brand">
-              Your orders
-            </Link>
-          ) : (
-            <Link href="/login" className="text-neutral-600 transition-colors hover:text-brand">
-              Log in
-            </Link>
-          )}
+        <div className="w-full sm:w-auto">
+          <h2 className="mb-6 text-xl font-semibold">Account</h2>
+          <ul className="flex flex-col gap-3">
+            <li>
+              <Link href="/products" className="text-base text-neutral-600 transition-colors hover:text-brand">
+                All products
+              </Link>
+            </li>
+            <li>
+              <Link href="/cart" className="text-base text-neutral-600 transition-colors hover:text-brand">
+                Your cart
+              </Link>
+            </li>
+            <li>
+              <Link href="/wishlist" className="text-base text-neutral-600 transition-colors hover:text-brand">
+                Wishlist
+              </Link>
+            </li>
+            <li>
+              {user ? (
+                <Link href="/orders" className="text-base text-neutral-600 transition-colors hover:text-brand">
+                  Your orders
+                </Link>
+              ) : (
+                <Link href="/login" className="text-base text-neutral-600 transition-colors hover:text-brand">
+                  Log in
+                </Link>
+              )}
+            </li>
+          </ul>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Ordering</h3>
-          <p className="text-neutral-600">Cash on Delivery, nationwide.</p>
-          <p className="text-neutral-600">We call to confirm every order before it ships.</p>
+        <div className="w-full sm:w-auto">
+          <h2 className="mb-6 text-xl font-semibold">Ordering</h2>
+          <ul className="flex flex-col gap-3 text-base text-neutral-600">
+            <li>Cash on Delivery, nationwide.</li>
+            <li>We call to confirm every order before it ships.</li>
+          </ul>
         </div>
       </div>
 
-      <div className="border-t px-4 py-4 text-center text-xs text-neutral-500">
-        © {new Date().getFullYear()} Dinventa.
+      <div className="border-t border-neutral-200 bg-neutral-50 py-5">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 text-sm text-neutral-600">
+          © {new Date().getFullYear()} Dinventa. All rights reserved.
+        </div>
       </div>
     </footer>
   );

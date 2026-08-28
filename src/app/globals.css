@@ -1,15 +1,25 @@
 @import "tailwindcss";
 
 :root {
+  /* White page background, matching the reference — grey is only used
+     locally, on specific promo/hero panels (see the hero wrapper and
+     PromoBanner), not the whole body. */
   --background: #ffffff;
   --foreground: #1a1a1a;
 
-  /* BD tech-retail-style brand red (StarTech/Ryans/etc. genre convention —
-     a vivid red primary is the dominant pattern for BD electronics
-     ecommerce, distinct from this site's own hex/branding). */
-  --color-brand: #e2231a;
-  --color-brand-dark: #b81810;
-  --color-brand-light: #fdecea;
+  /* Exact values pulled from reference-project-images/global.css
+     (--color-blue / --color-blue-dark in the reference source), not just
+     eyeballed off the screenshot. Buttons/badges/accents all derive from
+     this one token set, so this single change re-colors the whole site. */
+  --color-brand: #3c50e0;
+  --color-brand-dark: #1c3fb7;
+  --color-brand-light: #eef2ff;
+
+  /* The reference's separate near-black "dark" token (--color-dark in its
+     global.css) — used for a handful of buttons (hero "Shop Now", "Grab the
+     deal") that are deliberately NOT brand blue. Distinct from --foreground,
+     which is body text color. */
+  --color-dark: #1c274c;
 }
 
 @theme inline {
@@ -18,12 +28,36 @@
   --color-brand: var(--color-brand);
   --color-brand-dark: var(--color-brand-dark);
   --color-brand-light: var(--color-brand-light);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-dark: var(--color-dark);
+  --font-sans: var(--font-dm-sans);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Tailwind v4 removed the old preflight default that made <button> show a
+   pointer cursor — it now inherits the browser's plain "default" arrow
+   cursor unless told otherwise. Restoring it globally here instead of
+   adding `cursor-pointer` to every button/summary individually across the
+   app (the actual cause of "buttons feel unclickable" reports). */
+button:not(:disabled),
+[type="submit"]:not(:disabled),
+[type="button"]:not(:disabled),
+summary {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* No link anywhere (nav, menus, footer) is underlined by default — pages
+   that want one opt back in explicitly with the `hover:underline` utility
+   (e.g. the login/register cross-links), rather than every nav Link needing
+   `no-underline` repeated on it individually. */
+a {
+  text-decoration: none;
 }

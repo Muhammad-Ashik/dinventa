@@ -1,47 +1,66 @@
-import Image from "next/image";
 import Link from "next/link";
 import { formatBDT } from "@/lib/money";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { WishlistButton } from "@/components/wishlist-button";
+import { ProductImageGallery } from "@/components/product-image-gallery";
+import { QuickViewTrigger } from "@/components/quick-view-trigger";
 
 export function ProductCard({
   product,
+  isWishlisted = false,
+  isLoggedIn = false,
 }: {
   product: {
     id: string;
     slug: string;
     name: string;
+    description: string;
     price: number;
+    compareAtPrice: number | null;
     imageUrl: string;
+    images: string[];
+    stock: number;
     brand: string;
     category: { name: string };
   };
+  isWishlisted?: boolean;
+  isLoggedIn?: boolean;
 }) {
+  const onSale = product.compareAtPrice !== null && product.compareAtPrice > product.price;
+  const discountPercent = onSale
+    ? Math.round(((product.compareAtPrice! - product.price) / product.compareAtPrice!) * 100)
+    : 0;
+  const gallery = product.images.length > 0 ? product.images : [product.imageUrl];
+
   return (
-    <div className="group flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white transition-shadow hover:shadow-md">
-      <Link href={`/products/${product.slug}`}>
-        <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
-            sizes="(max-width: 768px) 50vw, 20vw"
+    <div className="group flex flex-col">
+      <div className="relative mb-4 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-[#F6F7FB]">
+        <ProductImageGallery
+          images={gallery}
+          alt={product.name}
+          href={`/products/${product.slug}`}
+        />
+
+        <div className="absolute top-2 left-2 z-10">
+          <WishlistButton
+            productId={product.id}
+            initialWishlisted={isWishlisted}
+            isLoggedIn={isLoggedIn}
           />
         </div>
-      </Link>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <p className="flex items-center justify-between text-xs font-medium uppercase tracking-wide text-neutral-500">
-          <span>{product.category.name}</span>
-          <span className="text-neutral-400">{product.brand}</span>
-        </p>
-        <Link
-          href={`/products/${product.slug}`}
-          className="line-clamp-2 text-sm font-medium transition-colors hover:text-brand"
-        >
-          {product.name}
-        </Link>
-        <p className="mt-1 text-base font-bold text-brand">{formatBDT(product.price)}</p>
-        <div className="mt-auto pt-2">
+
+        {onSale && (
+          <span className="absolute top-2 right-2 z-10 rounded-full bg-brand px-2 py-1 text-xs font-medium text-white">
+            {discountPercent}% OFF
+          </span>
+        )}
+
+        <div className="absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center gap-2 pb-4 duration-200 ease-linear group-hover:translate-y-0">
+          <QuickViewTrigger
+            product={{ ...product, images: gallery }}
+            isWishlisted={isWishlisted}
+            isLoggedIn={isLoggedIn}
+          />
           <AddToCartButton
             productId={product.id}
             name={product.name}
@@ -50,6 +69,22 @@ export function ProductCard({
           />
         </div>
       </div>
+
+      <Link
+        href={`/products/${product.slug}`}
+        title={product.name}
+        className="mb-1.5 line-clamp-1 text-base font-semibold text-neutral-900 transition-colors hover:text-brand"
+      >
+        {product.name}
+      </Link>
+      <p className="flex items-center gap-2 text-base font-medium">
+        {onSale && (
+          <span className="text-neutral-400 line-through">
+            {formatBDT(product.compareAtPrice!)}
+          </span>
+        )}
+        <span className="text-neutral-900">{formatBDT(product.price)}</span>
+      </p>
     </div>
   );
 }

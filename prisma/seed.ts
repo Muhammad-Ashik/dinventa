@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { findProductImageUrl } from "../src/lib/product-image";
+import { findProductImages } from "../src/lib/product-image";
 
 const prisma = new PrismaClient();
 
@@ -21,6 +21,7 @@ const products = [
     description:
       "Compact 87-key mechanical keyboard with blue switches and red backlighting.",
     price: 3200,
+    compareAtPrice: 3800,
     stock: 25,
     brand: "Redragon",
     categorySlug: "electronics",
@@ -39,6 +40,7 @@ const products = [
     slug: "logitech-g102-gaming-mouse",
     description: "Lightweight gaming mouse with RGB lighting and 8000 DPI sensor.",
     price: 1450,
+    compareAtPrice: 1800,
     stock: 30,
     brand: "Logitech",
     categorySlug: "electronics",
@@ -57,6 +59,7 @@ const products = [
     slug: "24-inch-full-hd-monitor",
     description: "24-inch IPS monitor with 75Hz refresh rate, ideal for work and casual gaming.",
     price: 12500,
+    compareAtPrice: 15000,
     stock: 12,
     brand: "TechNova",
     categorySlug: "electronics",
@@ -75,6 +78,10 @@ const products = [
     slug: "bluetooth-portable-speaker",
     description: "Compact speaker with 10-hour battery life and deep bass.",
     price: 1990,
+    compareAtPrice: 2500,
+    // Real, fixed deadline computed at seed time (not a fake per-visit
+    // countdown) — drives the homepage's flash-sale countdown.
+    saleEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     stock: 20,
     brand: "TechNova",
     categorySlug: "electronics",
@@ -113,6 +120,7 @@ const products = [
     slug: "womens-denim-jacket",
     description: "Classic fit denim jacket, a wardrobe staple for every season.",
     price: 2200,
+    compareAtPrice: 2800,
     stock: 25,
     brand: "UrbanThread",
     categorySlug: "fashion",
@@ -122,6 +130,7 @@ const products = [
     slug: "unisex-canvas-sneakers",
     description: "Lightweight canvas sneakers that go with almost any outfit.",
     price: 1800,
+    compareAtPrice: 2200,
     stock: 32,
     brand: "UrbanThread",
     categorySlug: "fashion",
@@ -151,6 +160,7 @@ const products = [
     slug: "cotton-bedsheet-set-queen",
     description: "Queen-size cotton bedsheet with two pillow covers, machine washable.",
     price: 1800,
+    compareAtPrice: 2200,
     stock: 22,
     brand: "HomeCraft",
     categorySlug: "home-lifestyle",
@@ -171,6 +181,7 @@ const products = [
     slug: "electric-hair-trimmer",
     description: "Cordless rechargeable trimmer with multiple length guides.",
     price: 1250,
+    compareAtPrice: 1600,
     stock: 20,
     brand: "PureGlow",
     categorySlug: "beauty-personal-care",
@@ -191,6 +202,7 @@ const products = [
     slug: "non-slip-yoga-mat",
     description: "6mm thick yoga mat with carry strap, non-slip on both sides.",
     price: 900,
+    compareAtPrice: 1100,
     stock: 30,
     brand: "ActiveGear",
     categorySlug: "sports-outdoors",
@@ -200,6 +212,7 @@ const products = [
     slug: "adjustable-dumbbell-set-5kg",
     description: "Pair of 5kg adjustable dumbbells for home strength training.",
     price: 2500,
+    compareAtPrice: 3200,
     stock: 15,
     brand: "ActiveGear",
     categorySlug: "sports-outdoors",
@@ -220,6 +233,7 @@ const products = [
     slug: "bestselling-novel-box-set",
     description: "3-book box set of award-winning contemporary fiction.",
     price: 950,
+    compareAtPrice: 1200,
     stock: 18,
     brand: "PagePress",
     categorySlug: "books-stationery",
@@ -260,12 +274,13 @@ async function main() {
     const category = await prisma.category.findUniqueOrThrow({
       where: { slug: categorySlug },
     });
-    const imageUrl = await findProductImageUrl(product.name, product.slug);
+    const images = await findProductImages(product.name, product.slug, 4);
+    const imageUrl = images[0];
 
     await prisma.product.upsert({
       where: { slug: product.slug },
-      update: { ...product, imageUrl, categoryId: category.id },
-      create: { ...product, imageUrl, categoryId: category.id },
+      update: { ...product, imageUrl, images, categoryId: category.id },
+      create: { ...product, imageUrl, images, categoryId: category.id },
     });
   }
 

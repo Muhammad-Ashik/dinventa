@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { CheckIcon } from "@heroicons/react/20/solid";
 
 const VARIANT_CLASSES: Record<string, string> = {
   primary: "bg-green-600 text-white hover:bg-green-700 active:bg-green-800",
@@ -48,13 +49,21 @@ export function ActionButton({
     <button
       type="submit"
       disabled={disabled}
-      className={`rounded px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
+      className={`flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
         showSuccess
           ? "border border-green-300 bg-green-50 text-green-700"
           : VARIANT_CLASSES[variant]
       }`}
     >
-      {pending ? "Working…" : showSuccess ? `✓ ${successLabel}` : children}
+      {pending ? (
+        "Working…"
+      ) : showSuccess ? (
+        <>
+          <CheckIcon className="size-4" /> {successLabel}
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

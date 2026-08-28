@@ -10,6 +10,7 @@ export type ProductFilters = {
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
+  onSale?: boolean;
   sort?: ProductSort;
 };
 
@@ -35,6 +36,7 @@ export function parseProductFilters(
     minPrice: minPrice ? Number(minPrice) : undefined,
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
     inStock: first(searchParams.inStock) === "1" || undefined,
+    onSale: first(searchParams.onSale) === "1" || undefined,
     sort: sort && sort in SORT_TO_ORDER_BY ? (sort as ProductSort) : undefined,
   };
 }
@@ -45,6 +47,7 @@ export async function getProducts(filters: ProductFilters) {
     ...(filters.category ? { category: { slug: filters.category } } : {}),
     ...(filters.brand ? { brand: filters.brand } : {}),
     ...(filters.inStock ? { stock: { gt: 0 } } : {}),
+    ...(filters.onSale ? { compareAtPrice: { not: null } } : {}),
     ...(filters.minPrice !== undefined || filters.maxPrice !== undefined
       ? {
           price: {

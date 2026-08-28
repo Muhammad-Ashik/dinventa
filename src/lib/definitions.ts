@@ -72,15 +72,36 @@ export type ProfileFormState =
     }
   | undefined;
 
-export const ManualProductFormSchema = z.object({
-  name: z.string().trim().min(2, "Please enter a product name."),
-  description: z.string().trim().min(10, "Please enter a longer description."),
-  price: z.coerce.number().int().positive("Price must be a positive whole number of taka."),
-  stock: z.coerce.number().int().min(0, "Stock can't be negative."),
-  brand: z.string().trim().min(1, "Please enter a brand (or \"Generic\")."),
-  categoryId: z.string().trim().min(1, "Please choose a category."),
-  imageUrl: z.union([z.url("Please enter a valid image URL."), z.literal("")]).optional(),
-});
+export const ManualProductFormSchema = z
+  .object({
+    name: z.string().trim().min(2, "Please enter a product name."),
+    description: z.string().trim().min(10, "Please enter a longer description."),
+    price: z.coerce.number().int().positive("Price must be a positive whole number of taka."),
+    // "Was" price for a genuine discount — optional; empty string means no
+    // discount, not zero (an empty HTML number input submits as "").
+    compareAtPrice: z
+      .union([z.coerce.number().int().positive(), z.literal("")])
+      .optional(),
+    // Real end time for a genuine time-boxed sale — optional, only
+    // meaningful alongside compareAtPrice. Empty string means no deadline
+    // (a plain ongoing discount), not "expired". Comes from a
+    // datetime-local input, so validated as "is this a parseable date"
+    // rather than a strict ISO format.
+    saleEndsAt: z
+      .union([z.string().refine((v) => !Number.isNaN(Date.parse(v)), "Invalid date."), z.literal("")])
+      .optional(),
+    stock: z.coerce.number().int().min(0, "Stock can't be negative."),
+    brand: z.string().trim().min(1, "Please enter a brand (or \"Generic\")."),
+    categoryId: z.string().trim().min(1, "Please choose a category."),
+    imageUrl: z.union([z.url("Please enter a valid image URL."), z.literal("")]).optional(),
+  })
+  .refine(
+    (data) => !data.compareAtPrice || data.compareAtPrice > data.price,
+    {
+      message: "Original price must be higher than the sale price.",
+      path: ["compareAtPrice"],
+    }
+  );
 
 export type ManualProductFormState =
   | {
@@ -88,10 +109,27 @@ export type ManualProductFormState =
         name?: string[];
         description?: string[];
         price?: string[];
+        compareAtPrice?: string[];
+        saleEndsAt?: string[];
         stock?: string[];
         brand?: string[];
         categoryId?: string[];
         imageUrl?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const ReviewFormSchema = z.object({
+  rating: z.coerce.number().int().min(1, "Please choose a rating.").max(5),
+  comment: z.string().trim().max(1000).optional(),
+});
+
+export type ReviewFormState =
+  | {
+      errors?: {
+        rating?: string[];
+        comment?: string[];
       };
       message?: string;
     }

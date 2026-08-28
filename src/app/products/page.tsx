@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getBrands, getCategories, getProducts, parseProductFilters } from "@/lib/products";
+import { getOptionalSession } from "@/lib/dal";
+import { getWishlistedProductIds } from "@/lib/wishlist";
 import { ProductCard } from "@/components/product-card";
 import { DropdownFilter } from "@/components/dropdown-filter";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -25,11 +27,14 @@ export default async function ProductsPage({
   const resolvedSearchParams = await searchParams;
   const filters = parseProductFilters(resolvedSearchParams);
 
-  const [products, categories, brands] = await Promise.all([
+  const [products, categories, brands, session] = await Promise.all([
     getProducts(filters),
     getCategories(),
     getBrands(),
+    getOptionalSession(),
   ]);
+  const wishlisted = await getWishlistedProductIds(session?.userId);
+  const isLoggedIn = !!session;
 
   const activeCategory = categories.find((c) => c.slug === filters.category);
   const hasPriceFilter = filters.minPrice !== undefined || filters.maxPrice !== undefined;
@@ -47,6 +52,7 @@ export default async function ProductsPage({
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
       inStock: filters.inStock ? "1" : undefined,
+      onSale: filters.onSale ? "1" : undefined,
       sort: filters.sort,
       ...overrides,
     };
@@ -116,6 +122,7 @@ export default async function ProductsPage({
             {filters.category && <input type="hidden" name="category" value={filters.category} />}
             {filters.brand && <input type="hidden" name="brand" value={filters.brand} />}
             {filters.inStock && <input type="hidden" name="inStock" value="1" />}
+            {filters.onSale && <input type="hidden" name="onSale" value="1" />}
             {filters.sort && <input type="hidden" name="sort" value={filters.sort} />}
             <input
               name="minPrice"
@@ -154,6 +161,17 @@ export default async function ProductsPage({
           In stock only
         </Link>
 
+        <Link
+          href={hrefWith({ onSale: filters.onSale ? undefined : "1" })}
+          className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+            filters.onSale
+              ? "border-brand bg-brand-light text-brand"
+              : "border-neutral-300 text-neutral-700 hover:border-neutral-400"
+          }`}
+        >
+          On Sale
+        </Link>
+
         <div className="ml-auto">
           <DropdownFilter label={`Sort: ${currentSort.label}`}>
             {SORT_OPTIONS.map((opt) => (
@@ -176,7 +194,12 @@ export default async function ProductsPage({
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              isWishlisted={wishlisted.has(product.id)}
+              isLoggedIn={isLoggedIn}
+            />
           ))}
         </div>
       )}

@@ -2,6 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import {
+  ChevronDownIcon,
+  Cog6ToothIcon,
+  ClipboardDocumentListIcon,
+  UserCircleIcon,
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/20/solid";
 import { logout } from "@/lib/actions/auth";
 
 export function AccountMenu({
@@ -33,6 +40,8 @@ export function AccountMenu({
   }, []);
 
   const firstName = name.split(" ")[0];
+  const itemClass =
+    "flex items-center gap-2 px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand";
 
   return (
     <details ref={ref} className="group relative">
@@ -41,45 +50,26 @@ export function AccountMenu({
           {firstName.charAt(0).toUpperCase()}
         </span>
         <span className="hidden sm:inline">{firstName}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className="size-4 transition-transform group-open:rotate-180"
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
       </summary>
       <div className="absolute right-0 z-30 mt-2 w-48 rounded-lg border border-neutral-200 bg-white py-1.5 text-sm shadow-lg">
         {isAdmin && (
-          <Link
-            href="/admin"
-            className="block px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand"
-          >
+          <Link href="/admin" className={itemClass}>
+            <Cog6ToothIcon className="size-4" />
             Admin dashboard
           </Link>
         )}
-        <Link
-          href="/orders"
-          className="block px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand"
-        >
+        <Link href="/orders" className={itemClass}>
+          <ClipboardDocumentListIcon className="size-4" />
           Your orders
         </Link>
-        <Link
-          href="/account"
-          className="block px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand"
-        >
+        <Link href="/account" className={itemClass}>
+          <UserCircleIcon className="size-4" />
           Profile settings
         </Link>
         <form action={logout}>
-          <button
-            type="submit"
-            className="block w-full px-4 py-2 text-left text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand"
-          >
+          <button type="submit" className={`w-full text-left ${itemClass}`}>
+            <ArrowRightStartOnRectangleIcon className="size-4" />
             Log out
           </button>
         </form>

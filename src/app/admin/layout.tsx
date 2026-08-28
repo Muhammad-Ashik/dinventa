@@ -1,19 +1,12 @@
-import Link from "next/link";
 import { verifyAdmin } from "@/lib/dal";
+import { AdminNav } from "@/components/admin/admin-nav";
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   await verifyAdmin();
 
   return (
     <div className="flex flex-col gap-6">
-      <nav className="flex gap-4 border-b pb-3 text-sm">
-        <Link href="/admin" className="font-medium">
-          Dashboard
-        </Link>
-        <Link href="/admin/products/new" className="font-medium">
-          Add product
-        </Link>
-      </nav>
+      <AdminNav />
       {children}
     </div>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { prisma } from "@/lib/prisma";
 import { formatBDT } from "@/lib/money";
 import {
@@ -37,8 +38,11 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Link href="/admin" className="text-sm text-neutral-500 hover:text-brand">
-          ← Back to dashboard
+        <Link
+          href="/admin"
+          className="flex w-fit items-center gap-1 text-sm text-neutral-500 transition-colors hover:text-brand"
+        >
+          <ArrowLeftIcon className="size-3.5" /> Back to dashboard
         </Link>
         <div className="mt-1 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Order #{order.id.slice(-8)}</h1>
@@ -52,7 +56,7 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="flex flex-col gap-4 rounded border p-4">
+        <div className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4">
           <h2 className="font-semibold">Items</h2>
           {!itemsEditable && (
             <p className="text-xs text-neutral-500">
@@ -118,7 +122,7 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="rounded border p-4">
+          <div className="rounded-lg border border-neutral-200 p-4">
             <h2 className="mb-3 font-semibold">Shipping info</h2>
             <OrderShippingForm
               orderId={order.id}
@@ -128,7 +132,7 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
             />
           </div>
 
-          <div className="flex flex-col gap-2 rounded border p-4 text-sm">
+          <div className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4 text-sm">
             <h2 className="font-semibold">Notes & actions</h2>
             {order.confirmationNote && (
               <p className="text-neutral-600">Confirmation: {order.confirmationNote}</p>

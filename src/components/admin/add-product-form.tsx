@@ -78,6 +78,45 @@ export function AddProductForm({
         </div>
       </div>
 
+      <div className="flex flex-col gap-1">
+        <label htmlFor="compareAtPrice" className="font-medium">
+          Original price (BDT) <span className="font-normal text-neutral-500">(optional)</span>
+        </label>
+        <input
+          id="compareAtPrice"
+          name="compareAtPrice"
+          type="number"
+          min={1}
+          className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+        />
+        <p className="text-xs text-neutral-500">
+          Set this only for a genuine discount — must be higher than the price above. Shows a
+          strikethrough price and a discount badge.
+        </p>
+        {state?.errors?.compareAtPrice && (
+          <p className="text-red-600">{state.errors.compareAtPrice[0]}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="saleEndsAt" className="font-medium">
+          Sale ends at <span className="font-normal text-neutral-500">(optional)</span>
+        </label>
+        <input
+          id="saleEndsAt"
+          name="saleEndsAt"
+          type="datetime-local"
+          className="rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-brand"
+        />
+        <p className="text-xs text-neutral-500">
+          Only used if an original price is set above. Shows a real countdown on the homepage that
+          expires at this exact time — leave blank for an ongoing discount with no deadline.
+        </p>
+        {state?.errors?.saleEndsAt && (
+          <p className="text-red-600">{state.errors.saleEndsAt[0]}</p>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
           <label htmlFor="brand" className="font-medium">

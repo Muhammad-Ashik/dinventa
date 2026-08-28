@@ -7,7 +7,7 @@ import { verifyAdmin } from "@/lib/dal";
 import { generateStructured } from "@/lib/llm";
 import { getCategories } from "@/lib/products";
 import { slugify } from "@/lib/slugify";
-import { findProductImageUrl } from "@/lib/product-image";
+import { findProductImages } from "@/lib/product-image";
 import { getCallService } from "@/lib/calls";
 import { triggerCourierParcel } from "@/lib/confirm-order";
 import { getCourierService } from "@/lib/courier";
@@ -126,7 +126,7 @@ export async function findTrendingProducts(
     if (!slug || existingSlugs.has(slug)) continue;
     existingSlugs.add(slug);
 
-    const imageUrl = await findProductImageUrl(candidate.name, slug);
+    const images = await findProductImages(candidate.name, slug, 4);
 
     await prisma.pendingProduct.create({
       data: {
@@ -134,7 +134,8 @@ export async function findTrendingProducts(
         slug,
         description: candidate.description,
         price: Math.max(1, Math.round(candidate.price)),
-        imageUrl,
+        imageUrl: images[0],
+        images,
         brand: candidate.brand?.trim() || "Generic",
         categoryId: category.id,
       },
@@ -159,6 +160,7 @@ export async function approveProduct(id: string) {
         description: pending.description,
         price: pending.price,
         imageUrl: pending.imageUrl,
+        images: pending.images,
         brand: pending.brand,
         stock: DEFAULT_STOCK,
         categoryId: pending.categoryId,
@@ -364,6 +366,8 @@ export async function createProductManually(
     name: formData.get("name"),
     description: formData.get("description"),
     price: formData.get("price"),
+    compareAtPrice: formData.get("compareAtPrice"),
+    saleEndsAt: formData.get("saleEndsAt"),
     stock: formData.get("stock"),
     brand: formData.get("brand"),
     categoryId: formData.get("categoryId"),
@@ -389,7 +393,10 @@ export async function createProductManually(
     slug = `${baseSlug}-${suffix++}`;
   }
 
-  const imageUrl = data.imageUrl || (await findProductImageUrl(data.name, slug));
+  // A manually-supplied imageUrl is the only photo we have for this product
+  // — never padded with unrelated auto-fetched extras. Auto-fetch (a real
+  // multi-photo gallery) only kicks in when the admin left it blank.
+  const images = data.imageUrl ? [data.imageUrl] : await findProductImages(data.name, slug, 4);
 
   await prisma.product.create({
     data: {
@@ -397,9 +404,14 @@ export async function createProductManually(
       slug,
       description: data.description,
       price: data.price,
+      compareAtPrice: data.compareAtPrice || null,
+      // Only meaningful alongside an actual discount — ignored otherwise so
+      // a countdown can never appear on a product that isn't on sale.
+      saleEndsAt: data.compareAtPrice && data.saleEndsAt ? new Date(data.saleEndsAt) : null,
       stock: data.stock,
       brand: data.brand,
-      imageUrl,
+      imageUrl: images[0],
+      images,
       categoryId: category.id,
     },
   });

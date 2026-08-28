@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SparklesIcon, XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/20/solid";
 
 type ChatMessage = {
   role: "user" | "assistant" | "error";
@@ -56,18 +57,20 @@ export function AiSearchChat() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed right-5 bottom-5 z-50 flex flex-col items-end gap-3">
       {open && (
-        <div className="flex w-80 flex-col gap-3 rounded-lg border bg-white p-4 shadow-lg">
+        <div className="flex w-80 flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-4 shadow-xl">
           <div className="flex items-center justify-between">
-            <p className="font-medium">Find a product</p>
+            <p className="flex items-center gap-1.5 font-medium">
+              <SparklesIcon className="size-4 text-brand" /> Find a product
+            </p>
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="text-neutral-500"
+              className="rounded p-1 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700"
             >
-              ✕
+              <XMarkIcon className="size-4" />
             </button>
           </div>
 
@@ -101,14 +104,15 @@ export function AiSearchChat() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="What are you looking for?"
               disabled={pending}
-              className="flex-1 rounded border px-2 py-1.5 text-sm"
+              className="flex-1 rounded border border-neutral-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
             />
             <button
               type="submit"
               disabled={pending || !input.trim()}
-              className="rounded bg-brand px-3 py-1.5 text-sm text-white transition-colors hover:bg-brand-dark active:bg-brand-dark disabled:opacity-50"
+              aria-label="Send"
+              className="flex items-center justify-center rounded bg-brand px-3 py-1.5 text-sm text-white transition-colors hover:bg-brand-dark active:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Go
+              <PaperAirplaneIcon className="size-4" />
             </button>
           </form>
         </div>
@@ -117,8 +121,9 @@ export function AiSearchChat() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="rounded-full bg-brand px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-brand-dark active:bg-brand-dark"
+        className="flex items-center gap-1.5 rounded-full bg-brand px-4 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-brand-dark active:bg-brand-dark"
       >
+        {open ? <XMarkIcon className="size-4" /> : <SparklesIcon className="size-4" />}
         {open ? "Close" : "Ask AI"}
       </button>
     </div>

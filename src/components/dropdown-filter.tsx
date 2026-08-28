@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 // Native <details>/<summary> for the toggle mechanics (no JS needed for
 // open/close itself), plus a thin client-side layer just to close it on an
@@ -48,18 +49,7 @@ export function DropdownFilter({
         }`}
       >
         {label}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className="size-4 transition-transform group-open:rotate-180"
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
       </summary>
       <div
         className={`absolute left-0 z-30 mt-2 w-64 rounded-lg border border-neutral-200 bg-white p-4 text-sm shadow-lg ${panelClassName ?? ""}`}

@@ -44,24 +44,24 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Admin dashboard</h1>
+      <h1 className="text-2xl font-bold">Admin dashboard</h1>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-neutral-200 p-4">
           <p className="text-sm text-neutral-500">Products</p>
           <p className="text-2xl font-semibold">{productCount}</p>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-neutral-200 p-4">
           <p className="text-sm text-neutral-500">Orders</p>
           <p className="text-2xl font-semibold">{orderCount}</p>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-neutral-200 p-4">
           <p className="text-sm text-neutral-500">Awaiting confirmation</p>
           <p className="text-2xl font-semibold">{pendingOrders}</p>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 rounded border p-4">
+      <div className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Trending product suggestions</h2>
           <FindTrendingButton />
@@ -75,8 +75,8 @@ export default async function AdminDashboardPage() {
         ) : (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {pendingProducts.map((product) => (
-              <div key={product.id} className="flex flex-col gap-2 rounded border p-3">
-                <div className="relative aspect-square w-full overflow-hidden rounded bg-neutral-100">
+              <div key={product.id} className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-3">
+                <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-100">
                   <Image
                     src={product.imageUrl}
                     alt={product.name}
@@ -108,7 +108,7 @@ export default async function AdminDashboardPage() {
         )}
       </div>
 
-      <div className="flex flex-col gap-4 rounded border p-4">
+      <div className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4">
         <h2 className="font-semibold">Orders awaiting phone confirmation</h2>
 
         {pendingConfirmationOrders.length === 0 ? (
@@ -118,7 +118,7 @@ export default async function AdminDashboardPage() {
             {pendingConfirmationOrders.map((order) => (
               <div key={order.id} className="flex flex-col gap-2 py-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <Link href={`/admin/orders/${order.id}`} className="font-medium hover:text-brand">
+                  <Link href={`/admin/orders/${order.id}`} className="font-medium transition-colors hover:text-brand">
                     Order #{order.id.slice(-8)} — {order.user.name}
                   </Link>
                   <p className="font-semibold">{formatBDT(order.totalAmount)}</p>
@@ -154,7 +154,7 @@ export default async function AdminDashboardPage() {
         )}
       </div>
 
-      <div className="flex flex-col gap-4 rounded border p-4">
+      <div className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4">
         <h2 className="font-semibold">Confirmed orders awaiting courier pickup</h2>
 
         {awaitingCourierOrders.length === 0 ? (
@@ -164,7 +164,7 @@ export default async function AdminDashboardPage() {
             {awaitingCourierOrders.map((order) => (
               <div key={order.id} className="flex flex-col gap-2 py-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <Link href={`/admin/orders/${order.id}`} className="font-medium hover:text-brand">
+                  <Link href={`/admin/orders/${order.id}`} className="font-medium transition-colors hover:text-brand">
                     Order #{order.id.slice(-8)} — {order.user.name}
                   </Link>
                   <p className="font-semibold">{formatBDT(order.totalAmount)}</p>

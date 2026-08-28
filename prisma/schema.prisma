@@ -43,7 +43,9 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  orders Order[]
+  orders   Order[]
+  wishlist WishlistItem[]
+  reviews  Review[]
 }
 
 model Category {
@@ -56,44 +58,94 @@ model Category {
 }
 
 model Product {
-  id          String        @id @default(cuid())
-  name        String
-  slug        String        @unique
-  description String
-  price       Int
-  imageUrl    String
-  stock       Int           @default(0)
-  brand       String        @default("Generic")
-  status      ProductStatus @default(ACTIVE)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  name           String
+  slug           String        @unique
+  description    String
+  price          Int
+  // Real "was" price for a genuine promotion — nullable, only set when a
+  // product is actually discounted. Must be > price when present (enforced
+  // in the manual-add-product form); never auto-generated/faked.
+  compareAtPrice Int?
+  // Real end time for a genuine time-boxed promotion — nullable, only set
+  // when compareAtPrice is also set. Drives the homepage countdown; never a
+  // fake per-pageview deadline, always a real fixed timestamp.
+  saleEndsAt     DateTime?
+  imageUrl       String
+  // Additional real photos for the quick-view gallery (imageUrl doubles as
+  // the cover / first image). Empty for any product only ever given one
+  // photo — the gallery just shows the single cover then, never padded with
+  // repeats.
+  images         String[]      @default([])
+  stock          Int           @default(0)
+  brand          String        @default("Generic")
+  status         ProductStatus @default(ACTIVE)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  orderItems OrderItem[]
+  orderItems     OrderItem[]
+  wishlistedBy   WishlistItem[]
+  reviews        Review[]
 
   @@index([categoryId])
   @@index([brand])
 }
 
 model PendingProduct {
-  id          String               @id @default(cuid())
-  name        String
-  slug        String               @unique
-  description String
-  price       Int
-  imageUrl    String
-  brand       String               @default("Generic")
-  status      PendingProductStatus @default(PENDING)
-  createdAt   DateTime             @default(now())
-  reviewedAt  DateTime?
+  id             String               @id @default(cuid())
+  name           String
+  slug           String               @unique
+  description    String
+  price          Int
+  compareAtPrice Int?
+  imageUrl       String
+  images         String[]             @default([])
+  brand          String               @default("Generic")
+  status         PendingProductStatus @default(PENDING)
+  createdAt      DateTime             @default(now())
+  reviewedAt     DateTime?
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
   @@index([categoryId])
   @@index([status])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+// Only creatable for a product the reviewer actually received — see
+// canReviewProduct() in src/lib/reviews.ts, which checks for a shipped/
+// delivered order line before a review is allowed. Never seeded/fabricated.
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([productId])
 }
 
 model Order {
