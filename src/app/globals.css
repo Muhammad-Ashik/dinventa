@@ -29,12 +29,13 @@
   --color-brand-light: #eef2ff;
 
   /* Used for a handful of secondary buttons (hero "Shop Now", "Grab the
-     deal", "View All") that are deliberately NOT brand blue — a neutral
-     grey (the same value used in dark mode) instead of the reference's
-     original navy, so these read as clearly secondary/grey rather than a
-     second, slightly-different shade of blue next to --color-brand.
-     Distinct from --foreground, which is body text color. */
-  --color-dark: #4e5058;
+     deal", "View All") that are deliberately NOT brand blue — the
+     reference's original near-black navy. A neutral grey was tried here
+     briefly (matching dark mode's token) but read as a washed-out mistake
+     rather than a deliberate secondary color in light mode specifically;
+     dark mode keeps its own grey value below. Distinct from --foreground,
+     which is body text color. */
+  --color-dark: #1c274c;
 
   /* Single semantic surface token for every structural card/panel
      background (promo/hero wrappers, countdown, best-seller cards, AI

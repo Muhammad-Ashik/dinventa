@@ -12,8 +12,13 @@ export default function RegisterPage() {
     <div className="flex flex-col gap-4">
       <Breadcrumbs items={[{ label: "Sign up" }]} />
 
-      <div className="flex items-center justify-center rounded-2xl bg-surface px-4 py-10 sm:py-16">
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm sm:p-8 dark:bg-surface">
+      {/* Full-bleed grey page canvas (matching the /products page's own
+          -mt-8/-mb-8 technique), not just a rounded grey box floating on
+          the still-white default page background — the sign-up "window"
+          card is the only thing that stays white here. */}
+      <div className="relative left-1/2 -mt-8 -mb-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
+        <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-10 sm:py-16">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm sm:p-8 dark:bg-surface">
           <h1 className="text-xl font-bold sm:text-3xl">Create an Account</h1>
           <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
             Enter your detail below
@@ -118,6 +123,7 @@ export default function RegisterPage() {
               Sign in Now!
             </Link>
           </p>
+          </div>
         </div>
       </div>
     </div>

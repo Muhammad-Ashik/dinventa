@@ -16,6 +16,7 @@ import { FilterSection } from "@/components/filter-section";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { AiSearchBar } from "@/components/ai-search-bar";
 import { MobileFiltersDrawer } from "@/components/mobile-filters-drawer";
+import { FilterCheckbox } from "@/components/filter-checkbox";
 import { buildFilterHref, toggleFilterValue as toggle } from "@/lib/filter-href";
 
 // Shared by /products and /popular — same sidebar filters, sort, grid and
@@ -80,8 +81,6 @@ export async function ProductListingPage({
 
   const checkboxRowClass =
     "flex items-start gap-2 rounded px-1.5 py-1 text-sm text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300";
-  const checkboxClass =
-    "mt-0.5 size-4 shrink-0 rounded border-neutral-300 text-brand accent-brand focus:ring-brand dark:border-neutral-600";
   const countBadgeClass =
     "min-w-5 rounded-full bg-neutral-100 px-1.5 py-0.5 text-center text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400";
 
@@ -133,12 +132,7 @@ export async function ProductListingPage({
                 href={hrefWith({ category: toggle(filters.category, c.slug), page: 1 })}
                 className={checkboxRowClass}
               >
-                <input
-                  type="checkbox"
-                  readOnly
-                  checked={!!filters.category?.includes(c.slug)}
-                  className={checkboxClass}
-                />
+                <FilterCheckbox checked={!!filters.category?.includes(c.slug)} />
                 <span className="flex-1">{c.name}</span>
                 <span className={countBadgeClass}>{categoryCounts[c.slug] ?? 0}</span>
               </Link>
@@ -152,12 +146,7 @@ export async function ProductListingPage({
                 href={hrefWith({ brand: toggle(filters.brand, b), page: 1 })}
                 className={checkboxRowClass}
               >
-                <input
-                  type="checkbox"
-                  readOnly
-                  checked={!!filters.brand?.includes(b)}
-                  className={checkboxClass}
-                />
+                <FilterCheckbox checked={!!filters.brand?.includes(b)} />
                 <span className="flex-1">{b}</span>
                 <span className={countBadgeClass}>{brandCounts[b]}</span>
               </Link>
@@ -205,14 +194,14 @@ export async function ProductListingPage({
               href={hrefWith({ inStock: filters.inStock ? undefined : "1", page: 1 })}
               className={checkboxRowClass}
             >
-              <input type="checkbox" readOnly checked={!!filters.inStock} className={checkboxClass} />
+              <FilterCheckbox checked={!!filters.inStock} />
               In stock only
             </Link>
             <Link
               href={hrefWith({ onSale: filters.onSale ? undefined : "1", page: 1 })}
               className={checkboxRowClass}
             >
-              <input type="checkbox" readOnly checked={!!filters.onSale} className={checkboxClass} />
+              <FilterCheckbox checked={!!filters.onSale} />
               On sale
             </Link>
           </FilterSection>

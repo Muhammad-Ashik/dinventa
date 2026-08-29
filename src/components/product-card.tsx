@@ -77,21 +77,30 @@ export function ProductCard({
         </div>
       </div>
 
-      <Link
-        href={`/products/${product.slug}`}
-        title={product.name}
-        className="mb-2 line-clamp-1 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand dark:text-neutral-100"
-      >
-        {product.name}
-      </Link>
-      <p className="flex items-center gap-2 text-lg font-medium">
-        {onSale && (
-          <span className="text-neutral-400 line-through dark:text-neutral-500">
-            {formatBDT(product.compareAtPrice!)}
-          </span>
-        )}
-        <span className="text-neutral-900 dark:text-neutral-100">{formatBDT(product.price)}</span>
-      </p>
+      {/* flex-1 (not just a plain block) so this stretches to fill whatever
+          extra height the grid row's tallest sibling forces onto this card
+          (CSS Grid's default align-items: stretch already does that for the
+          card as a whole) — then mt-auto on the price pins it to the very
+          bottom of that space, so price/buttons line up across a row
+          regardless of how many lines a given title wraps to. Title is
+          never truncated (no line-clamp): cutting it off mid-word was the
+          actual problem, not the row-height side effect of not doing so. */}
+      <div className="flex flex-1 flex-col">
+        <Link
+          href={`/products/${product.slug}`}
+          className="mb-2 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand dark:text-neutral-100"
+        >
+          {product.name}
+        </Link>
+        <p className="mt-auto flex items-center gap-2 text-lg font-medium">
+          {onSale && (
+            <span className="text-neutral-400 line-through dark:text-neutral-500">
+              {formatBDT(product.compareAtPrice!)}
+            </span>
+          )}
+          <span className="text-neutral-900 dark:text-neutral-100">{formatBDT(product.price)}</span>
+        </p>
+      </div>
     </div>
   );
 }

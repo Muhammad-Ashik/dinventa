@@ -20,7 +20,7 @@ export function BestSellerCard({
       <Link
         href={`/products/${product.slug}`}
         title={product.name}
-        className="line-clamp-1 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand sm:text-xl dark:text-neutral-100"
+        className="text-lg font-semibold text-neutral-900 transition-colors hover:text-brand sm:text-xl dark:text-neutral-100"
       >
         {product.name}
       </Link>
