@@ -43,19 +43,19 @@ export function CountdownPromo({ product, endsAt }: { product: Product; endsAt: 
   ];
 
   return (
-    <div className="flex flex-col items-center justify-between gap-8 overflow-hidden rounded-2xl bg-band p-10 sm:flex-row">
+    <div className="flex flex-col items-center justify-between gap-5 overflow-hidden rounded-2xl bg-band p-6 sm:flex-row sm:gap-8 sm:p-10">
       <div>
-        <p className="text-base font-medium text-brand">Don&apos;t miss it!</p>
-        <h2 className="mt-1.5 max-w-sm text-3xl font-bold">{product.name}</h2>
-        <p className="mt-1.5 text-lg text-neutral-600 dark:text-neutral-400">{formatBDT(product.price)}</p>
+        <p className="text-sm font-medium text-brand sm:text-base">Don&apos;t miss it!</p>
+        <h2 className="mt-1.5 max-w-sm text-2xl font-bold sm:text-3xl">{product.name}</h2>
+        <p className="mt-1.5 text-base text-neutral-600 sm:text-lg dark:text-neutral-400">{formatBDT(product.price)}</p>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex gap-2 sm:gap-3">
           {units.map(([label, value]) => (
             <div
               key={label}
-              className="flex w-20 flex-col items-center rounded-lg border border-neutral-200 bg-white py-3 dark:border-neutral-700 dark:bg-surface"
+              className="flex w-14 flex-col items-center rounded-lg border border-neutral-200 bg-white py-2.5 sm:w-20 sm:py-3 dark:border-neutral-700 dark:bg-surface"
             >
-              <span className="text-2xl font-bold tabular-nums">{String(value).padStart(2, "0")}</span>
+              <span className="text-lg font-bold tabular-nums sm:text-2xl">{String(value).padStart(2, "0")}</span>
               <span className="text-xs text-neutral-500 dark:text-neutral-400">{label}</span>
             </div>
           ))}
@@ -63,7 +63,7 @@ export function CountdownPromo({ product, endsAt }: { product: Product; endsAt: 
 
         <Link
           href={`/products/${product.slug}`}
-          className="mt-6 inline-flex rounded-lg bg-brand px-7 py-3.5 text-base font-medium text-white transition-colors hover:bg-brand-dark"
+          className="mt-6 inline-flex rounded-lg bg-brand px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark sm:px-7 sm:py-3.5 sm:text-base"
         >
           Check it out
         </Link>

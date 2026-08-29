@@ -51,7 +51,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
     : 0;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6 sm:gap-8">
       <div className="flex flex-col gap-4">
         <Breadcrumbs
           items={[
@@ -60,7 +60,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
           ]}
         />
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:gap-10 md:grid-cols-2">
           <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-band">
             <ProductImageGallery
               images={product.images.length > 0 ? product.images : [product.imageUrl]}
@@ -87,7 +87,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
                 <span className="text-neutral-300 dark:text-neutral-600">•</span>
                 <span>{product.brand}</span>
               </p>
-              <h1 className="mt-1 text-3xl font-bold">{product.name}</h1>
+              <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{product.name}</h1>
               {ratingSummary.count > 0 && (
                 <div className="mt-2 flex items-center gap-2">
                   <StarRating rating={ratingSummary.average} />
@@ -100,7 +100,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
             </div>
 
             <div className="flex items-center gap-3">
-              <p className="text-3xl font-bold text-brand">{formatBDT(product.price)}</p>
+              <p className="text-2xl font-bold text-brand sm:text-3xl">{formatBDT(product.price)}</p>
               {onSale && (
                 <p className="text-lg text-neutral-400 line-through dark:text-neutral-500">
                   {formatBDT(product.compareAtPrice!)}
@@ -165,7 +165,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
       {relatedProducts.length > 0 && (
         <section>
           <h2 className="mb-3 text-lg font-bold">You might also like</h2>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-y-10">
             {relatedProducts.map((p) => (
               <ProductCard
                 key={p.id}

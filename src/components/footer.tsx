@@ -7,19 +7,19 @@ export async function Footer() {
 
   return (
     <footer className="overflow-hidden border-t border-neutral-200 dark:border-neutral-800">
-      <div className="mx-auto flex w-full max-w-7xl flex-wrap justify-between gap-12 px-4 pt-16 pb-12 xl:flex-nowrap xl:gap-20">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap justify-between gap-8 px-4 pt-10 pb-8 sm:gap-12 sm:pt-16 sm:pb-12 xl:flex-nowrap xl:gap-20">
         <div className="w-full max-w-[350px]">
-          <span className="text-2xl font-bold text-foreground">
+          <span className="text-xl font-bold text-foreground sm:text-2xl">
             Din<span className="text-brand">venta</span>
           </span>
-          <p className="mt-5 text-base text-neutral-600 dark:text-neutral-400">
+          <p className="mt-5 text-sm text-neutral-600 sm:text-base dark:text-neutral-400">
             AI-assisted shopping for Bangladesh — smart search, phone-confirmed orders, and
             doorstep delivery.
           </p>
         </div>
 
         <div className="w-full sm:w-auto">
-          <h2 className="mb-6 text-xl font-semibold text-foreground">Shop</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">Shop</h2>
           <ul className="flex flex-col gap-3">
             {categories.map((c) => (
               <li key={c.id}>
@@ -35,7 +35,7 @@ export async function Footer() {
         </div>
 
         <div className="w-full sm:w-auto">
-          <h2 className="mb-6 text-xl font-semibold text-foreground">Account</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">Account</h2>
           <ul className="flex flex-col gap-3">
             <li>
               <Link href="/products" className="text-base text-neutral-600 transition-colors hover:text-brand dark:text-neutral-400">
@@ -67,7 +67,7 @@ export async function Footer() {
         </div>
 
         <div className="w-full sm:w-auto">
-          <h2 className="mb-6 text-xl font-semibold text-foreground">Ordering</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">Ordering</h2>
           <ul className="flex flex-col gap-3 text-base text-neutral-600 dark:text-neutral-400">
             <li>Cash on Delivery, nationwide.</li>
             <li>We call to confirm every order before it ships.</li>

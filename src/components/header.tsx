@@ -19,7 +19,7 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 bg-surface shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-6 px-4 py-4">
-        <Link href="/" className="shrink-0 text-2xl font-bold tracking-tight text-foreground">
+        <Link href="/" className="shrink-0 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
           Din<span className="text-brand">venta</span>
         </Link>
 

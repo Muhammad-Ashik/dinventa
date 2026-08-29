@@ -43,7 +43,7 @@ export function ProductDetailTabs({
         ))}
       </div>
 
-      <div className="pt-8">
+      <div className="pt-6 sm:pt-8">
         {active === "Description" && (
           <p className="max-w-3xl leading-relaxed whitespace-pre-line text-neutral-700 dark:text-neutral-300">
             {description}
@@ -64,7 +64,7 @@ export function ProductDetailTabs({
         )}
 
         {active === "Reviews" && (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2">
             <ReviewList reviews={reviews} />
             <div>{canReview && <ReviewForm productSlug={productSlug} productId={productId} />}</div>
           </div>

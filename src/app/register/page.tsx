@@ -12,9 +12,9 @@ export default function RegisterPage() {
     <div className="flex flex-col gap-4">
       <Breadcrumbs items={[{ label: "Sign up" }]} />
 
-      <div className="flex items-center justify-center rounded-2xl bg-surface px-4 py-16">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-surface">
-          <h1 className="text-2xl font-bold sm:text-3xl">Create an Account</h1>
+      <div className="flex items-center justify-center rounded-2xl bg-surface px-4 py-10 sm:py-16">
+        <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm sm:p-8 dark:bg-surface">
+          <h1 className="text-xl font-bold sm:text-3xl">Create an Account</h1>
           <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
             Enter your detail below
           </p>

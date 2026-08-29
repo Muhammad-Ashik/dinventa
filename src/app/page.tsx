@@ -67,14 +67,18 @@ export default async function HomePage() {
   });
 
   return (
-    <div className="flex flex-col gap-14">
+    <div className="flex flex-col gap-8 sm:gap-14">
       <div className="relative left-1/2 -mt-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="min-w-0 lg:basis-[70%]">
               <HeroSlider deals={heroDeals} />
             </div>
-            <div className="flex min-w-0 lg:basis-[30%]">
+            {/* Hidden on mobile — the global AiSearchBubble (mounted in
+                layout.tsx) replaces this inline panel there, since a
+                full-height "Ask AI" card pushed below a phone's hero slider
+                just adds scrolling before New Arrivals is even visible. */}
+            <div className="hidden min-w-0 lg:flex lg:basis-[30%]">
               <AiSearchHero />
             </div>
           </div>
@@ -83,12 +87,12 @@ export default async function HomePage() {
 
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-2xl font-bold">
+          <h2 className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
             <FireIcon className="size-6 text-brand" /> New Arrivals
           </h2>
           <ViewAllButton href="/products?sort=newest" />
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-10 lg:grid-cols-4">
           {newArrivals.slice(0, 8).map((product) => (
             <ProductCard key={product.id} product={product} {...cardProps(product)} />
           ))}
@@ -109,19 +113,19 @@ export default async function HomePage() {
 
       {bestSellers.length > 0 && (
         <section className="flex flex-col items-center">
-          <h2 className="flex items-center gap-2 text-3xl font-bold">
+          <h2 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
             <StarIcon className="size-6 text-brand" /> Best Selling Products
           </h2>
-          <p className="mt-2 max-w-md text-center text-lg text-neutral-500 dark:text-neutral-400">
+          <p className="mt-2 max-w-md text-center text-base text-neutral-500 sm:text-lg dark:text-neutral-400">
             The products our customers actually order the most — ranked by real order counts,
             not a guess.
           </p>
-          <div className="mt-8 grid w-full grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid w-full grid-cols-1 gap-6 sm:mt-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
             {bestSellers.map((product) => (
               <BestSellerCard key={product.id} product={product} />
             ))}
           </div>
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <ViewAllButton href="/products" />
           </div>
         </section>
@@ -139,10 +143,10 @@ export default async function HomePage() {
       {categorySections.map(({ category, products }) => (
         <section key={category.id}>
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">{category.name}</h2>
+            <h2 className="text-xl font-bold sm:text-2xl">{category.name}</h2>
             <ViewAllButton href={`/products?category=${category.slug}`} />
           </div>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-y-10">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} {...cardProps(product)} />
             ))}

@@ -16,15 +16,15 @@ export function BestSellerCard({
   const onSale = product.compareAtPrice !== null && product.compareAtPrice > product.price;
 
   return (
-    <div className="min-h-[360px] rounded-xl bg-band p-7 text-center">
+    <div className="min-h-[360px] rounded-xl bg-band p-5 text-center sm:p-7">
       <Link
         href={`/products/${product.slug}`}
         title={product.name}
-        className="line-clamp-1 text-xl font-semibold text-neutral-900 transition-colors hover:text-brand dark:text-neutral-100"
+        className="line-clamp-1 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand sm:text-xl dark:text-neutral-100"
       >
         {product.name}
       </Link>
-      <p className="mt-2 flex items-center justify-center gap-2 text-lg font-medium">
+      <p className="mt-2 flex items-center justify-center gap-2 text-base font-medium sm:text-lg">
         <span className="text-neutral-900 dark:text-neutral-100">{formatBDT(product.price)}</span>
         {onSale && (
           <span className="text-neutral-400 line-through dark:text-neutral-500">

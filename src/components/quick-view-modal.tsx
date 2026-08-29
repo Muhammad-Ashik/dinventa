@@ -158,14 +158,14 @@ export function QuickViewModal({
             )}
             <Link
               href={`/products/${product.slug}`}
-              className="mt-3 text-xl font-bold hover:text-brand"
+              className="mt-3 text-lg font-bold hover:text-brand sm:text-xl"
             >
               {product.name}
             </Link>
             <p className="mt-3 line-clamp-4 text-sm text-neutral-600 dark:text-neutral-400">{product.description}</p>
 
             <div className="mt-4 flex items-center gap-2">
-              <span className="text-2xl font-bold text-brand">{formatBDT(product.price)}</span>
+              <span className="text-xl font-bold text-brand sm:text-2xl">{formatBDT(product.price)}</span>
               {onSale && (
                 <span className="text-base text-neutral-400 line-through dark:text-neutral-500">
                   {formatBDT(product.compareAtPrice!)}

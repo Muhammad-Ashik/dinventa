@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 import { PageTransition } from "@/components/page-transition";
+import { AiSearchBubble } from "@/components/ai-search-bubble";
 
 // Matches the reference's typography exactly (--font-body: "DM Sans" in its
 // global.css) instead of the default Geist that next's starter ships with.
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </main>
           <Footer />
           <ScrollToTopButton />
+          <AiSearchBubble />
         </CartProvider>
       </body>
     </html>

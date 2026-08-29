@@ -13,8 +13,8 @@ export function AiSearchHero() {
   const { input, setInput, pending, error, submit } = useAiSearch();
 
   return (
-    <div className="flex h-[460px] flex-1 flex-col items-center justify-center overflow-hidden rounded-2xl bg-surface px-7 py-6 text-center">
-      <h2 className="text-xl font-bold">Tell our AI what you&apos;re looking for</h2>
+    <div className="flex h-[460px] flex-1 flex-col items-center justify-center overflow-hidden rounded-2xl bg-surface px-4 py-6 text-center sm:px-7">
+      <h2 className="text-lg font-bold sm:text-xl">Tell our AI what you&apos;re looking for</h2>
       <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">
         Describe it in your own words and we&apos;ll take you straight to matching products.
       </p>
@@ -43,7 +43,7 @@ export function AiSearchHero() {
         <button
           type="submit"
           disabled={pending || !input.trim()}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand px-6 py-2.5 text-base font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:text-base"
         >
           <SparklesIcon className="size-4" />
           {pending ? "Thinking…" : "Ask AI"}

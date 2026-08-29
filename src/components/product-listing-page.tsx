@@ -15,11 +15,8 @@ import { DropdownFilter } from "@/components/dropdown-filter";
 import { FilterSection } from "@/components/filter-section";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { AiSearchBar } from "@/components/ai-search-bar";
-
-function toggle(list: string[] | undefined, value: string): string[] | undefined {
-  const next = list?.includes(value) ? list.filter((v) => v !== value) : [...(list ?? []), value];
-  return next.length > 0 ? next : undefined;
-}
+import { MobileFiltersDrawer } from "@/components/mobile-filters-drawer";
+import { buildFilterHref, toggleFilterValue as toggle } from "@/lib/filter-href";
 
 // Shared by /products and /popular — same sidebar filters, sort, grid and
 // pagination on both; the only differences are the base path, the default
@@ -78,30 +75,7 @@ export async function ProductListingPage({
   // params (?category=a&category=b), matching what parseProductFilters
   // reads back.
   function hrefWith(overrides: Record<string, string | number | string[] | undefined>) {
-    const params = new URLSearchParams();
-    const merged: Record<string, string | number | string[] | undefined> = {
-      q: filters.q,
-      category: filters.category,
-      brand: filters.brand,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
-      inStock: filters.inStock ? "1" : undefined,
-      onSale: filters.onSale ? "1" : undefined,
-      sort: filters.sort === defaultSort ? undefined : filters.sort,
-      page,
-      ...overrides,
-    };
-    for (const [key, value] of Object.entries(merged)) {
-      if (value === undefined || value === "" || (key === "page" && value === 1)) continue;
-      if (Array.isArray(value)) {
-        if (value.length === 0) continue;
-        for (const v of value) params.append(key, v);
-      } else {
-        params.set(key, String(value));
-      }
-    }
-    const qs = params.toString();
-    return qs ? `${basePath}?${qs}` : basePath;
+    return buildFilterHref(basePath, filters, defaultSort, page, overrides);
   }
 
   const checkboxRowClass =
@@ -129,15 +103,15 @@ export async function ProductListingPage({
     // the -mt-8/-mb-8 cancel the root layout's <main> padding so this reaches
     // the header and footer edge-to-edge, then the inner wrapper restores it.
     <div className="relative left-1/2 -mt-8 -mb-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="flex flex-col gap-4">
           <Breadcrumbs
             items={activeCategory ? [{ label: activeCategory.name }] : [{ label: baseLabel }]}
           />
-          <h1 className="text-2xl font-bold">{activeCategory ? activeCategory.name : baseLabel}</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">{activeCategory ? activeCategory.name : baseLabel}</h1>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr]">
-        <aside className="flex flex-col gap-5 rounded-xl bg-white p-5 dark:bg-surface">
+      <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-[240px_1fr]">
+        <aside className="hidden flex-col gap-5 rounded-xl bg-white p-5 lg:flex dark:bg-surface">
           <AiSearchBar />
 
           <div className="flex items-center justify-between">
@@ -246,17 +220,35 @@ export async function ProductListingPage({
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 dark:bg-surface">
-            <DropdownFilter label={currentSort.label}>
-              {sortOptions.map((opt) => (
-                <Link
-                  key={opt.value}
-                  href={hrefWith({ sort: opt.value, page: 1 })}
-                  className={sortLinkClass(filters.sort === opt.value)}
-                >
-                  {opt.label}
-                </Link>
-              ))}
-            </DropdownFilter>
+            <div className="hidden lg:block">
+              <DropdownFilter label={currentSort.label}>
+                {sortOptions.map((opt) => (
+                  <Link
+                    key={opt.value}
+                    href={hrefWith({ sort: opt.value, page: 1 })}
+                    className={sortLinkClass(filters.sort === opt.value)}
+                  >
+                    {opt.label}
+                  </Link>
+                ))}
+              </DropdownFilter>
+            </div>
+
+            <div className="lg:hidden">
+              <MobileFiltersDrawer
+                basePath={basePath}
+                filters={filters}
+                defaultSort={defaultSort}
+                page={page}
+                categories={categories}
+                categoryCounts={categoryCounts}
+                brands={brands}
+                brandCounts={brandCounts}
+                sortOptions={sortOptions}
+                currentSortLabel={currentSort.label}
+                hasAnyFilter={hasAnyFilter}
+              />
+            </div>
 
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
               Showing {products.length} of {total} Products
@@ -266,7 +258,7 @@ export async function ProductListingPage({
           {products.length === 0 ? (
             <p className="text-neutral-600 dark:text-neutral-400">No products match your filters.</p>
           ) : (
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-10">
               {products.map((product) => (
                 <ProductCard
                   key={product.id}

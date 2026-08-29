@@ -16,28 +16,28 @@ export function PromoBanner({
 }) {
   return (
     <div
-      className={`flex items-center justify-between gap-6 overflow-hidden rounded-2xl bg-band text-neutral-900 dark:text-neutral-100 ${compact ? "p-7" : "flex-col p-10 sm:flex-row"}`}
+      className={`flex items-center justify-between gap-4 overflow-hidden rounded-2xl bg-band text-neutral-900 sm:gap-6 dark:text-neutral-100 ${compact ? "p-5 sm:p-7" : "flex-col p-6 sm:flex-row sm:p-10"}`}
     >
       <div>
-        <p className={`font-medium text-neutral-500 dark:text-neutral-400 ${compact ? "text-base" : "text-lg"}`}>
+        <p className={`font-medium text-neutral-500 dark:text-neutral-400 ${compact ? "text-sm sm:text-base" : "text-base sm:text-lg"}`}>
           {product.category.name}
         </p>
-        <h2 className={`mt-2 font-bold ${compact ? "text-2xl" : "text-3xl sm:text-4xl"}`}>
+        <h2 className={`mt-2 font-bold ${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-4xl"}`}>
           {product.name}
         </h2>
-        <p className={`mt-1.5 font-medium text-brand ${compact ? "text-lg" : "mt-3 text-xl"}`}>
+        <p className={`mt-1.5 font-medium text-brand ${compact ? "text-base sm:text-lg" : "text-lg sm:mt-3 sm:text-xl"}`}>
           Up to {discountPercent}% off
         </p>
         <Link
           href={`/products/${product.slug}`}
-          className={`mt-5 inline-flex rounded-lg text-base font-medium text-white transition-colors ${
-            compact ? "bg-dark px-6 py-3 hover:bg-brand-dark" : "bg-brand px-7 py-3.5 hover:bg-brand-dark"
+          className={`mt-5 inline-flex rounded-lg text-sm font-medium text-white transition-colors sm:text-base ${
+            compact ? "bg-dark px-4 py-2.5 hover:bg-brand-dark sm:px-6 sm:py-3" : "bg-brand px-5 py-3 hover:bg-brand-dark sm:px-7 sm:py-3.5"
           }`}
         >
           {compact ? "Grab the deal" : "Shop Now"}
         </Link>
       </div>
-      <div className={`relative shrink-0 ${compact ? "size-28" : "size-52 sm:size-64"}`}>
+      <div className={`relative shrink-0 ${compact ? "size-20 sm:size-28" : "size-36 sm:size-52 lg:size-64"}`}>
         <Image
           src={product.imageUrl}
           alt={product.name}
