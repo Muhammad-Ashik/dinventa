@@ -88,17 +88,17 @@ export function ProductCard({
       <div className="flex flex-1 flex-col">
         <Link
           href={`/products/${product.slug}`}
-          className="mb-2 text-lg font-semibold text-neutral-900 transition-colors hover:text-brand dark:text-neutral-100"
+          className="mb-1.5 text-sm font-semibold text-neutral-900 transition-colors hover:text-brand sm:mb-2 sm:text-lg dark:text-neutral-100"
         >
           {product.name}
         </Link>
-        <p className="mt-auto flex items-center gap-2 text-lg font-medium">
+        <p className="mt-auto flex items-center gap-2 text-sm font-semibold sm:text-lg sm:font-medium">
           {onSale && (
-            <span className="text-neutral-400 line-through dark:text-neutral-500">
+            <span className="text-neutral-400 font-normal line-through dark:text-neutral-500">
               {formatBDT(product.compareAtPrice!)}
             </span>
           )}
-          <span className="text-neutral-900 dark:text-neutral-100">{formatBDT(product.price)}</span>
+          <span className="text-brand">{formatBDT(product.price)}</span>
         </p>
       </div>
     </div>

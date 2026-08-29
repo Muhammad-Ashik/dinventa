@@ -5,6 +5,7 @@ import { getCategories } from "@/lib/products";
 import { getWishlistCount } from "@/lib/wishlist";
 import { CartCountBadge } from "@/components/cart-count-badge";
 import { AccountMenu } from "@/components/account-menu";
+import { MobileAccountMenu } from "@/components/mobile-account-menu";
 import { NavCategoriesDropdown } from "@/components/nav-categories-dropdown";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileMenu } from "@/components/mobile-menu";
@@ -95,11 +96,7 @@ export async function Header() {
 
         <div className="ml-auto flex items-center gap-4 md:hidden">
           {user ? (
-            <Link href="/account" aria-label="Account">
-              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
-                {user.name.charAt(0).toUpperCase()}
-              </span>
-            </Link>
+            <MobileAccountMenu name={user.name} isAdmin={user.role === "ADMIN"} />
           ) : (
             <Link
               href="/login"
@@ -112,11 +109,7 @@ export async function Header() {
 
           <ThemeToggle />
 
-          <MobileMenu
-            user={user ? { name: user.name, role: user.role } : null}
-            categories={categories}
-            wishlistCount={wishlistCount}
-          />
+          <MobileMenu categories={categories} wishlistCount={wishlistCount} />
         </div>
       </div>
     </header>

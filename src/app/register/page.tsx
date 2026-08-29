@@ -9,15 +9,16 @@ export default function RegisterPage() {
   const [state, action, pending] = useActionState(signup, undefined);
 
   return (
-    <div className="flex flex-col gap-4">
-      <Breadcrumbs items={[{ label: "Sign up" }]} />
-
-      {/* Full-bleed grey page canvas (matching the /products page's own
-          -mt-8/-mb-8 technique), not just a rounded grey box floating on
-          the still-white default page background — the sign-up "window"
-          card is the only thing that stays white here. */}
-      <div className="relative left-1/2 -mt-8 -mb-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-10 sm:py-16">
+    // Full-bleed grey page canvas (matching the /products page's own
+    // -mt-8/-mb-8 technique), not just a rounded grey box floating on the
+    // still-white default page background — the sign-up "window" card is
+    // the only thing that stays white here. Breadcrumbs live inside this
+    // band (not before it) so the -mt-8 cancels the layout's top padding
+    // right up to the header, instead of leaving a white gap above it.
+    <div className="relative left-1/2 -mt-8 -mb-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6 sm:py-8">
+        <Breadcrumbs items={[{ label: "Sign up" }]} />
+        <div className="flex flex-1 items-center justify-center py-4 sm:py-8">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm sm:p-8 dark:bg-surface">
           <h1 className="text-xl font-bold sm:text-3xl">Create an Account</h1>
           <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">

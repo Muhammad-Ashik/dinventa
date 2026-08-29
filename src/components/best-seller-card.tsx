@@ -25,7 +25,7 @@ export function BestSellerCard({
         {product.name}
       </Link>
       <p className="mt-2 flex items-center justify-center gap-2 text-base font-medium sm:text-lg">
-        <span className="text-neutral-900 dark:text-neutral-100">{formatBDT(product.price)}</span>
+        <span className="text-brand">{formatBDT(product.price)}</span>
         {onSale && (
           <span className="text-neutral-400 line-through dark:text-neutral-500">
             {formatBDT(product.compareAtPrice!)}

@@ -31,7 +31,7 @@ export function PromoBanner({
         <Link
           href={`/products/${product.slug}`}
           className={`mt-5 inline-flex rounded-lg text-sm font-medium text-white transition-colors sm:text-base ${
-            compact ? "bg-dark px-4 py-2.5 hover:bg-brand-dark sm:px-6 sm:py-3" : "bg-brand px-5 py-3 hover:bg-brand-dark sm:px-7 sm:py-3.5"
+            compact ? "bg-dark px-4 py-2.5 hover:bg-brand-dark sm:px-6 sm:py-3 dark:bg-brand" : "bg-brand px-5 py-3 hover:bg-brand-dark sm:px-7 sm:py-3.5"
           }`}
         >
           {compact ? "Grab the deal" : "Shop Now"}

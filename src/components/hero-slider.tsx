@@ -43,7 +43,7 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
 
   if (!hasDeals) {
     return (
-      <div className="flex min-h-[460px] flex-col items-start justify-center rounded-2xl bg-surface p-6 sm:p-12">
+      <div className="flex min-h-[460px] flex-col items-start justify-center rounded-2xl bg-surface p-6 sm:p-12 dark:bg-background">
         <h1 className="text-2xl font-bold sm:text-4xl">Smart shopping, made for Bangladesh</h1>
         <p className="mt-3 max-w-md text-sm text-neutral-600 sm:text-lg dark:text-neutral-400">
           Tell our AI what you&apos;re looking for and we&apos;ll find it instantly.
@@ -59,7 +59,7 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
   }
 
   return (
-    <div className="relative h-[460px] overflow-hidden rounded-2xl bg-surface">
+    <div className="relative h-[460px] overflow-hidden rounded-2xl bg-surface dark:bg-background">
       <div
         className={`flex h-full cursor-grab touch-pan-y select-none active:cursor-grabbing ${
           skipTransition ? "" : "transition-transform duration-500 ease-out"
@@ -97,7 +97,7 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
                 </div>
                 <Link
                   href={`/products/${p.slug}`}
-                  className="mt-6 inline-block rounded-lg bg-dark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark sm:px-7 sm:py-3.5 sm:text-base"
+                  className="mt-6 inline-block rounded-lg bg-dark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark sm:px-7 sm:py-3.5 sm:text-base dark:bg-brand"
                 >
                   Shop Now
                 </Link>

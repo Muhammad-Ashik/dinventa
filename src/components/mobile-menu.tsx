@@ -9,28 +9,22 @@ import {
   MagnifyingGlassIcon,
   HeartIcon,
   ShoppingCartIcon,
-  ClipboardDocumentListIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-  ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { logout } from "@/lib/actions/auth";
 import { CartCountBadge } from "@/components/cart-count-badge";
 
 const itemClass =
   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800";
 
 // Everything that doesn't fit in the collapsed mobile header (nav links,
-// categories, account actions, search/wishlist/cart, theme toggle) lives
-// here instead — a single hamburger-triggered drawer rather than the old
-// partial "categories only" scroll row, so mobile actually has parity with
-// desktop instead of a cut-down subset.
+// categories, search/wishlist/cart) lives here instead — a single
+// hamburger-triggered drawer rather than the old partial "categories only"
+// scroll row, so mobile actually has parity with desktop instead of a
+// cut-down subset. Account actions live in MobileAccountMenu (the header's
+// own avatar dropdown) instead, not duplicated here.
 export function MobileMenu({
-  user,
   categories,
   wishlistCount,
 }: {
-  user: { name: string; role: string } | null;
   categories: { id: string; name: string; slug: string }[];
   wishlistCount: number;
 }) {
@@ -99,30 +93,6 @@ export function MobileMenu({
                   </span>
                 </Link>
               </div>
-
-              {user && (
-                <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                  <p className="px-3 py-1 text-sm text-neutral-500 dark:text-neutral-400">
-                    Welcome back, {user.name.split(" ")[0]}
-                  </p>
-                  {user.role === "ADMIN" && (
-                    <Link href="/admin" className={itemClass} onClick={close}>
-                      <Cog6ToothIcon className="size-5" /> Admin dashboard
-                    </Link>
-                  )}
-                  <Link href="/orders" className={itemClass} onClick={close}>
-                    <ClipboardDocumentListIcon className="size-5" /> Your orders
-                  </Link>
-                  <Link href="/account" className={itemClass} onClick={close}>
-                    <UserCircleIcon className="size-5" /> Profile settings
-                  </Link>
-                  <form action={logout}>
-                    <button type="submit" className={`w-full text-left ${itemClass}`}>
-                      <ArrowRightStartOnRectangleIcon className="size-5" /> Log out
-                    </button>
-                  </form>
-                </div>
-              )}
 
               <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                 <Link href="/popular" className={itemClass} onClick={close}>
