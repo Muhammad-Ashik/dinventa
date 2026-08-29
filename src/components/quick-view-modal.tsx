@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { formatBDT } from "@/lib/money";
-import { toggleWishlist } from "@/lib/actions/wishlist";
 import { AddToCartWithQuantity } from "@/components/add-to-cart-with-quantity";
+import { WishlistButton } from "@/components/wishlist-button";
 import { useDragSlider, wrapSlides } from "@/lib/use-drag-slider";
 
 type Product = {
@@ -35,11 +32,8 @@ export function QuickViewModal({
   isLoggedIn: boolean;
   onClose: () => void;
 }) {
-  const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
-  const [wishlisted, setWishlisted] = useState(isWishlisted);
   const [closing, setClosing] = useState(false);
-  const [, startTransition] = useTransition();
   const { dragOffset, skipTransition, position, dragHandlers } = useDragSlider(
     product.images.length,
     activeImage,
@@ -72,17 +66,6 @@ export function QuickViewModal({
   const discountPercent = onSale
     ? Math.round(((product.compareAtPrice! - product.price) / product.compareAtPrice!) * 100)
     : 0;
-
-  function handleWishlistClick() {
-    if (!isLoggedIn) {
-      router.push("/login");
-      return;
-    }
-    setWishlisted((w) => !w);
-    startTransition(async () => {
-      await toggleWishlist(product.id);
-    });
-  }
 
   return createPortal(
     <div
@@ -181,23 +164,20 @@ export function QuickViewModal({
                   price={product.price}
                   imageUrl={product.images[0]}
                   maxQuantity={product.stock}
+                  isWishlisted={isWishlisted}
+                  isLoggedIn={isLoggedIn}
                 />
               ) : (
-                <p className="text-sm font-medium text-red-600">Out of stock</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm font-medium text-red-600">Out of stock</p>
+                  <WishlistButton
+                    productId={product.id}
+                    initialWishlisted={isWishlisted}
+                    isLoggedIn={isLoggedIn}
+                    className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 transition-colors hover:border-brand hover:text-brand dark:border-neutral-700 dark:text-neutral-300"
+                  />
+                </div>
               )}
-
-              <button
-                type="button"
-                onClick={handleWishlistClick}
-                className="flex items-center justify-center gap-1.5 rounded bg-dark px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-              >
-                {wishlisted ? (
-                  <HeartSolid className="size-4" />
-                ) : (
-                  <HeartOutline className="size-4" />
-                )}
-                {wishlisted ? "Added to wishlist" : "Add to wishlist"}
-              </button>
             </div>
           </div>
         </div>
