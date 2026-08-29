@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { SparklesIcon } from "@heroicons/react/24/solid";
+import { useAiSearch } from "@/lib/use-ai-search";
 
 const EXAMPLE_QUERIES = [
   "Gaming mouse under 1500 taka",
@@ -11,36 +10,10 @@ const EXAMPLE_QUERIES = [
 ];
 
 export function AiSearchHero() {
-  const router = useRouter();
-  const [input, setInput] = useState("");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function submit(message: string) {
-    if (!message || pending) return;
-    setPending(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/ai/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Something went wrong.");
-        return;
-      }
-      router.push(data.redirectUrl);
-    } catch {
-      setError("Couldn't reach the AI search assistant. Please try again.");
-    } finally {
-      setPending(false);
-    }
-  }
+  const { input, setInput, pending, error, submit } = useAiSearch();
 
   return (
-    <div className="flex h-[460px] flex-1 flex-col items-center justify-center overflow-hidden rounded-2xl bg-white px-7 py-6 text-center dark:bg-surface">
+    <div className="flex h-[460px] flex-1 flex-col items-center justify-center overflow-hidden rounded-2xl bg-surface px-7 py-6 text-center">
       <h2 className="text-xl font-bold">Tell our AI what you&apos;re looking for</h2>
       <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">
         Describe it in your own words and we&apos;ll take you straight to matching products.

@@ -16,7 +16,7 @@ export function BestSellerCard({
   const onSale = product.compareAtPrice !== null && product.compareAtPrice > product.price;
 
   return (
-    <div className="min-h-[360px] rounded-xl bg-surface-muted p-7 text-center">
+    <div className="min-h-[360px] rounded-xl bg-band p-7 text-center">
       <Link
         href={`/products/${product.slug}`}
         title={product.name}

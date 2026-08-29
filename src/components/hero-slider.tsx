@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatBDT } from "@/lib/money";
-import { useDragSlider } from "@/lib/use-drag-slider";
+import { useDragSlider, wrapSlides } from "@/lib/use-drag-slider";
 
 type Deal = {
   slug: string;
@@ -22,17 +22,28 @@ const AUTO_ADVANCE_MS = 5000;
 export function HeroSlider({ deals }: { deals: Deal[] }) {
   const [index, setIndex] = useState(0);
   const hasDeals = deals.length > 0;
-  const { dragOffset, isDragging, dragHandlers } = useDragSlider(deals.length, index, setIndex);
+  const { dragOffset, skipTransition, position, next, dragHandlers } = useDragSlider(
+    deals.length,
+    index,
+    setIndex,
+    500
+  );
+
+  // A ref so the interval (set up once per deals.length) always calls the
+  // latest `next` closure without needing to be torn down and recreated
+  // every time `index` changes.
+  const nextRef = useRef(next);
+  nextRef.current = next;
 
   useEffect(() => {
     if (deals.length <= 1) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % deals.length), AUTO_ADVANCE_MS);
+    const id = setInterval(() => nextRef.current(), AUTO_ADVANCE_MS);
     return () => clearInterval(id);
   }, [deals.length]);
 
   if (!hasDeals) {
     return (
-      <div className="flex min-h-[460px] flex-col items-start justify-center rounded-2xl bg-white p-10 sm:p-12 dark:bg-surface">
+      <div className="flex min-h-[460px] flex-col items-start justify-center rounded-2xl bg-surface p-10 sm:p-12">
         <h1 className="text-3xl font-bold sm:text-4xl">Smart shopping, made for Bangladesh</h1>
         <p className="mt-3 max-w-md text-base text-neutral-600 sm:text-lg dark:text-neutral-400">
           Tell our AI what you&apos;re looking for and we&apos;ll find it instantly.
@@ -48,21 +59,21 @@ export function HeroSlider({ deals }: { deals: Deal[] }) {
   }
 
   return (
-    <div className="relative h-[460px] overflow-hidden rounded-2xl bg-white dark:bg-surface">
+    <div className="relative h-[460px] overflow-hidden rounded-2xl bg-surface">
       <div
         className={`flex h-full cursor-grab touch-pan-y select-none active:cursor-grabbing ${
-          isDragging ? "" : "transition-transform duration-500 ease-out"
+          skipTransition ? "" : "transition-transform duration-500 ease-out"
         }`}
-        style={{ transform: `translateX(calc(${-index * 100}% + ${dragOffset}px))` }}
+        style={{ transform: `translateX(calc(${-(position + 1) * 100}% + ${dragOffset}px))` }}
         {...dragHandlers}
       >
-        {deals.map((p) => {
+        {wrapSlides(deals).map((p, i) => {
           const discountPercent = p.compareAtPrice
             ? Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100)
             : 0;
           return (
             <div
-              key={p.slug}
+              key={p.slug + i}
               className="flex w-full shrink-0 items-center gap-8 p-10 sm:p-12"
             >
               <div className="flex-1">

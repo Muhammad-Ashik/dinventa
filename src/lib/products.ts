@@ -5,8 +5,11 @@ export type ProductSort = "newest" | "price_asc" | "price_desc" | "popular";
 
 export type ProductFilters = {
   q?: string;
-  category?: string;
-  brand?: string;
+  // Real multi-select — checking "Electronics" and "Fashion" shows products
+  // in either, matching what a checkbox actually implies (unlike the old
+  // single-slug version, which silently only kept the last one picked).
+  category?: string[];
+  brand?: string[];
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
@@ -28,15 +31,19 @@ export function parseProductFilters(
   searchParams: Record<string, string | string[] | undefined>
 ): ProductFilters {
   const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+  const all = (v: string | string[] | undefined) =>
+    v === undefined ? [] : Array.isArray(v) ? v : [v];
 
   const minPrice = first(searchParams.minPrice);
   const maxPrice = first(searchParams.maxPrice);
   const sort = first(searchParams.sort);
+  const category = all(searchParams.category);
+  const brand = all(searchParams.brand);
 
   return {
     q: first(searchParams.q) || undefined,
-    category: first(searchParams.category) || undefined,
-    brand: first(searchParams.brand) || undefined,
+    category: category.length > 0 ? category : undefined,
+    brand: brand.length > 0 ? brand : undefined,
     minPrice: minPrice ? Number(minPrice) : undefined,
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
     inStock: first(searchParams.inStock) === "1" || undefined,
@@ -48,8 +55,8 @@ export function parseProductFilters(
 function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereInput {
   return {
     status: "ACTIVE",
-    ...(filters.category ? { category: { slug: filters.category } } : {}),
-    ...(filters.brand ? { brand: filters.brand } : {}),
+    ...(filters.category?.length ? { category: { slug: { in: filters.category } } } : {}),
+    ...(filters.brand?.length ? { brand: { in: filters.brand } } : {}),
     ...(filters.inStock ? { stock: { gt: 0 } } : {}),
     ...(filters.onSale ? { compareAtPrice: { not: null } } : {}),
     ...(filters.minPrice !== undefined || filters.maxPrice !== undefined
@@ -113,4 +120,31 @@ export async function getBrands(): Promise<string[]> {
     orderBy: { brand: "asc" },
   });
   return rows.map((r) => r.brand);
+}
+
+// Real per-category product counts for the filter sidebar (e.g. "Fashion
+// (6)") — never a static/estimated number.
+export async function getCategoryCounts(): Promise<Record<string, number>> {
+  const rows = await prisma.product.groupBy({
+    by: ["categoryId"],
+    where: { status: "ACTIVE" },
+    _count: true,
+  });
+  const categories = await prisma.category.findMany({ select: { id: true, slug: true } });
+  const idToSlug = new Map(categories.map((c) => [c.id, c.slug]));
+  const counts: Record<string, number> = {};
+  for (const row of rows) {
+    const slug = idToSlug.get(row.categoryId);
+    if (slug) counts[slug] = row._count;
+  }
+  return counts;
+}
+
+export async function getBrandCounts(): Promise<Record<string, number>> {
+  const rows = await prisma.product.groupBy({
+    by: ["brand"],
+    where: { status: "ACTIVE" },
+    _count: true,
+  });
+  return Object.fromEntries(rows.map((r) => [r.brand, r._count]));
 }

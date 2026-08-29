@@ -45,12 +45,12 @@ export function WishlistButton({
       disabled={isPending}
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       aria-pressed={wishlisted}
-      className="absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur transition-colors hover:bg-white disabled:cursor-not-allowed"
+      className="absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur transition-colors hover:bg-white hover:scale-110 active:scale-95 disabled:cursor-not-allowed"
     >
       {wishlisted ? (
-        <HeartSolid className="size-4 text-brand" />
+        <HeartSolid className="size-4 scale-100 text-brand transition-transform" />
       ) : (
-        <HeartOutline className="size-4 text-neutral-600 dark:text-neutral-700" />
+        <HeartOutline className="size-4 text-neutral-600 transition-transform dark:text-neutral-700" />
       )}
     </button>
   );

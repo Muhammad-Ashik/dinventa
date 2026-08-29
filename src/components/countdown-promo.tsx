@@ -43,7 +43,7 @@ export function CountdownPromo({ product, endsAt }: { product: Product; endsAt: 
   ];
 
   return (
-    <div className="flex flex-col items-center justify-between gap-8 overflow-hidden rounded-2xl bg-surface-muted p-10 sm:flex-row">
+    <div className="flex flex-col items-center justify-between gap-8 overflow-hidden rounded-2xl bg-band p-10 sm:flex-row">
       <div>
         <p className="text-base font-medium text-brand">Don&apos;t miss it!</p>
         <h2 className="mt-1.5 max-w-sm text-3xl font-bold">{product.name}</h2>

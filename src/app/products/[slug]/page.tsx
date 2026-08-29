@@ -61,11 +61,11 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
         />
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-surface-muted">
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-band">
             <ProductImageGallery
               images={product.images.length > 0 ? product.images : [product.imageUrl]}
               alt={product.name}
-              imgClassName="object-contain p-8"
+              imgClassName="object-contain"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
             <WishlistButton

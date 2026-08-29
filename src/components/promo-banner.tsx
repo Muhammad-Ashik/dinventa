@@ -16,7 +16,7 @@ export function PromoBanner({
 }) {
   return (
     <div
-      className={`flex items-center justify-between gap-6 overflow-hidden rounded-2xl bg-surface-muted text-neutral-900 dark:text-neutral-100 ${compact ? "p-7" : "flex-col p-10 sm:flex-row"}`}
+      className={`flex items-center justify-between gap-6 overflow-hidden rounded-2xl bg-band text-neutral-900 dark:text-neutral-100 ${compact ? "p-7" : "flex-col p-10 sm:flex-row"}`}
     >
       <div>
         <p className={`font-medium text-neutral-500 dark:text-neutral-400 ${compact ? "text-base" : "text-lg"}`}>

@@ -11,7 +11,7 @@ import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { formatBDT } from "@/lib/money";
 import { toggleWishlist } from "@/lib/actions/wishlist";
 import { AddToCartWithQuantity } from "@/components/add-to-cart-with-quantity";
-import { useDragSlider } from "@/lib/use-drag-slider";
+import { useDragSlider, wrapSlides } from "@/lib/use-drag-slider";
 
 type Product = {
   id: string;
@@ -38,13 +38,26 @@ export function QuickViewModal({
   const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(isWishlisted);
+  const [closing, setClosing] = useState(false);
   const [, startTransition] = useTransition();
-  const { dragHandlers } = useDragSlider(product.images.length, activeImage, setActiveImage);
+  const { dragOffset, skipTransition, position, dragHandlers } = useDragSlider(
+    product.images.length,
+    activeImage,
+    setActiveImage
+  );
   const imageDraggable = product.images.length > 1;
+
+  // Plays the exit animation before actually unmounting (the parent removes
+  // this component the instant `onClose` fires) — closing abruptly with no
+  // transition at all is far more jarring than a missing open animation.
+  function handleClose() {
+    setClosing(true);
+    setTimeout(onClose, 150);
+  }
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     }
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
@@ -52,7 +65,8 @@ export function QuickViewModal({
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSale = product.compareAtPrice !== null && product.compareAtPrice > product.price;
   const discountPercent = onSale
@@ -72,16 +86,20 @@ export function QuickViewModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 ${
+        closing ? "animate-modal-backdrop-out" : "animate-modal-backdrop-in"
+      }`}
+      onClick={handleClose}
     >
       <div
-        className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white p-6 shadow-xl sm:p-8 dark:bg-surface"
+        className={`relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white p-6 shadow-xl sm:p-8 dark:bg-surface ${
+          closing ? "animate-modal-panel-out" : "animate-modal-panel-in"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label="Close"
           className="absolute top-4 right-4 z-10 flex size-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
         >
@@ -97,29 +115,38 @@ export function QuickViewModal({
                     key={src}
                     type="button"
                     onClick={() => setActiveImage(i)}
-                    className={`relative size-14 shrink-0 overflow-hidden rounded-lg bg-surface-muted ${
+                    className={`relative size-14 shrink-0 overflow-hidden rounded-lg bg-band transition-shadow ${
                       i === activeImage ? "ring-2 ring-brand" : ""
                     }`}
                   >
-                    <Image src={src} alt="" fill className="object-contain p-1" sizes="56px" />
+                    <Image src={src} alt="" fill className="object-contain" sizes="56px" />
                   </button>
                 ))}
               </div>
             )}
             <div
-              className={`relative aspect-square flex-1 overflow-hidden rounded-xl bg-surface-muted select-none ${
+              className={`relative aspect-square flex-1 overflow-hidden rounded-xl bg-band select-none ${
                 imageDraggable ? "cursor-grab active:cursor-grabbing" : ""
               }`}
               {...(imageDraggable ? dragHandlers : {})}
             >
-              <Image
-                src={product.images[activeImage] ?? product.images[0]}
-                alt={product.name}
-                fill
-                className="object-contain p-6"
-                sizes="(max-width: 640px) 90vw, 400px"
-                draggable={false}
-              />
+              <div
+                className={`flex h-full w-full ${skipTransition ? "" : "transition-transform duration-300 ease-out"}`}
+                style={{ transform: `translateX(calc(${-(position + 1) * 100}% + ${dragOffset}px))` }}
+              >
+                {wrapSlides(product.images).map((src, i) => (
+                  <div key={src + i} className="relative h-full w-full shrink-0">
+                    <Image
+                      src={src}
+                      alt={product.name}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 90vw, 400px"
+                      draggable={false}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

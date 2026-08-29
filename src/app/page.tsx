@@ -45,7 +45,7 @@ export default async function HomePage() {
         orderBy: { saleEndsAt: "asc" },
       }),
       getFeaturedReviews(3),
-      ...categories.map((c) => getProducts({ category: c.slug, sort: "newest" })),
+      ...categories.map((c) => getProducts({ category: [c.slug], sort: "newest" })),
     ]);
 
   const categorySections = categories
@@ -68,7 +68,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-14">
-      <div className="relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-surface-muted">
+      <div className="relative left-1/2 -mt-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="min-w-0 lg:basis-[70%]">

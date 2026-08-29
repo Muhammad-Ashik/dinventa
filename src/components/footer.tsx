@@ -75,7 +75,7 @@ export async function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-neutral-200 bg-neutral-50 py-5 dark:border-neutral-800 dark:bg-surface-muted">
+      <div className="border-t border-neutral-200 bg-neutral-50 py-5 dark:border-neutral-800 dark:bg-surface">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 text-sm text-neutral-600 dark:text-neutral-400">
           © {new Date().getFullYear()} Dinventa. All rights reserved.
         </div>

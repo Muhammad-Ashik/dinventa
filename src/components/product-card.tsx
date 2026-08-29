@@ -34,7 +34,7 @@ export function ProductCard({
 
   return (
     <div className="group flex flex-col">
-      <div className="relative mb-5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
+      <div className="relative mb-5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-band">
         <ProductImageGallery
           images={gallery}
           alt={product.name}

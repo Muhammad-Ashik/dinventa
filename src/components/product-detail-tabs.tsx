@@ -25,7 +25,7 @@ export function ProductDetailTabs({
   const [active, setActive] = useState<(typeof TABS)[number]>("Description");
 
   return (
-    <div className="rounded-2xl bg-surface-muted p-6 sm:p-10">
+    <div className="rounded-2xl bg-band p-6 sm:p-10">
       <div className="flex flex-wrap gap-6 border-b border-neutral-200 pb-4 dark:border-neutral-700">
         {TABS.map((tab) => (
           <button
