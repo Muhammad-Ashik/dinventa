@@ -108,6 +108,8 @@ export async function ProductListingPage({
     "flex items-start gap-2 rounded px-1.5 py-1 text-sm text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300";
   const checkboxClass =
     "mt-0.5 size-4 shrink-0 rounded border-neutral-300 text-brand accent-brand focus:ring-brand dark:border-neutral-600";
+  const countBadgeClass =
+    "min-w-5 rounded-full bg-neutral-100 px-1.5 py-0.5 text-center text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400";
 
   const sortLinkClass = (isActive: boolean) =>
     isActive
@@ -164,9 +166,7 @@ export async function ProductListingPage({
                   className={checkboxClass}
                 />
                 <span className="flex-1">{c.name}</span>
-                <span className="text-xs text-neutral-400 dark:text-neutral-500">
-                  {categoryCounts[c.slug] ?? 0}
-                </span>
+                <span className={countBadgeClass}>{categoryCounts[c.slug] ?? 0}</span>
               </Link>
             ))}
           </FilterSection>
@@ -185,7 +185,7 @@ export async function ProductListingPage({
                   className={checkboxClass}
                 />
                 <span className="flex-1">{b}</span>
-                <span className="text-xs text-neutral-400 dark:text-neutral-500">{brandCounts[b]}</span>
+                <span className={countBadgeClass}>{brandCounts[b]}</span>
               </Link>
             ))}
           </FilterSection>

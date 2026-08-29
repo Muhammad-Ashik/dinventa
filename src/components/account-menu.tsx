@@ -25,7 +25,7 @@ export function AccountMenu({
   return (
     <Dropdown
       align="right"
-      panelClassName="mt-2 w-48 rounded-lg border border-neutral-200 bg-background py-1.5 text-sm shadow-lg dark:border-neutral-700 dark:shadow-black/40"
+      panelClassName="mt-6 w-48 rounded-lg border border-neutral-200 bg-background py-1.5 text-sm shadow-lg dark:border-neutral-700 dark:shadow-black/40"
       trigger={({ open, toggle }) => (
         <button
           type="button"
@@ -36,7 +36,7 @@ export function AccountMenu({
             {firstName.charAt(0).toUpperCase()}
           </span>
           <span className="hidden sm:inline">{firstName}</span>
-          <ChevronDownIcon className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDownIcon className={`size-5 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
       )}
     >

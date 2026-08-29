@@ -11,7 +11,8 @@ export function NavCategoriesDropdown({
 }) {
   return (
     <Dropdown
-      panelClassName="mt-3 w-56 rounded-lg border border-neutral-200 bg-background py-1.5 text-sm shadow-lg dark:border-neutral-700 dark:shadow-black/40"
+      align="center"
+      panelClassName="mt-6 w-56 rounded-lg border border-neutral-200 bg-background py-1.5 text-sm shadow-lg dark:border-neutral-700 dark:shadow-black/40"
       trigger={({ open, toggle }) => (
         <button
           type="button"
@@ -19,7 +20,7 @@ export function NavCategoriesDropdown({
           className="flex items-center gap-1 font-medium text-dark transition-colors select-none hover:text-brand dark:text-neutral-100"
         >
           Categories
-          <ChevronDownIcon className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDownIcon className={`size-5 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
       )}
     >

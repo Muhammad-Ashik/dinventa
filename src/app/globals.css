@@ -207,11 +207,20 @@ html {
     transform: translateY(-4px) scale(0.98);
   }
 }
+/* `forwards` on every one of these matters, not just style: without it,
+   animation-fill-mode defaults to `none`, so the instant each animation's
+   120-160ms finishes, the browser drops the animation's effect entirely
+   and the element SNAPS BACK to its un-animated CSS state — opacity: 1 for
+   an element with no other opacity rule — before the JS timer (set to a
+   close/comparable duration) actually unmounts it a few ms later. That gap
+   is exactly the "closes, then flashes back to visible, then finally
+   disappears" bug: the CSS animation was doing its job correctly the whole
+   time, it just weren't told to hold its last frame instead of reverting. */
 .animate-dropdown-in {
-  animation: dropdown-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: dropdown-in 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .animate-dropdown-out {
-  animation: dropdown-out 120ms ease-in;
+  animation: dropdown-out 120ms ease-in forwards;
 }
 
 /* Modal enter/exit — QuickViewModal toggles these classes based on its own
@@ -237,10 +246,10 @@ html {
   }
 }
 .animate-modal-backdrop-in {
-  animation: modal-backdrop-in 200ms ease-out;
+  animation: modal-backdrop-in 200ms ease-out forwards;
 }
 .animate-modal-panel-in {
-  animation: modal-panel-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modal-panel-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Separate keyframes, not `reverse` of the -in ones — same reason as
@@ -265,10 +274,10 @@ html {
   }
 }
 .animate-modal-backdrop-out {
-  animation: modal-backdrop-out 150ms ease-in;
+  animation: modal-backdrop-out 150ms ease-in forwards;
 }
 .animate-modal-panel-out {
-  animation: modal-panel-out 150ms ease-in;
+  animation: modal-panel-out 150ms ease-in forwards;
 }
 
 /* Mobile nav drawer (src/components/mobile-menu.tsx) — slides in from the
@@ -292,8 +301,82 @@ html {
   }
 }
 .animate-drawer-in {
-  animation: drawer-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: drawer-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .animate-drawer-out {
-  animation: drawer-out 180ms ease-in;
+  animation: drawer-out 180ms ease-in forwards;
+}
+
+/* Drag-hint hand (src/components/product-image-gallery.tsx) — multi-image
+   product galleries only show tiny dots to signal "more photos here",
+   easy to miss entirely, so shoppers never realize the image can be
+   dragged. On hover, a hand icon appears, squeezes into a grip, then drags
+   right-to-left and fades out — miming an actual swipe gesture instead of
+   relying on shoppers to notice the dots or stumble into dragging by
+   accident. Two animations share one timeline: `-pos` moves the wrapper
+   and fades it in/out overall, while `-grip` scales the icon down right as
+   the position settles, so the "squeeze" reads as gripping just before the
+   drag starts. A single icon with a squeeze (rather than swapping to a
+   second, hand-drawn "fist" glyph — heroicons has no such icon, and one
+   drawn from scratch never looked convincingly like a fist at this size)
+   keeps this looking like a real icon throughout instead of a good icon
+   crossfading into a rough one. Only plays on hover
+   (group-hover:animate-...), not constantly, since a permanently-looping
+   animation on every multi-image card would be distracting noise rather
+   than a one-time nudge. */
+@keyframes drag-hint-pos {
+  0% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(60%);
+  }
+  30% {
+    transform: translateX(35%);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-60%);
+  }
+  85% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+/* Squeezes down (the "grip") right as -pos above settles into place, holds
+   through the whole leftward drag, then relaxes as it fades out. */
+@keyframes drag-hint-grip {
+  0%,
+  15% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.8);
+  }
+  70% {
+    transform: scale(0.8);
+  }
+  85%,
+  100% {
+    transform: scale(1);
+  }
+}
+/* @utility, not a plain class — these need to work as
+   `group-hover:animate-drag-hint-*`, and Tailwind only knows how to
+   compose a variant prefix onto a utility it has registered itself. A
+   plain `.animate-drag-hint-pos { ... }` class (the pattern every other
+   custom animation above uses) is invisible to that system: the class
+   name still renders in the DOM, but `group-hover:` in front of it never
+   generates any actual CSS rule, so it silently does nothing on hover. */
+@utility animate-drag-hint-pos {
+  animation: drag-hint-pos 1.8s ease-in-out infinite;
+}
+@utility animate-drag-hint-grip {
+  animation: drag-hint-grip 1.8s ease-in-out infinite;
 }

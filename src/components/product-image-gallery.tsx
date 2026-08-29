@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { HandRaisedIcon } from "@heroicons/react/24/solid";
 import { useDragSlider, wrapSlides } from "@/lib/use-drag-slider";
 
 // Dot-cycle gallery for grid cards — lets a shopper flip through a
@@ -77,6 +78,20 @@ export function ProductImageGallery({
           strip
         )}
       </div>
+
+      {draggable && (
+        // Purely a hover hint, not part of the drag mechanics — dots alone
+        // are easy to miss, so this mimes an actual swipe gesture (the hand
+        // squeezes into a grip, then drags right-to-left) to make "you can
+        // drag this" obvious without the shopper stumbling into it by
+        // accident. pointer-events-none keeps it out of the way of the
+        // real drag/click handlers underneath.
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+          <div className="opacity-0 group-hover:animate-drag-hint-pos">
+            <HandRaisedIcon className="size-8 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] group-hover:animate-drag-hint-grip" />
+          </div>
+        </div>
+      )}
 
       {images.length > 1 && (
         <div className="absolute inset-x-0 bottom-2 z-10 flex items-center justify-center gap-1.5">

@@ -27,7 +27,7 @@ export function FilterSection({
       >
         {title}
         <ChevronUpIcon
-          className={`size-4 text-neutral-400 transition-transform duration-200 ${open ? "" : "rotate-180"}`}
+          className={`size-5 text-neutral-400 transition-transform duration-200 ${open ? "" : "rotate-180"}`}
         />
       </button>
       <div
