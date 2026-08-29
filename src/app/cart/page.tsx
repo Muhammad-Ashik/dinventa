@@ -2,76 +2,146 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCart } from "@/lib/cart-context";
 import { formatBDT } from "@/lib/money";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 export default function CartPage() {
-  const { items, setQuantity, removeItem, totalPrice } = useCart();
+  const { items, setQuantity, removeItem, clear, totalPrice } = useCart();
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-bold">Your cart</h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Your cart is empty.{" "}
-          <Link href="/products" className="font-medium text-brand hover:underline">
-            Browse products
+      <div className="flex flex-col gap-4">
+        <Breadcrumbs items={[{ label: "Cart" }]} />
+        <div className="flex flex-col items-center rounded-2xl bg-band px-6 py-16 text-center">
+          <span className="flex size-20 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
+            <ShoppingCartIcon className="size-9" />
+          </span>
+          <p className="mt-4 text-lg font-medium">Your cart is empty!</p>
+          <Link
+            href="/products"
+            className="mt-6 inline-flex rounded-lg bg-dark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
+          >
+            Continue Shopping
           </Link>
-          .
-        </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Your cart</h1>
+    <div className="flex flex-col gap-4">
+      <Breadcrumbs items={[{ label: "Cart" }]} />
 
-      <div className="flex flex-col divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
-        {items.map((item) => (
-          <div key={item.productId} className="flex items-center gap-4 p-4">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800">
-              <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
-            </div>
-
-            <div className="flex-1">
-              <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-brand">{formatBDT(item.price)}</p>
-            </div>
-
-            <input
-              type="number"
-              min={1}
-              value={item.quantity}
-              onChange={(e) => setQuantity(item.productId, Number(e.target.value))}
-              className="w-16 rounded border border-neutral-300 px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-brand dark:border-neutral-700 dark:bg-neutral-900"
-            />
-
-            <p className="w-24 text-right font-semibold">
-              {formatBDT(item.price * item.quantity)}
-            </p>
-
-            <button
-              type="button"
-              onClick={() => removeItem(item.productId)}
-              className="text-sm text-neutral-500 hover:text-brand dark:text-neutral-400"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold sm:text-2xl">Your Cart</h1>
+        <button
+          type="button"
+          onClick={clear}
+          className="text-sm font-medium text-brand transition-colors hover:underline"
+        >
+          Clear Shopping Cart
+        </button>
       </div>
 
-      <div className="flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-800">
-        <p className="text-lg font-bold">
-          Total: <span className="text-brand">{formatBDT(totalPrice)}</span>
-        </p>
-        <Link
-          href="/checkout"
-          className="rounded bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
-        >
-          Proceed to checkout
-        </Link>
+      <div className="overflow-x-auto rounded-xl bg-white dark:bg-surface">
+        <table className="w-full min-w-[640px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-neutral-200 text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+              <th className="px-5 py-4 font-medium">Product</th>
+              <th className="px-5 py-4 font-medium">Price</th>
+              <th className="px-5 py-4 font-medium">Quantity</th>
+              <th className="px-5 py-4 font-medium">Subtotal</th>
+              <th className="px-5 py-4 font-medium">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+            {items.map((item) => (
+              <tr key={item.productId}>
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-band">
+                      <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                    </div>
+                    <span className="font-medium">{item.name}</span>
+                  </div>
+                </td>
+                <td className="px-5 py-4 text-brand">{formatBDT(item.price)}</td>
+                <td className="px-5 py-4">
+                  <div className="flex w-fit items-center rounded-lg border border-neutral-200 dark:border-neutral-700">
+                    <button
+                      type="button"
+                      aria-label="Decrease quantity"
+                      onClick={() => setQuantity(item.productId, item.quantity - 1)}
+                      className="flex size-8 items-center justify-center text-neutral-600 hover:text-brand dark:text-neutral-300"
+                    >
+                      –
+                    </button>
+                    <span className="flex w-8 items-center justify-center border-x border-neutral-200 py-1 dark:border-neutral-700">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label="Increase quantity"
+                      onClick={() => setQuantity(item.productId, item.quantity + 1)}
+                      className="flex size-8 items-center justify-center text-neutral-600 hover:text-brand dark:text-neutral-300"
+                    >
+                      +
+                    </button>
+                  </div>
+                </td>
+                <td className="px-5 py-4 font-semibold">{formatBDT(item.price * item.quantity)}</td>
+                <td className="px-5 py-4">
+                  <button
+                    type="button"
+                    aria-label="Remove item"
+                    onClick={() => removeItem(item.productId)}
+                    className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400"
+                  >
+                    <TrashIcon className="size-4" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end">
+        <div className="w-full rounded-xl bg-white p-5 lg:max-w-sm dark:bg-surface">
+          <h2 className="font-semibold">Order Summary</h2>
+
+          <div className="mt-4 flex items-center justify-between border-b border-neutral-200 pb-3 text-sm font-medium text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+            <span>Product</span>
+            <span>Subtotal</span>
+          </div>
+
+          <div className="flex flex-col divide-y divide-neutral-200 dark:divide-neutral-800">
+            {items.map((item) => (
+              <div key={item.productId} className="flex items-center justify-between py-3 text-sm">
+                <span className="line-clamp-1 pr-4 text-neutral-700 dark:text-neutral-300">
+                  {item.name}
+                </span>
+                <span className="shrink-0 font-medium">
+                  {formatBDT(item.price * item.quantity)}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between border-t border-neutral-200 pt-3 dark:border-neutral-800">
+            <span className="font-semibold">Total</span>
+            <span className="text-lg font-bold text-brand">{formatBDT(totalPrice)}</span>
+          </div>
+
+          <Link
+            href="/checkout"
+            className="mt-5 flex w-full items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
+          >
+            Process to Checkout
+          </Link>
+        </div>
       </div>
     </div>
   );

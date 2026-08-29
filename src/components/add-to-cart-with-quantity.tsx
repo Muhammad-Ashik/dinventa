@@ -1,31 +1,44 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MinusIcon, PlusIcon, CheckIcon, ShoppingCartIcon } from "@heroicons/react/20/solid";
 import { useCart } from "@/lib/cart-context";
+import { WishlistButton } from "@/components/wishlist-button";
+
+const wishlistIconClass =
+  "flex size-11 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 transition-colors hover:border-brand hover:text-brand dark:border-neutral-700 dark:text-neutral-300";
 
 // Product-detail-page variant of AddToCartButton with a quantity stepper —
 // kept separate from the plain AddToCartButton (used in compact grid cards,
 // where a stepper would be too heavy) rather than adding a mode flag to it.
+// Also carries "Purchase Now" (add the item then go straight to checkout,
+// skipping a trip through the cart) and the wishlist toggle, all sharing
+// this one quantity value, matching the reference's single action row.
 export function AddToCartWithQuantity({
   productId,
   name,
   price,
   imageUrl,
   maxQuantity,
+  isWishlisted,
+  isLoggedIn,
 }: {
   productId: string;
   name: string;
   price: number;
   imageUrl: string;
   maxQuantity: number;
+  isWishlisted: boolean;
+  isLoggedIn: boolean;
 }) {
+  const router = useRouter();
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3">
       <div className="flex items-center rounded border border-neutral-300 dark:border-neutral-700">
         <button
           type="button"
@@ -52,10 +65,21 @@ export function AddToCartWithQuantity({
         type="button"
         onClick={() => {
           addItem({ productId, name, price, imageUrl }, quantity);
+          router.push("/checkout");
+        }}
+        className="flex-1 rounded bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
+      >
+        Purchase Now
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          addItem({ productId, name, price, imageUrl }, quantity);
           setAdded(true);
           setTimeout(() => setAdded(false), 1500);
         }}
-        className="flex flex-1 items-center justify-center gap-1.5 rounded bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
+        className="flex flex-1 items-center justify-center gap-1.5 rounded bg-dark px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark active:bg-brand-dark"
       >
         {added ? (
           <>
@@ -63,10 +87,17 @@ export function AddToCartWithQuantity({
           </>
         ) : (
           <>
-            <ShoppingCartIcon className="size-4" /> Add to cart
+            <ShoppingCartIcon className="size-4" /> Add to Cart
           </>
         )}
       </button>
+
+      <WishlistButton
+        productId={productId}
+        initialWishlisted={isWishlisted}
+        isLoggedIn={isLoggedIn}
+        className={wishlistIconClass}
+      />
     </div>
   );
 }

@@ -10,10 +10,12 @@ export function WishlistButton({
   productId,
   initialWishlisted,
   isLoggedIn,
+  className = "absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur transition-colors hover:bg-white hover:scale-110 active:scale-95 disabled:cursor-not-allowed",
 }: {
   productId: string;
   initialWishlisted: boolean;
   isLoggedIn: boolean;
+  className?: string;
 }) {
   const router = useRouter();
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
@@ -45,7 +47,7 @@ export function WishlistButton({
       disabled={isPending}
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       aria-pressed={wishlisted}
-      className="absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur transition-colors hover:bg-white hover:scale-110 active:scale-95 disabled:cursor-not-allowed"
+      className={className}
     >
       {wishlisted ? (
         <HeartSolid className="size-4 scale-100 text-brand transition-transform" />

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingCartIcon, HeartIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, HeartIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/outline";
 import { getCurrentUser } from "@/lib/dal";
 import { getCategories } from "@/lib/products";
 import { getWishlistCount } from "@/lib/wishlist";
@@ -83,24 +83,35 @@ export async function Header() {
           {user ? (
             <AccountMenu name={user.name} isAdmin={user.role === "ADMIN"} />
           ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/register"
-                className="rounded-full border border-neutral-300 px-3 py-1 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand dark:border-neutral-700"
-              >
-                Sign up
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-full bg-brand px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
-              >
-                Sign in
-              </Link>
-            </div>
+            <Link
+              href="/login"
+              aria-label="Sign in"
+              className="text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300"
+            >
+              <UserIcon className="size-5.5" />
+            </Link>
           )}
         </nav>
 
-        <div className="ml-auto md:hidden">
+        <div className="ml-auto flex items-center gap-4 md:hidden">
+          {user ? (
+            <Link href="/account" aria-label="Account">
+              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              aria-label="Sign in"
+              className="text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300"
+            >
+              <UserIcon className="size-6" />
+            </Link>
+          )}
+
+          <ThemeToggle />
+
           <MobileMenu
             user={user ? { name: user.name, role: user.role } : null}
             categories={categories}

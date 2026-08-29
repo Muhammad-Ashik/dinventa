@@ -15,7 +15,6 @@ import {
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { logout } from "@/lib/actions/auth";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { CartCountBadge } from "@/components/cart-count-badge";
 
 const itemClass =
@@ -86,47 +85,44 @@ export function MobileMenu({
               </div>
 
               <div className="mt-6 flex flex-col gap-1">
-                {user ? (
-                  <>
-                    <p className="px-3 py-1 text-sm text-neutral-500 dark:text-neutral-400">
-                      Welcome back, {user.name.split(" ")[0]}
-                    </p>
-                    {user.role === "ADMIN" && (
-                      <Link href="/admin" className={itemClass} onClick={close}>
-                        <Cog6ToothIcon className="size-5" /> Admin dashboard
-                      </Link>
-                    )}
-                    <Link href="/orders" className={itemClass} onClick={close}>
-                      <ClipboardDocumentListIcon className="size-5" /> Your orders
-                    </Link>
-                    <Link href="/account" className={itemClass} onClick={close}>
-                      <UserCircleIcon className="size-5" /> Profile settings
-                    </Link>
-                    <form action={logout}>
-                      <button type="submit" className={`w-full text-left ${itemClass}`}>
-                        <ArrowRightStartOnRectangleIcon className="size-5" /> Log out
-                      </button>
-                    </form>
-                  </>
-                ) : (
-                  <div className="flex gap-2 px-1 pb-2">
-                    <Link
-                      href="/register"
-                      onClick={close}
-                      className="flex-1 rounded-lg border border-neutral-300 px-4 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand dark:border-neutral-700"
-                    >
-                      Sign up
-                    </Link>
-                    <Link
-                      href="/login"
-                      onClick={close}
-                      className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-brand-dark"
-                    >
-                      Sign in
-                    </Link>
-                  </div>
-                )}
+                <Link href="/products" className={itemClass} onClick={close}>
+                  <MagnifyingGlassIcon className="size-5" /> Search
+                </Link>
+                <Link href="/wishlist" className={itemClass} onClick={close}>
+                  <HeartIcon className="size-5" /> Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+                </Link>
+                <Link href="/cart" className={itemClass} onClick={close}>
+                  <ShoppingCartIcon className="size-5" />
+                  <span className="flex items-center gap-1.5">
+                    Cart
+                    <CartCountBadge />
+                  </span>
+                </Link>
               </div>
+
+              {user && (
+                <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+                  <p className="px-3 py-1 text-sm text-neutral-500 dark:text-neutral-400">
+                    Welcome back, {user.name.split(" ")[0]}
+                  </p>
+                  {user.role === "ADMIN" && (
+                    <Link href="/admin" className={itemClass} onClick={close}>
+                      <Cog6ToothIcon className="size-5" /> Admin dashboard
+                    </Link>
+                  )}
+                  <Link href="/orders" className={itemClass} onClick={close}>
+                    <ClipboardDocumentListIcon className="size-5" /> Your orders
+                  </Link>
+                  <Link href="/account" className={itemClass} onClick={close}>
+                    <UserCircleIcon className="size-5" /> Profile settings
+                  </Link>
+                  <form action={logout}>
+                    <button type="submit" className={`w-full text-left ${itemClass}`}>
+                      <ArrowRightStartOnRectangleIcon className="size-5" /> Log out
+                    </button>
+                  </form>
+                </div>
+              )}
 
               <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                 <Link href="/popular" className={itemClass} onClick={close}>
@@ -160,26 +156,6 @@ export function MobileMenu({
                   ))}
                 </div>
               )}
-
-              <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                <Link href="/products" className={itemClass} onClick={close}>
-                  <MagnifyingGlassIcon className="size-5" /> Search
-                </Link>
-                <Link href="/wishlist" className={itemClass} onClick={close}>
-                  <HeartIcon className="size-5" /> Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
-                </Link>
-                <Link href="/cart" className={itemClass} onClick={close}>
-                  <ShoppingCartIcon className="size-5" />
-                  <span className="flex items-center gap-1.5">
-                    Cart
-                    <CartCountBadge />
-                  </span>
-                </Link>
-                <div className={`${itemClass} justify-between`}>
-                  <span>Theme</span>
-                  <ThemeToggle />
-                </div>
-              </div>
             </div>
           </div>,
           document.body

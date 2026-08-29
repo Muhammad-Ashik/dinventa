@@ -7,8 +7,8 @@ import { getWishlistedProductIds } from "@/lib/wishlist";
 import { AddToCartWithQuantity } from "@/components/add-to-cart-with-quantity";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ProductCard } from "@/components/product-card";
+import { ProductDetailGallery } from "@/components/product-detail-gallery";
 import { WishlistButton } from "@/components/wishlist-button";
-import { ProductImageGallery } from "@/components/product-image-gallery";
 import { StarRating } from "@/components/star-rating";
 import { ProductDetailTabs } from "@/components/product-detail-tabs";
 import { canReviewProduct, getProductRatingSummary, getProductReviews } from "@/lib/reviews";
@@ -61,33 +61,26 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
         />
 
         <div className="grid grid-cols-1 gap-6 sm:gap-10 md:grid-cols-2">
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-band">
-            <ProductImageGallery
-              images={product.images.length > 0 ? product.images : [product.imageUrl]}
-              alt={product.name}
-              imgClassName="object-contain"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-            <WishlistButton
-              productId={product.id}
-              initialWishlisted={wishlisted.has(product.id)}
-              isLoggedIn={isLoggedIn}
-            />
-            {onSale && (
-              <span className="absolute top-2 left-2 z-10 rounded bg-brand px-2 py-1 text-xs font-bold text-white">
-                {discountPercent}% OFF
-              </span>
-            )}
-          </div>
+          <ProductDetailGallery
+            images={product.images.length > 0 ? product.images : [product.imageUrl]}
+            alt={product.name}
+          />
 
           <div className="flex flex-col gap-4">
             <div>
-              <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+              <div className="flex items-start justify-between gap-3">
+                <h1 className="text-2xl font-bold sm:text-3xl">{product.name}</h1>
+                {onSale && (
+                  <span className="shrink-0 rounded-full bg-brand px-3 py-1 text-xs font-bold text-white">
+                    {discountPercent}% OFF
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                 <span>{product.category.name}</span>
                 <span className="text-neutral-300 dark:text-neutral-600">•</span>
                 <span>{product.brand}</span>
               </p>
-              <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{product.name}</h1>
               {ratingSummary.count > 0 && (
                 <div className="mt-2 flex items-center gap-2">
                   <StarRating rating={ratingSummary.average} />
@@ -117,7 +110,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
               </span>
             </div>
 
-            {product.stock > 0 && (
+            {product.stock > 0 ? (
               <div className="pt-1">
                 <AddToCartWithQuantity
                   productId={product.id}
@@ -125,6 +118,20 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
                   price={product.price}
                   imageUrl={product.imageUrl}
                   maxQuantity={product.stock}
+                  isWishlisted={wishlisted.has(product.id)}
+                  isLoggedIn={isLoggedIn}
+                />
+              </div>
+            ) : (
+              // Add to Cart is gone entirely once out of stock, but the
+              // wishlist toggle still needs to live somewhere — it was
+              // otherwise only reachable via AddToCartWithQuantity above.
+              <div className="pt-1">
+                <WishlistButton
+                  productId={product.id}
+                  initialWishlisted={wishlisted.has(product.id)}
+                  isLoggedIn={isLoggedIn}
+                  className="flex w-fit items-center gap-1.5 rounded-lg border border-neutral-200 px-4 py-2.5 text-sm font-medium text-neutral-700 transition-colors hover:border-brand hover:text-brand dark:border-neutral-700 dark:text-neutral-300"
                 />
               </div>
             )}
