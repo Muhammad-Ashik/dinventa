@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import {
+  FunnelIcon,
+  TagIcon,
+  BuildingStorefrontIcon,
+  BanknotesIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/outline";
+import {
   getBrandCounts,
   getCategories,
   getCategoryCounts,
@@ -114,7 +121,9 @@ export async function ProductListingPage({
           <AiSearchBar />
 
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Filters</h2>
+            <h2 className="flex items-center gap-1.5 font-semibold">
+              <FunnelIcon className="size-4.5" /> Filters
+            </h2>
             {hasAnyFilter && (
               <Link
                 href={basePath}
@@ -125,7 +134,10 @@ export async function ProductListingPage({
             )}
           </div>
 
-          <FilterSection title="Category">
+          <FilterSection
+            title="Category"
+            icon={<TagIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+          >
             {categories.map((c) => (
               <Link
                 key={c.id}
@@ -139,7 +151,10 @@ export async function ProductListingPage({
             ))}
           </FilterSection>
 
-          <FilterSection title="Brand">
+          <FilterSection
+            title="Brand"
+            icon={<BuildingStorefrontIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+          >
             {brands.map((b) => (
               <Link
                 key={b}
@@ -153,7 +168,10 @@ export async function ProductListingPage({
             ))}
           </FilterSection>
 
-          <FilterSection title="Price">
+          <FilterSection
+            title="Price"
+            icon={<BanknotesIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+          >
             <form method="get" action={basePath} className="flex items-center gap-2">
               {filters.q && <input type="hidden" name="q" value={filters.q} />}
               {filters.category?.map((c) => <input key={c} type="hidden" name="category" value={c} />)}
@@ -189,7 +207,10 @@ export async function ProductListingPage({
             </form>
           </FilterSection>
 
-          <FilterSection title="Availability">
+          <FilterSection
+            title="Availability"
+            icon={<CheckCircleIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+          >
             <Link
               href={hrefWith({ inStock: filters.inStock ? undefined : "1", page: 1 })}
               className={checkboxRowClass}
@@ -247,7 +268,7 @@ export async function ProductListingPage({
           {products.length === 0 ? (
             <p className="text-neutral-600 dark:text-neutral-400">No products match your filters.</p>
           ) : (
-            <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-10">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-10">
               {products.map((product) => (
                 <ProductCard
                   key={product.id}

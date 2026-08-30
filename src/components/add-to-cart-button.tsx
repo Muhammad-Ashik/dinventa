@@ -28,17 +28,10 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={handleClick}
-      className="inline-flex h-[38px] items-center justify-center gap-1.5 rounded-lg bg-brand px-5 text-sm font-medium text-white transition-colors duration-200 hover:bg-brand-dark"
+      aria-label={added ? "Added to cart" : "Add to cart"}
+      className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-dark text-white transition-colors duration-200 hover:bg-brand-dark"
     >
-      {added ? (
-        <>
-          <CheckIcon className="size-4" /> Added
-        </>
-      ) : (
-        <>
-          <ShoppingCartIcon className="size-4" /> Add to cart
-        </>
-      )}
+      {added ? <CheckIcon className="size-4" /> : <ShoppingCartIcon className="size-4" />}
     </button>
   );
 }

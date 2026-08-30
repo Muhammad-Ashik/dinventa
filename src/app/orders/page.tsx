@@ -1,71 +1,52 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { verifySession } from "@/lib/dal";
-import { formatBDT } from "@/lib/money";
-
-const STATUS_STYLES: Record<string, string> = {
-  PENDING_CONFIRMATION: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400",
-  CONFIRMED: "bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400",
-  DECLINED: "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400",
-  SHIPPED: "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400",
-  DELIVERED: "bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400",
-  CANCELLED: "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING_CONFIRMATION: "Pending confirmation",
-  CONFIRMED: "Confirmed",
-  DECLINED: "Declined",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
+import { getCurrentUser } from "@/lib/dal";
+import { AccountSidebar } from "@/components/account-sidebar";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { OrderCard } from "@/components/order-card";
 
 export default async function MyOrdersPage() {
-  const session = await verifySession();
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
   const orders = await prisma.order.findMany({
-    where: { userId: session.userId },
+    where: { userId: user.id },
     include: { items: { include: { product: true } } },
     orderBy: { createdAt: "desc" },
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Your orders</h1>
+    <div className="relative left-1/2 -mt-8 -mb-8 w-[calc(100vw-var(--scrollbar-width))] -translate-x-1/2 bg-band">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6 sm:py-8">
+        <Breadcrumbs items={[{ label: "My Account", href: "/account" }, { label: "Orders" }]} />
 
-      {orders.length === 0 ? (
-        <p className="text-neutral-600 dark:text-neutral-400">
-          You haven&apos;t placed any orders yet.{" "}
-          <Link href="/products" className="font-medium text-brand hover:underline">
-            Start shopping
-          </Link>
-          .
-        </p>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {orders.map((order) => (
-            <Link
-              key={order.id}
-              href={`/orders/${order.id}`}
-              className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4 text-sm transition-colors hover:border-brand dark:border-neutral-800"
-            >
-              <div className="flex items-center justify-between">
-                <p className="font-medium">Order #{order.id.slice(-8)}</p>
-                <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[order.status] ?? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"}`}
-                >
-                  {STATUS_LABELS[order.status]}
-                </span>
+        <div className="flex flex-col gap-6 sm:flex-row">
+          <AccountSidebar name={user.name} memberSince={user.createdAt} active="orders" />
+
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            <h1 className="text-xl font-bold">Your Orders</h1>
+
+            {orders.length === 0 ? (
+              <div className="rounded-2xl bg-white p-5 dark:bg-surface">
+                <p className="text-neutral-600 dark:text-neutral-400">
+                  You haven&apos;t placed any orders yet.{" "}
+                  <Link href="/products" className="font-medium text-brand hover:underline">
+                    Start shopping
+                  </Link>
+                  .
+                </p>
               </div>
-              <p className="text-neutral-500 dark:text-neutral-400">
-                {order.items.map((item) => `${item.quantity}× ${item.product.name}`).join(", ")}
-              </p>
-              <p className="font-semibold text-brand">{formatBDT(order.totalAmount)}</p>
-            </Link>
-          ))}
+            ) : (
+              <div className="flex flex-col gap-4">
+                {orders.map((order) => (
+                  <OrderCard key={order.id} order={order} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

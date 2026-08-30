@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Squares2X2Icon, UserIcon, TruckIcon } from "@heroicons/react/24/outline";
 import { getCategories } from "@/lib/products";
 import { getCurrentUser } from "@/lib/dal";
 
@@ -19,7 +20,9 @@ export async function Footer() {
         </div>
 
         <div className="w-full sm:w-auto">
-          <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">Shop</h2>
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">
+            <Squares2X2Icon className="size-5 text-brand" /> Shop
+          </h2>
           <ul className="flex flex-col gap-3">
             {categories.map((c) => (
               <li key={c.id}>
@@ -35,7 +38,9 @@ export async function Footer() {
         </div>
 
         <div className="w-full sm:w-auto">
-          <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">Account</h2>
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">
+            <UserIcon className="size-5 text-brand" /> Account
+          </h2>
           <ul className="flex flex-col gap-3">
             <li>
               <Link href="/products" className="text-base text-neutral-600 transition-colors hover:text-brand dark:text-neutral-400">
@@ -67,7 +72,9 @@ export async function Footer() {
         </div>
 
         <div className="w-full sm:w-auto">
-          <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">Ordering</h2>
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground sm:mb-6 sm:text-xl">
+            <TruckIcon className="size-5 text-brand" /> Ordering
+          </h2>
           <ul className="flex flex-col gap-3 text-base text-neutral-600 dark:text-neutral-400">
             <li>Cash on Delivery, nationwide.</li>
             <li>We call to confirm every order before it ships.</li>

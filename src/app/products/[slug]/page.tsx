@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { BanknotesIcon, PhoneIcon, TruckIcon } from "@heroicons/react/24/outline";
 import { prisma } from "@/lib/prisma";
 import { formatBDT } from "@/lib/money";
 import { getOptionalSession } from "@/lib/dal";
@@ -11,13 +10,8 @@ import { ProductDetailGallery } from "@/components/product-detail-gallery";
 import { WishlistButton } from "@/components/wishlist-button";
 import { StarRating } from "@/components/star-rating";
 import { ProductDetailTabs } from "@/components/product-detail-tabs";
+import { TrustBadges } from "@/components/trust-badges";
 import { canReviewProduct, getProductRatingSummary, getProductReviews } from "@/lib/reviews";
-
-const TRUST_BADGES = [
-  { Icon: BanknotesIcon, label: "Cash on Delivery" },
-  { Icon: PhoneIcon, label: "We call to confirm your order" },
-  { Icon: TruckIcon, label: "Nationwide delivery" },
-];
 
 export default async function ProductDetailPage(props: PageProps<"/products/[slug]">) {
   const { slug } = await props.params;
@@ -136,14 +130,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
               </div>
             )}
 
-            <div className="mt-2 flex flex-col gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900">
-              {TRUST_BADGES.map(({ Icon, label }) => (
-                <div key={label} className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-                  <Icon className="size-4 text-brand" />
-                  <span>{label}</span>
-                </div>
-              ))}
-            </div>
+            <TrustBadges className="mt-2" />
           </div>
         </div>
       </div>
@@ -172,7 +159,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
       {relatedProducts.length > 0 && (
         <section>
           <h2 className="mb-3 text-lg font-bold">You might also like</h2>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-y-10">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-y-10">
             {relatedProducts.map((p) => (
               <ProductCard
                 key={p.id}

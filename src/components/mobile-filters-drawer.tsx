@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { AdjustmentsHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  AdjustmentsHorizontalIcon,
+  XMarkIcon,
+  ArrowsUpDownIcon,
+  TagIcon,
+  BuildingStorefrontIcon,
+  BanknotesIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/outline";
 import { FilterSection } from "@/components/filter-section";
 import { FilterCheckbox } from "@/components/filter-checkbox";
 import { buildFilterHref, toggleFilterValue } from "@/lib/filter-href";
@@ -69,10 +77,10 @@ export function MobileFiltersDrawer({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 rounded-full border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors select-none hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-300"
+        aria-label="Filters & Sort"
+        className="flex size-9 items-center justify-center rounded-full text-neutral-700 transition-colors select-none hover:text-brand dark:text-neutral-300"
       >
-        <AdjustmentsHorizontalIcon className="size-4" />
-        Filters & Sort
+        <AdjustmentsHorizontalIcon className="size-6" />
       </button>
 
       {open &&
@@ -111,7 +119,10 @@ export function MobileFiltersDrawer({
                 </Link>
               )}
 
-              <FilterSection title={`Sort by (${currentSortLabel})`}>
+              <FilterSection
+                title={`Sort by (${currentSortLabel})`}
+                icon={<ArrowsUpDownIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+              >
                 {sortOptions.map((opt) => (
                   <Link
                     key={opt.value}
@@ -124,7 +135,10 @@ export function MobileFiltersDrawer({
                 ))}
               </FilterSection>
 
-              <FilterSection title="Category">
+              <FilterSection
+                title="Category"
+                icon={<TagIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+              >
                 {categories.map((c) => (
                   <Link
                     key={c.id}
@@ -139,7 +153,10 @@ export function MobileFiltersDrawer({
                 ))}
               </FilterSection>
 
-              <FilterSection title="Brand">
+              <FilterSection
+                title="Brand"
+                icon={<BuildingStorefrontIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+              >
                 {brands.map((b) => (
                   <Link
                     key={b}
@@ -154,7 +171,10 @@ export function MobileFiltersDrawer({
                 ))}
               </FilterSection>
 
-              <FilterSection title="Price">
+              <FilterSection
+                title="Price"
+                icon={<BanknotesIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+              >
                 <form method="get" action={basePath} className="flex items-center gap-2">
                   {filters.q && <input type="hidden" name="q" value={filters.q} />}
                   {filters.category?.map((c) => (
@@ -192,7 +212,10 @@ export function MobileFiltersDrawer({
                 </form>
               </FilterSection>
 
-              <FilterSection title="Availability">
+              <FilterSection
+                title="Availability"
+                icon={<CheckCircleIcon className="size-4 text-neutral-500 dark:text-neutral-400" />}
+              >
                 <Link
                   href={hrefWith({ inStock: filters.inStock ? undefined : "1", page: 1 })}
                   onClick={() => setOpen(false)}

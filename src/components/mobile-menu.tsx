@@ -9,8 +9,13 @@ import {
   MagnifyingGlassIcon,
   HeartIcon,
   ShoppingCartIcon,
+  FireIcon,
+  Squares2X2Icon,
+  TagIcon,
+  TruckIcon,
 } from "@heroicons/react/24/outline";
 import { CartCountBadge } from "@/components/cart-count-badge";
+import { categoryIcon } from "@/lib/category-icons";
 
 const itemClass =
   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-foreground transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800";
@@ -96,16 +101,16 @@ export function MobileMenu({
 
               <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                 <Link href="/popular" className={itemClass} onClick={close}>
-                  Popular
+                  <FireIcon className="size-5" /> Popular
                 </Link>
                 <Link href="/products" className={itemClass} onClick={close}>
-                  All Products
+                  <Squares2X2Icon className="size-5" /> All Products
                 </Link>
                 <Link href="/products?onSale=1" className={itemClass} onClick={close}>
-                  Deals
+                  <TagIcon className="size-5" /> Deals
                 </Link>
                 <Link href="/orders" className={itemClass} onClick={close}>
-                  Track Order
+                  <TruckIcon className="size-5" /> Track Order
                 </Link>
               </div>
 
@@ -114,16 +119,19 @@ export function MobileMenu({
                   <p className="px-3 text-sm font-semibold text-neutral-500 dark:text-neutral-400">
                     Categories
                   </p>
-                  {categories.map((c) => (
-                    <Link
-                      key={c.id}
-                      href={`/products?category=${c.slug}`}
-                      className={itemClass}
-                      onClick={close}
-                    >
-                      {c.name}
-                    </Link>
-                  ))}
+                  {categories.map((c) => {
+                    const CategoryIcon = categoryIcon(c.slug);
+                    return (
+                      <Link
+                        key={c.id}
+                        href={`/products?category=${c.slug}`}
+                        className={itemClass}
+                        onClick={close}
+                      >
+                        <CategoryIcon className="size-5" /> {c.name}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>

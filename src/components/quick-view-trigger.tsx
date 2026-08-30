@@ -19,10 +19,12 @@ export function QuickViewTrigger({
   product,
   isWishlisted,
   isLoggedIn,
+  className = "flex size-10 shrink-0 items-center justify-center rounded-lg bg-dark text-white transition-colors hover:bg-brand-dark",
 }: {
   product: Product;
   isWishlisted: boolean;
   isLoggedIn: boolean;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -36,7 +38,7 @@ export function QuickViewTrigger({
           e.stopPropagation();
           setOpen(true);
         }}
-        className="flex size-9 items-center justify-center rounded-lg bg-brand text-white shadow-sm transition-colors hover:bg-brand-dark"
+        className={className}
       >
         <ArrowsPointingOutIcon className="size-4" />
       </button>

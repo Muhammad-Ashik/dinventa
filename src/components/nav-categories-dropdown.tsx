@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Dropdown } from "@/components/dropdown";
+import { categoryIcon } from "@/lib/category-icons";
 
 export function NavCategoriesDropdown({
   categories,
@@ -24,15 +25,18 @@ export function NavCategoriesDropdown({
         </button>
       )}
     >
-      {categories.map((c) => (
-        <Link
-          key={c.id}
-          href={`/products?category=${c.slug}`}
-          className="block px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand dark:text-neutral-300 dark:hover:bg-neutral-800"
-        >
-          {c.name}
-        </Link>
-      ))}
+      {categories.map((c) => {
+        const CategoryIcon = categoryIcon(c.slug);
+        return (
+          <Link
+            key={c.id}
+            href={`/products?category=${c.slug}`}
+            className="flex items-center gap-2 px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-brand dark:text-neutral-300 dark:hover:bg-neutral-800"
+          >
+            <CategoryIcon className="size-4" /> {c.name}
+          </Link>
+        );
+      })}
     </Dropdown>
   );
 }

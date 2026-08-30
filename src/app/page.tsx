@@ -1,4 +1,5 @@
 import { FireIcon, StarIcon } from "@heroicons/react/20/solid";
+import { categoryIcon } from "@/lib/category-icons";
 import { getCategories, getProducts } from "@/lib/products";
 import { prisma } from "@/lib/prisma";
 import { getOptionalSession } from "@/lib/dal";
@@ -85,19 +86,19 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
-            <FireIcon className="size-6 text-brand" /> New Arrivals
+      <div>
+        <div className="mb-6 flex items-center justify-between gap-2">
+          <h2 className="flex min-w-0 items-center gap-1.5 text-base font-bold sm:gap-2 sm:text-xl md:text-2xl">
+            <FireIcon className="size-5 shrink-0 text-brand sm:size-6" /> New Arrivals
           </h2>
           <ViewAllButton href="/products?sort=newest" />
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-10 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-y-10 lg:grid-cols-4">
           {newArrivals.slice(0, 8).map((product) => (
-            <ProductCard key={product.id} product={product} {...cardProps(product)} />
+            <ProductCard key={product.id} product={product} bare {...cardProps(product)} />
           ))}
         </div>
-      </section>
+      </div>
 
       {bannerDeal && (
         <PromoBanner product={bannerDeal} discountPercent={discountPercentOf(bannerDeal)} />
@@ -140,19 +141,24 @@ export default async function HomePage() {
 
       <CustomerReviews reviews={featuredReviews} />
 
-      {categorySections.map(({ category, products }) => (
-        <section key={category.id}>
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold sm:text-2xl">{category.name}</h2>
-            <ViewAllButton href={`/products?category=${category.slug}`} />
+      {categorySections.map(({ category, products }) => {
+        const CategoryIcon = categoryIcon(category.slug);
+        return (
+          <div key={category.id}>
+            <div className="mb-6 flex items-center justify-between gap-2">
+              <h2 className="flex min-w-0 items-center gap-1.5 text-base font-bold sm:gap-2 sm:text-xl md:text-2xl">
+                <CategoryIcon className="size-5 shrink-0 text-brand sm:size-6" /> {category.name}
+              </h2>
+              <ViewAllButton href={`/products?category=${category.slug}`} />
+            </div>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-y-10">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} bare {...cardProps(product)} />
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-y-10">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} {...cardProps(product)} />
-            ))}
-          </div>
-        </section>
-      ))}
+        );
+      })}
     </div>
   );
 }

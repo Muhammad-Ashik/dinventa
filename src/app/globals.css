@@ -141,6 +141,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Base card styling for every bare <section> (homepage rails, related
+   products, ...) that doesn't already set its own background — gives them
+   the same rounded grey band treatment as the rest of the site instead of
+   floating with no visual container. Smaller padding below `sm` matches
+   this site's mobile-scaled-down spacing elsewhere. */
+section {
+  padding: 20px;
+  background-color: var(--color-band);
+  border-radius: 15px;
+}
+
+@media (min-width: 640px) {
+  section {
+    padding: 32px;
+  }
+}
+
 /* Page-change transition: PageTransition (src/components/page-transition.tsx)
    remounts a wrapper keyed on pathname on every real navigation, and one of
    these plays on that remount — a full-page snap-cut otherwise, since the

@@ -20,7 +20,7 @@ export function ProductDetailGallery({ images, alt }: { images: string[]; alt: s
   return (
     <div className="flex flex-col gap-3">
       <div
-        className={`relative aspect-square w-full overflow-hidden rounded-xl bg-band select-none ${
+        className={`relative aspect-square w-full overflow-hidden rounded-xl bg-white select-none dark:bg-surface ${
           draggable ? "cursor-grab active:cursor-grabbing" : ""
         }`}
         {...(draggable ? dragHandlers : {})}
@@ -52,7 +52,7 @@ export function ProductDetailGallery({ images, alt }: { images: string[]; alt: s
               type="button"
               aria-label={`Show image ${i + 1}`}
               onClick={() => setIndex(i)}
-              className={`relative size-16 shrink-0 overflow-hidden rounded-lg border-2 bg-band transition-colors sm:size-20 ${
+              className={`relative size-16 shrink-0 overflow-hidden rounded-lg border-2 bg-white transition-colors sm:size-20 dark:bg-surface ${
                 i === index ? "border-brand" : "border-transparent"
               }`}
             >

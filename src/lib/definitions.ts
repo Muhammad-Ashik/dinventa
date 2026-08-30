@@ -79,6 +79,51 @@ export type ProfileFormState =
     }
   | undefined;
 
+export const ChangePasswordFormSchema = z
+  .object({
+    oldPassword: z.string().min(1, "Please enter your current password."),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long.")
+      .regex(/[a-zA-Z]/, "Password must contain at least one letter.")
+      .regex(/[0-9]/, "Password must contain at least one number."),
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords don't match.",
+    path: ["confirmNewPassword"],
+  });
+
+export type ChangePasswordFormState =
+  | {
+      errors?: {
+        oldPassword?: string[];
+        newPassword?: string[];
+        confirmNewPassword?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const AddressFormSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters long."),
+  email: z.email("Please enter a valid email.").trim(),
+  phone: z.string().trim().min(6, "Please enter a valid phone number."),
+  address: z.string().trim().min(5, "Please enter a full address."),
+});
+
+export type AddressFormState =
+  | {
+      errors?: {
+        name?: string[];
+        email?: string[];
+        phone?: string[];
+        address?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
 export const ManualProductFormSchema = z
   .object({
     name: z.string().trim().min(2, "Please enter a product name."),

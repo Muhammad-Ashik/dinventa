@@ -49,3 +49,28 @@ export async function getFeaturedReviews(limit: number) {
     take: limit,
   });
 }
+
+// Products from this user's shipped/delivered orders that don't have a
+// review from them yet — the "Need to Review" list on /account/reviews.
+export async function getProductsNeedingReview(userId: string) {
+  const items = await prisma.orderItem.findMany({
+    where: {
+      order: { userId, status: { in: [...VERIFIED_PURCHASE_STATUSES] } },
+      product: { reviews: { none: { userId } } },
+    },
+    include: { product: true },
+    distinct: ["productId"],
+    orderBy: { id: "desc" },
+  });
+  return items.map((item) => item.product);
+}
+
+// This user's own past reviews — the "Reviewed Products" list on
+// /account/reviews.
+export async function getUserReviews(userId: string) {
+  return prisma.review.findMany({
+    where: { userId },
+    include: { product: true },
+    orderBy: { createdAt: "desc" },
+  });
+}

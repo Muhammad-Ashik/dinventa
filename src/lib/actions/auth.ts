@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/lib/dal";
 import { createSession, deleteSession } from "@/lib/session";
 import {
+  ChangePasswordFormSchema,
+  ChangePasswordFormState,
   LoginFormSchema,
   LoginFormState,
   ProfileFormSchema,
@@ -82,8 +84,8 @@ export async function logout() {
 }
 
 // Deliberately name/phone only — email is the login identifier (changing it
-// would need re-verification) and password changes deserve their own
-// current-password-gated flow, both out of scope for a basic profile form.
+// would need re-verification) and password changes get their own
+// current-password-gated flow below, not folded into this basic profile form.
 export async function updateProfile(
   _state: ProfileFormState,
   formData: FormData
@@ -103,6 +105,36 @@ export async function updateProfile(
     data: validatedFields.data,
   });
 
-  revalidatePath("/account");
+  revalidatePath("/account/settings");
   return { message: "Profile updated." };
+}
+
+export async function changePassword(
+  _state: ChangePasswordFormState,
+  formData: FormData
+): Promise<ChangePasswordFormState> {
+  const session = await verifySession();
+
+  const validatedFields = ChangePasswordFormSchema.safeParse({
+    oldPassword: formData.get("oldPassword"),
+    newPassword: formData.get("newPassword"),
+    confirmNewPassword: formData.get("confirmNewPassword"),
+  });
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.flatten().fieldErrors };
+  }
+
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: session.userId } });
+  const currentPasswordMatches = await bcrypt.compare(
+    validatedFields.data.oldPassword,
+    user.passwordHash
+  );
+  if (!currentPasswordMatches) {
+    return { errors: { oldPassword: ["Current password is incorrect."] } };
+  }
+
+  const passwordHash = await bcrypt.hash(validatedFields.data.newPassword, 10);
+  await prisma.user.update({ where: { id: session.userId }, data: { passwordHash } });
+
+  return { message: "Password changed." };
 }

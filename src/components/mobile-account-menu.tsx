@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {
   Cog6ToothIcon,
+  Squares2X2Icon,
   ClipboardDocumentListIcon,
   UserCircleIcon,
   ArrowRightStartOnRectangleIcon,
@@ -41,11 +42,15 @@ export function MobileAccountMenu({ name, isAdmin }: { name: string; isAdmin: bo
           Admin dashboard
         </Link>
       )}
+      <Link href="/account" className={itemClass}>
+        <Squares2X2Icon className="size-4" />
+        My Account
+      </Link>
       <Link href="/orders" className={itemClass}>
         <ClipboardDocumentListIcon className="size-4" />
         Your orders
       </Link>
-      <Link href="/account" className={itemClass}>
+      <Link href="/account/settings" className={itemClass}>
         <UserCircleIcon className="size-4" />
         Profile settings
       </Link>

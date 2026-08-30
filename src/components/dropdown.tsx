@@ -38,12 +38,11 @@ export function Dropdown({
     else if (!open) setOpen(true);
   }
 
-  // Selecting an option (a link or button inside the panel — a sort
-  // option, a category, "log out", ...) should close the menu same as
-  // picking from any other dropdown. Without this, clicking straight
-  // through a Link navigated the page but left the panel open over the
-  // newly-loaded content indefinitely, until some later, unrelated click
-  // happened to land outside it.
+  // Selecting a link inside the panel (a sort option, a category, ...)
+  // should close the menu same as picking from any other dropdown. Without
+  // this, clicking straight through a Link navigated the page but left the
+  // panel open over the newly-loaded content indefinitely, until some
+  // later, unrelated click happened to land outside it.
   //
   // This closes immediately (skipping the animated `closing` state that
   // toggle()/outside-click use) rather than reusing doClose(): a Link click
@@ -54,8 +53,19 @@ export function Dropdown({
   // unmounting — which reads as a flash/flicker on close. The page is
   // navigating away regardless, so animating this specific close was never
   // going to be reliably visible anyway.
+  //
+  // Plain <button>s (e.g. a "Log out" submit button) get the normal
+  // animated doClose() instead of the immediate close above — closing
+  // immediately unmounts their <form> before the browser's native submit
+  // for that same click gets to fire, which silently cancels the
+  // submission ("Form submission canceled because the form is not
+  // connected"). A form isn't a client-side href navigation, so it doesn't
+  // hit the RSC-replacement race the immediate path exists for — doClose()
+  // leaves it mounted comfortably long enough to actually submit.
   function handlePanelClick(e: React.MouseEvent) {
-    if ((e.target as HTMLElement).closest("a, button")) setOpen(false);
+    const target = e.target as HTMLElement;
+    if (target.closest("a")) setOpen(false);
+    else if (target.closest("button")) doClose();
   }
 
   useEffect(() => {

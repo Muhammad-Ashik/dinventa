@@ -20,7 +20,7 @@ export function CustomerReviews({ reviews }: { reviews: FeaturedReview[] }) {
       <h2 className="mb-6 text-center text-xl font-bold sm:mb-8 sm:text-2xl">What customers are saying</h2>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-8">
         {reviews.map((review) => (
-          <div key={review.id} className="rounded-xl bg-band p-5 sm:p-7">
+          <div key={review.id} className="rounded-xl bg-white p-5 sm:p-7 dark:bg-surface">
             <StarRating rating={review.rating} />
             {review.comment && (
               <p className="mt-4 line-clamp-4 text-base text-neutral-700 dark:text-neutral-300">{review.comment}</p>

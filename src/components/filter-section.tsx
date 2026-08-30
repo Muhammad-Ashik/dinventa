@@ -11,9 +11,15 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 // heights in JS.
 export function FilterSection({
   title,
+  icon,
   children,
 }: {
   title: string;
+  // A rendered element, not a component reference — this is used from a
+  // Server Component (product-listing-page.tsx) passing into this Client
+  // Component, and only plain serializable values/JSX elements can cross
+  // that boundary, not component-type function references.
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(true);
@@ -25,7 +31,10 @@ export function FilterSection({
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between font-semibold"
       >
-        {title}
+        <span className="flex items-center gap-2">
+          {icon}
+          {title}
+        </span>
         <ChevronUpIcon
           className={`size-5 text-neutral-400 transition-transform duration-200 ${open ? "" : "rotate-180"}`}
         />

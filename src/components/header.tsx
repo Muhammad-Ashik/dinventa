@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { ShoppingCartIcon, HeartIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/outline";
+import {
+  ShoppingCartIcon,
+  HeartIcon,
+  MagnifyingGlassIcon,
+  UserIcon,
+  FireIcon,
+  Squares2X2Icon,
+  TagIcon,
+  TruckIcon,
+} from "@heroicons/react/24/outline";
 import { getCurrentUser } from "@/lib/dal";
 import { getCategories } from "@/lib/products";
 import { getWishlistCount } from "@/lib/wishlist";
@@ -27,28 +36,28 @@ export async function Header() {
         <nav className="hidden flex-1 items-center justify-center gap-9 md:flex">
           <Link
             href="/popular"
-            className="text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
+            className="flex items-center gap-1.5 text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
           >
-            Popular
+            <FireIcon className="size-4.5" /> Popular
           </Link>
           <Link
             href="/products"
-            className="text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
+            className="flex items-center gap-1.5 text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
           >
-            All Products
+            <Squares2X2Icon className="size-4.5" /> All Products
           </Link>
           <NavCategoriesDropdown categories={categories} />
           <Link
             href="/products?onSale=1"
-            className="text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
+            className="flex items-center gap-1.5 text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
           >
-            Deals
+            <TagIcon className="size-4.5" /> Deals
           </Link>
           <Link
             href="/orders"
-            className="text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
+            className="flex items-center gap-1.5 text-base font-medium text-dark transition-colors hover:text-brand dark:text-neutral-100"
           >
-            Track Order
+            <TruckIcon className="size-4.5" /> Track Order
           </Link>
         </nav>
 

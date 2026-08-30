@@ -6,6 +6,7 @@ import { ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCart } from "@/lib/cart-context";
 import { formatBDT } from "@/lib/money";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { QuantityInput } from "@/components/quantity-input";
 
 export default function CartPage() {
   const { items, setQuantity, removeItem, clear, totalPrice } = useCart();
@@ -52,7 +53,59 @@ export default function CartPage() {
           </button>
         </div>
 
-        <div className="overflow-x-auto rounded-xl bg-white dark:bg-surface">
+        {/* Mobile: a 2-row card per product (image+title, then price/qty/
+            subtotal/remove) instead of forcing the desktop table's five
+            columns into a horizontally-scrolling strip. */}
+        <div className="flex flex-col divide-y divide-neutral-200 rounded-xl bg-white sm:hidden dark:divide-neutral-800 dark:bg-surface">
+          {items.map((item) => (
+            <div key={item.productId} className="flex flex-col gap-3 p-4">
+              <div className="flex items-center gap-3">
+                <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-band">
+                  <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                </div>
+                <span className="line-clamp-2 flex-1 font-medium">{item.name}</span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm text-brand">{formatBDT(item.price)}</span>
+                <div className="flex items-center rounded-lg border border-neutral-200 dark:border-neutral-700">
+                  <button
+                    type="button"
+                    aria-label="Decrease quantity"
+                    onClick={() => setQuantity(item.productId, item.quantity - 1)}
+                    className="flex size-7 items-center justify-center text-neutral-600 hover:text-brand dark:text-neutral-300"
+                  >
+                    –
+                  </button>
+                  <QuantityInput
+                    value={item.quantity}
+                    min={1}
+                    onChange={(q) => setQuantity(item.productId, q)}
+                    className="w-6 text-sm"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Increase quantity"
+                    onClick={() => setQuantity(item.productId, item.quantity + 1)}
+                    className="flex size-7 items-center justify-center text-neutral-600 hover:text-brand dark:text-neutral-300"
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="text-sm font-semibold">{formatBDT(item.price * item.quantity)}</span>
+                <button
+                  type="button"
+                  aria-label="Remove item"
+                  onClick={() => removeItem(item.productId)}
+                  className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-red-600 text-white transition-colors hover:bg-red-700"
+                >
+                  <TrashIcon className="size-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto rounded-xl bg-white sm:block dark:bg-surface">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
               <tr className="border-b border-neutral-200 text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
@@ -85,9 +138,12 @@ export default function CartPage() {
                       >
                         –
                       </button>
-                      <span className="flex w-8 items-center justify-center border-x border-neutral-200 py-1 dark:border-neutral-700">
-                        {item.quantity}
-                      </span>
+                      <QuantityInput
+                        value={item.quantity}
+                        min={1}
+                        onChange={(q) => setQuantity(item.productId, q)}
+                        className="w-8 border-x border-neutral-200 py-1 dark:border-neutral-700"
+                      />
                       <button
                         type="button"
                         aria-label="Increase quantity"
@@ -104,7 +160,7 @@ export default function CartPage() {
                       type="button"
                       aria-label="Remove item"
                       onClick={() => removeItem(item.productId)}
-                      className="flex size-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400"
+                      className="flex size-9 items-center justify-center rounded-lg bg-red-600 text-white transition-colors hover:bg-red-700"
                     >
                       <TrashIcon className="size-4" />
                     </button>

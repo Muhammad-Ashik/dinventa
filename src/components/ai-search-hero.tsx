@@ -14,7 +14,12 @@ export function AiSearchHero() {
 
   return (
     <div className="flex h-[460px] flex-1 flex-col items-center justify-center overflow-hidden rounded-2xl bg-surface px-4 py-6 text-center sm:px-7 dark:bg-background">
-      <h2 className="text-lg font-bold sm:text-xl">Tell our AI what you&apos;re looking for</h2>
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand">
+        <SparklesIcon className="size-3.5" />
+        AI-Powered Search
+      </span>
+
+      <h2 className="mt-3 text-lg font-bold sm:text-xl">What are you looking for?</h2>
       <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">
         Describe it in your own words and we&apos;ll take you straight to matching products.
       </p>

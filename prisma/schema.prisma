@@ -33,6 +33,11 @@ enum PendingProductStatus {
   REJECTED
 }
 
+enum AddressType {
+  SHIPPING
+  BILLING
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -43,9 +48,28 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  orders   Order[]
-  wishlist WishlistItem[]
-  reviews  Review[]
+  orders    Order[]
+  wishlist  WishlistItem[]
+  reviews   Review[]
+  addresses Address[]
+}
+
+// One saved address per type per user (a "shipping" card and a "billing"
+// card, matching the account/addresses page) — not a full multi-address
+// book, since checkout only ever needs one of each.
+model Address {
+  id        String      @id @default(cuid())
+  type      AddressType
+  name      String
+  email     String
+  phone     String
+  address   String
+  updatedAt DateTime    @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
 }
 
 model Category {
