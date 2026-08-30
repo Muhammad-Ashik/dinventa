@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { PUBLIC_PRODUCT_SELECT } from "@/lib/products";
 import { formatBDT } from "@/lib/money";
 import { getOptionalSession } from "@/lib/dal";
 import { getWishlistedProductIds } from "@/lib/wishlist";
@@ -18,7 +19,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
 
   const product = await prisma.product.findUnique({
     where: { slug },
-    include: { category: true },
+    select: PUBLIC_PRODUCT_SELECT,
   });
 
   if (!product || product.status !== "ACTIVE") {
@@ -28,7 +29,7 @@ export default async function ProductDetailPage(props: PageProps<"/products/[slu
   const [relatedProducts, session, reviews, ratingSummary] = await Promise.all([
     prisma.product.findMany({
       where: { categoryId: product.categoryId, status: "ACTIVE", id: { not: product.id } },
-      include: { category: true },
+      select: PUBLIC_PRODUCT_SELECT,
       orderBy: { createdAt: "desc" },
       take: 4,
     }),

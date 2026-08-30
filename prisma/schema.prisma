@@ -79,6 +79,33 @@ model Category {
 
   products        Product[]
   pendingProducts PendingProduct[]
+  vettedRetailers VettedRetailer[]
+}
+
+// Per-category allow-list of retailer domains the real-product-search
+// pipeline is permitted to search/fetch — checked for a clean robots.txt and
+// no anti-scraping ToS clause before ever being added (see Phase 5 notes).
+// Deactivate rather than delete so history/audit isn't lost.
+model VettedRetailer {
+  id         String   @id @default(cuid())
+  name       String
+  domain     String   @unique
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+}
+
+// Generic admin-editable key-value store, currently just the markup rule
+// ("markupMode" = "flat"|"percent", "markupValue" = stringified number) —
+// kept generic rather than a fixed-column Settings table so future settings
+// don't need another migration.
+model AppSetting {
+  key   String @id
+  value String
 }
 
 model Product {
@@ -104,6 +131,20 @@ model Product {
   stock          Int           @default(0)
   brand          String        @default("Generic")
   status         ProductStatus @default(ACTIVE)
+  // Dropshipping sourcing fields — set when this product came from the real
+  // product-search pipeline (Phase 5). Null for manually-added products.
+  // sourceUrl/sourceDomain: the real retailer listing, for admin fulfillment
+  // (never shown to customers). realPrice: the scraped cost before markup —
+  // `price` above is always realPrice + the configured markup, applied once
+  // at discovery time and never silently changed by later markup edits.
+  sourceUrl         String?
+  sourceDomain      String?
+  realPrice         Int?
+  isSubstitute      Boolean   @default(false)
+  // Set by an admin-triggered re-verify (idea 22) — never auto-applied to
+  // `price`; re-verify only flags a change for manual review.
+  lastVerifiedAt    DateTime?
+  sourceCheckStatus String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -129,6 +170,12 @@ model PendingProduct {
   images         String[]             @default([])
   brand          String               @default("Generic")
   status         PendingProductStatus @default(PENDING)
+  // Same sourcing fields as Product (Phase 5) — carried straight across to
+  // the live Product row when approveProduct() copies this candidate over.
+  sourceUrl    String?
+  sourceDomain String?
+  realPrice    Int?
+  isSubstitute Boolean @default(false)
   createdAt      DateTime             @default(now())
   reviewedAt     DateTime?
 
@@ -197,6 +244,14 @@ model OrderItem {
   id        String @id @default(cuid())
   quantity  Int
   unitPrice Int
+  // Snapshotted from Product.realPrice at order-creation time (idea 21) —
+  // never re-derived later, so re-verifies/markup changes don't retroactively
+  // alter historical profit figures.
+  realUnitCost    Int?
+  // Set when an admin checks off "ordered from source" on the order's
+  // fulfillment checklist (idea 20) — the other two checklist steps derive
+  // from existing Order.courierTrackingCode / Order.status, no new fields.
+  sourceOrderedAt DateTime?
 
   orderId String
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)

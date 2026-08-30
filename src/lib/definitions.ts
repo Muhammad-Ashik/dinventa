@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { BANNED_DOMAINS } from "@/lib/product-search/types";
 
 export const SignupFormSchema = z
   .object({
@@ -167,6 +168,46 @@ export type ManualProductFormState =
         brand?: string[];
         categoryId?: string[];
         imageUrl?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const MarkupSettingSchema = z.object({
+  mode: z.enum(["flat", "percent"]),
+  value: z.coerce.number().min(0, "Must be zero or greater."),
+});
+
+export type MarkupSettingFormState =
+  | {
+      errors?: {
+        mode?: string[];
+        value?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const VettedRetailerFormSchema = z.object({
+  name: z.string().trim().min(2, "Please enter a retailer name."),
+  domain: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Please enter a domain (e.g. example.com).")
+    .refine(
+      (domain) => !BANNED_DOMAINS.some((banned) => domain === banned || domain.endsWith(`.${banned}`)),
+      { message: "This domain is explicitly banned from scraping and can't be added." }
+    ),
+  categoryId: z.string().trim().min(1, "Please choose a category."),
+});
+
+export type VettedRetailerFormState =
+  | {
+      errors?: {
+        name?: string[];
+        domain?: string[];
+        categoryId?: string[];
       };
       message?: string;
     }

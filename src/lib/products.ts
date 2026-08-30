@@ -78,11 +78,36 @@ function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereInput {
   };
 }
 
+// Fields safe to ever reach a customer-facing page — deliberately excludes
+// the dropshipping sourcing fields (sourceUrl, sourceDomain, realPrice,
+// isSubstitute, lastVerifiedAt, sourceCheckStatus), which are admin-only.
+// Without this, a raw `include: { category: true }` result handed to a
+// client component (e.g. ProductCard -> QuickViewTrigger) would ship those
+// fields into the page's RSC payload even if nothing ever renders them.
+export const PUBLIC_PRODUCT_SELECT = {
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
+  price: true,
+  compareAtPrice: true,
+  saleEndsAt: true,
+  imageUrl: true,
+  images: true,
+  stock: true,
+  brand: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+  categoryId: true,
+  category: true,
+} as const;
+
 export async function getProducts(filters: ProductFilters) {
   return prisma.product.findMany({
     where: buildProductWhere(filters),
     orderBy: SORT_TO_ORDER_BY[filters.sort ?? "newest"],
-    include: { category: true },
+    select: PUBLIC_PRODUCT_SELECT,
   });
 }
 
@@ -96,7 +121,7 @@ export async function getProductsPaged(filters: ProductFilters, page: number, pa
     prisma.product.findMany({
       where,
       orderBy: SORT_TO_ORDER_BY[filters.sort ?? "newest"],
-      include: { category: true },
+      select: PUBLIC_PRODUCT_SELECT,
       skip: (page - 1) * pageSize,
       take: pageSize,
     }),

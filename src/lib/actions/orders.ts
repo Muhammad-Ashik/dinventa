@@ -68,6 +68,10 @@ export async function createOrder(input: CheckoutInput): Promise<CheckoutResult>
               productId: product.id,
               quantity: item.quantity,
               unitPrice: product.price,
+              // Snapshotted now, not re-derived later, so a future
+              // re-verify or markup change never retroactively alters
+              // historical profit figures (idea 21).
+              realUnitCost: product.realPrice,
             };
           }),
         },

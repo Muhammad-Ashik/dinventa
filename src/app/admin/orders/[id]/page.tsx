@@ -10,9 +10,11 @@ import {
   retryCourierOrder,
   updateOrderItemQuantity,
   removeOrderItem,
+  markItemSourced,
 } from "@/lib/actions/admin";
 import { OrderShippingForm } from "@/components/admin/order-shipping-form";
 import { ActionButton } from "@/components/admin/action-button";
+import { CopyFulfillmentButton } from "@/components/admin/copy-fulfillment-button";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING_CONFIRMATION: "Pending phone confirmation",
@@ -34,6 +36,11 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
 
   const itemsEditable = order.status === "PENDING_CONFIRMATION";
   const canRemoveItems = itemsEditable && order.items.length > 1;
+  const sourcedItems = order.items.filter((item) => item.product.sourceUrl);
+  const totalProfit = order.items.reduce(
+    (sum, item) => (item.realUnitCost !== null ? sum + (item.unitPrice - item.realUnitCost) * item.quantity : sum),
+    0
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -70,6 +77,12 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
                 <div className="flex-1">
                   <p className="font-medium">{item.product.name}</p>
                   <p className="text-neutral-500 dark:text-neutral-400">{formatBDT(item.unitPrice)} each</p>
+                  {item.realUnitCost !== null && (
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Cost {formatBDT(item.realUnitCost * item.quantity)} · Profit{" "}
+                      {formatBDT((item.unitPrice - item.realUnitCost) * item.quantity)}
+                    </p>
+                  )}
                 </div>
 
                 {itemsEditable ? (
@@ -115,9 +128,17 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
             ))}
           </div>
 
-          <div className="flex justify-between border-t border-neutral-200 pt-3 font-bold dark:border-neutral-800">
-            <span>Total</span>
-            <span className="text-brand">{formatBDT(order.totalAmount)}</span>
+          <div className="flex flex-col gap-1 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+            <div className="flex justify-between font-bold">
+              <span>Total</span>
+              <span className="text-brand">{formatBDT(order.totalAmount)}</span>
+            </div>
+            {totalProfit > 0 && (
+              <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
+                <span>Profit (sourced items)</span>
+                <span>{formatBDT(totalProfit)}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -131,6 +152,57 @@ export default async function AdminOrderDetailPage(props: PageProps<"/admin/orde
               locked={order.status === "DECLINED" || order.status === "CANCELLED"}
             />
           </div>
+
+          {sourcedItems.length > 0 && (
+            <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4 text-sm dark:border-neutral-800">
+              <h2 className="font-semibold">Fulfillment (admin only)</h2>
+              {sourcedItems.map((item) => {
+                const trackingEntered = !!order.courierTrackingCode;
+                const shipped = order.status === "SHIPPED" || order.status === "DELIVERED";
+                return (
+                  <div key={item.id} className="flex flex-col gap-2 border-t border-neutral-200 pt-3 first:border-t-0 first:pt-0 dark:border-neutral-800">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-medium">{item.product.name}</p>
+                      <a
+                        href={item.product.sourceUrl!}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-brand hover:underline"
+                      >
+                        Order from {item.product.sourceDomain ?? "source"} ↗
+                      </a>
+                    </div>
+
+                    <CopyFulfillmentButton
+                      sourceUrl={item.product.sourceUrl!}
+                      shippingAddress={order.shippingAddress}
+                      phone={order.phone}
+                      quantity={item.quantity}
+                      productName={item.product.name}
+                    />
+
+                    <ul className="flex flex-col gap-1 text-xs text-neutral-600 dark:text-neutral-400">
+                      <li className="flex items-center justify-between">
+                        <span>{item.sourceOrderedAt ? "✓ Ordered from source" : "Ordered from source"}</span>
+                        {!item.sourceOrderedAt && (
+                          <form action={markItemSourced.bind(null, order.id, item.id)}>
+                            <button
+                              type="submit"
+                              className="rounded border border-neutral-300 px-2 py-0.5 font-medium transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+                            >
+                              Mark ordered
+                            </button>
+                          </form>
+                        )}
+                      </li>
+                      <li>{trackingEntered ? "✓ Tracking entered" : "Tracking entered"}</li>
+                      <li>{shipped ? "✓ Shipped" : "Shipped"}</li>
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           <div className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800 text-sm">
             <h2 className="font-semibold">Notes & actions</h2>

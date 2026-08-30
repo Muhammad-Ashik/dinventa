@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/lib/dal";
+import { PUBLIC_PRODUCT_SELECT } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
@@ -10,7 +11,7 @@ export default async function WishlistPage() {
 
   const items = await prisma.wishlistItem.findMany({
     where: { userId: session.userId },
-    include: { product: { include: { category: true } } },
+    include: { product: { select: PUBLIC_PRODUCT_SELECT } },
     orderBy: { createdAt: "desc" },
   });
 

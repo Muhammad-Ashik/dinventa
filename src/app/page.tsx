@@ -1,6 +1,6 @@
 import { FireIcon, StarIcon } from "@heroicons/react/20/solid";
 import { categoryIcon } from "@/lib/category-icons";
-import { getCategories, getProducts } from "@/lib/products";
+import { getCategories, getProducts, PUBLIC_PRODUCT_SELECT } from "@/lib/products";
 import { prisma } from "@/lib/prisma";
 import { getOptionalSession } from "@/lib/dal";
 import { getWishlistedProductIds } from "@/lib/wishlist";
@@ -30,11 +30,11 @@ export default async function HomePage() {
       getProducts({ sort: "newest" }),
       prisma.product.findMany({
         where: { status: "ACTIVE", compareAtPrice: { not: null } },
-        include: { category: true },
+        select: PUBLIC_PRODUCT_SELECT,
       }),
       prisma.product.findMany({
         where: { status: "ACTIVE" },
-        include: { category: true },
+        select: PUBLIC_PRODUCT_SELECT,
         orderBy: { orderItems: { _count: "desc" } },
         take: 6,
       }),
@@ -44,6 +44,7 @@ export default async function HomePage() {
       prisma.product.findFirst({
         where: { status: "ACTIVE", compareAtPrice: { not: null }, saleEndsAt: { gt: new Date() } },
         orderBy: { saleEndsAt: "asc" },
+        select: PUBLIC_PRODUCT_SELECT,
       }),
       getFeaturedReviews(3),
       ...categories.map((c) => getProducts({ category: [c.slug], sort: "newest" })),

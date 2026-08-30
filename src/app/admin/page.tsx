@@ -1,16 +1,14 @@
-import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatBDT } from "@/lib/money";
 import {
-  approveProduct,
-  rejectProduct,
   manuallyConfirmOrder,
   manuallyDeclineOrder,
   retryConfirmationCall,
   retryCourierOrder,
 } from "@/lib/actions/admin";
 import { FindTrendingButton } from "@/components/find-trending-button";
+import { PendingProductsGrid } from "@/components/admin/pending-products-grid";
 import { ActionButton } from "@/components/admin/action-button";
 
 export default async function AdminDashboardPage() {
@@ -21,6 +19,8 @@ export default async function AdminDashboardPage() {
     pendingProducts,
     pendingConfirmationOrders,
     awaitingCourierOrders,
+    categories,
+    categoryCounts,
   ] = await Promise.all([
     prisma.product.count(),
     prisma.order.count(),
@@ -40,7 +40,21 @@ export default async function AdminDashboardPage() {
       include: { user: true, items: { include: { product: true } } },
       orderBy: { createdAt: "desc" },
     }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.product.groupBy({ by: ["categoryId"], _count: true }),
   ]);
+
+  // Gap-based default (idea 4) — pre-select whichever category has the
+  // fewest live products, so the button nudges toward filling real gaps in
+  // the catalog rather than always searching the same one.
+  const countByCategoryId = new Map(categoryCounts.map((c) => [c.categoryId, c._count]));
+  const categoriesWithCounts = categories.map((c) => ({
+    id: c.id,
+    name: c.name,
+    productCount: countByCategoryId.get(c.id) ?? 0,
+  }));
+  const defaultCategoryId =
+    [...categoriesWithCounts].sort((a, b) => a.productCount - b.productCount)[0]?.id ?? "";
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,49 +77,11 @@ export default async function AdminDashboardPage() {
 
       <div className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Trending product suggestions</h2>
-          <FindTrendingButton />
+          <h2 className="font-semibold">Find real products</h2>
+          <FindTrendingButton categories={categoriesWithCounts} defaultCategoryId={defaultCategoryId} />
         </div>
 
-        {pendingProducts.length === 0 ? (
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            No pending suggestions. Click &quot;Find trending products&quot; to ask the AI for
-            some.
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-            {pendingProducts.map((product) => (
-              <div key={product.id} className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-3 dark:border-neutral-800">
-                <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                  />
-                </div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">{product.category.name}</p>
-                <p className="font-medium">{product.name}</p>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">{product.description}</p>
-                <p className="font-semibold">{formatBDT(product.price)}</p>
-
-                <div className="flex gap-2 pt-1">
-                  <form action={approveProduct.bind(null, product.id)}>
-                    <ActionButton variant="primary" successLabel="Approved">
-                      Approve
-                    </ActionButton>
-                  </form>
-                  <form action={rejectProduct.bind(null, product.id)}>
-                    <ActionButton variant="danger" successLabel="Rejected">
-                      Reject
-                    </ActionButton>
-                  </form>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <PendingProductsGrid products={pendingProducts} />
       </div>
 
       <div className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
